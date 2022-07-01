@@ -1,0 +1,43 @@
+import("ObserverUI/xaml/ObserveNPlayers.scar")
+import("ObserverUI/xaml/ToggleUIButton.scar")
+import("ObserverUI/UpdateObserverUI.scar")
+
+Core_RegisterModule("ObserverUI")
+
+function ObserverUI_OnInit()
+	print("ObserverUI_OnInit")
+	
+	if not UI_IsReplay() then
+		--return
+	end
+	
+	UI_AddChild("", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
+	UI_AddChild("", "XamlPresenter", "ObserveNPlayers", { IsHitTestVisible = false, Xaml = _ObserveNPlayersXaml})
+	
+	Set_ReplayStatViewer_And_ImprovedUI_Visibility(true)
+end
+
+_ToggleUIButtonDataContext = { 
+	command = UI_CreateCommand("SwitchBetween_ReplayStatViewer_And_ImprovedUI")
+}
+
+_IsImprovedUIVisible = true
+
+function SwitchBetween_ReplayStatViewer_And_ImprovedUI()
+	print("SwitchBetween_ReplayStatViewer_And_ImprovedUI")
+	
+	Set_ReplayStatViewer_And_ImprovedUI_Visibility(not _IsImprovedUIVisible)
+end
+
+function Set_ReplayStatViewer_And_ImprovedUI_Visibility(improvedUIIsVisible)
+	print("Set_ReplayStatViewer_And_ImprovedUI_Visibility")
+	
+	_IsImprovedUIVisible = improvedUIIsVisible
+	
+	local boolToVisibility = {}
+	boolToVisibility[true] = "Visible"
+	boolToVisibility[false] = "Collapsed" 
+	
+	UI_SetPropertyValue("ReplayStatViewer", "Visibility", boolToVisibility[not improvedUIIsVisible])
+	UI_SetPropertyValue("ObserveNPlayers", "Visibility", boolToVisibility[improvedUIIsVisible])
+end

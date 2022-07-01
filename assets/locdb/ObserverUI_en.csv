@@ -1,0 +1,50 @@
+﻿ID,Pipeline,PipelineStage,Notes,TranslationNotes,Tags,Text
+1,,,Mod name.,,,Improved Observer UI
+2,,,Mod description.,,,Improves the UI while observing and watching replays of games played with this game mode.\r\n\r\nDue to technical restrictions the UI is implemented as a game mode. Playing the new game mode is aimed to be indistinguishable from playing the 'Standard' game mode.
+3,,,,,,Improved Observer UI
+4,,,,,,"The standard, competitive game mode with a variety of match options and win conditions and an improved observer UI."
+5,,,,,,Win Conditions
+6,,,,,,Sacred
+7,,,,,,Landmarks
+8,,,,,,Wonder
+9,,,,,,Destroy all enemy Landmarks
+10,,,,,,Control all the Sacred Sites
+11,,,,,,Build and defend a Wonder
+12,,,,,,Landmarks
+13,,,,,,Sacred
+14,,,,,,Wonder
+15,,,,,,Match Options
+16,,,,,,Display Player Scores
+17,,,,,,Reveal On Elimination
+18,,,,,,Reveal Fog of War to eliminated players
+19,,,,,,Player Scores are visible when Pinned Player Information is On
+20,,,,,,Player Scores are visible when Pinned Player Information is On
+21,,,,,,Reveal Fog of War to eliminated players
+22,,,,,,Starting Resources
+23,,,,,,Resources allotted to each player at match start.
+24,,,,,,Map State
+25,,,,,,Initial state of the map
+26,,,,,,Concealed
+27,,,,,,Explored
+28,,,,,,Revealed
+29,,,,,,Concealed Map
+30,,,,,,Explored Map
+31,,,,,,Revealed Map
+32,,,,,,Age I Start
+33,,,,,,Age II Start
+34,,,,,,Age III Start
+35,,,,,,Age IV Start
+36,,,,,,Age I
+37,,,,,,Age II
+38,,,,,,Age III
+39,,,,,,Age IV
+40,,,,,,Starting Age
+41,,,,,,Age at which players start the match
+42,,,,,,Standard
+43,,,,,,High
+44,,,,,,Very High
+45,,,,,,Very High Resources
+46,,,,,,Maximum
+47,,,,,,Maximum Resources
+48,,,,,,High Resources
+49,,,,,,Standard Resources

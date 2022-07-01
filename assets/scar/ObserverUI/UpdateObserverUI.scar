@@ -1,0 +1,94 @@
+import("core.scar")
+
+_ObserverUIDataContext = {
+	players = {}
+}
+
+_ResIndex = {
+	food = 1,
+	wood = 2,
+	gold = 3,
+	stone = 4
+}
+
+function AdaptIconPathForXaml(iconPath)
+	return string.format("pack://application:,,,/WPFGUI;component/%s.png", string.gsub(iconPath, "\\", "/" ))
+end
+
+function InitializeObserverUIDataContext()
+	for index, playerTable in pairs(PLAYERS) do
+		
+		_ObserverUIDataContext.players[index] = {
+			name = playerTable.playerName,
+			color = UI_GetColourAsString(Player_GetUIColour(playerTable.id)),
+			civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race)),
+			
+			age = 1,
+			populationVsMaximumPopulation = "",
+			militaryPopulation = 0,
+			workerPopulation = 0,
+			idleWorkerPopulation = 0 
+		}
+		
+		local resources = {}
+		resources[_ResIndex.food] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_food_icon")}
+		resources[_ResIndex.wood] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_wood_icon")}
+		resources[_ResIndex.gold] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_gold_icon")}
+		resources[_ResIndex.stone] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_stone_icon")}
+		
+		_ObserverUIDataContext.players[index].resources = resources
+	end
+end
+
+function UpdateObserverUIDataContext()
+	for index, playerTable in pairs(_ObserverUIDataContext.players) do
+		local player = PLAYERS[index].id
+		local resources = Player_GetResources(player)
+		
+		playerTable.resources[_ResIndex.food].amount = resources.food
+		playerTable.resources[_ResIndex.wood].amount = resources.wood
+		playerTable.resources[_ResIndex.gold].amount = resources.gold
+		playerTable.resources[_ResIndex.stone].amount = resources.stone
+		
+		playerTable.age = Player_GetCurrentAge(player)
+		
+		local populationComposition = GetPopulationComposition(player)
+		
+		playerTable.populationVsMaximumPopulation = GetPopulationVsMaximumPopulation(player)
+		playerTable.militaryPopulation = populationComposition.militaryPopulation
+		playerTable.workerPopulation = populationComposition.workerPopulation
+		playerTable.idleWorkerPopulation = populationComposition.idleWorkerPopulaion 
+	end
+	
+	UI_SetDataContext("ObserveNPlayers", _ObserverUIDataContext)
+end
+
+function GetPopulationVsMaximumPopulation(player)
+	local maxPop = Player_GetMaxPopulation(player, CT_Personnel)
+	local curPop = Player_GetCurrentPopulation(player, CT_Personnel)
+	
+	return math.floor(curPop) .. "/" .. math.floor(maxPop)
+end
+
+function GetPopulationComposition(player)
+	local allWorkers = SGroup_CreateUnique()
+	local allMilitary = SGroup_CreateUnique()
+	
+	Player_GetAll(player, allWorkers)
+	SGroup_Filter(allWorkers, {"worker"}, FILTER_KEEP, allMilitary)
+	SGroup_Filter(allMilitary, {"military"}, FILTER_KEEP)
+	
+	local idleWorkerPopulation = 0
+    local countIdleWorkerPopulation = function(sgroup, index, squad)
+        if Squad_IsIdle(squad) then
+            idleWorkerPopulation = idleWorkerPopulation + Squad_Population(squad, CT_Personnel)
+        end
+    end
+    SGroup_ForEach(allWorkers, countIdleWorkerPopulation)
+	
+	return {
+		workerPopulation = SGroup_CountPopulation(allWorkers),
+		idleWorkerPopulaion = idleWorkerPopulation,
+		militaryPopulation = SGroup_CountPopulation(allMilitary)
+	}
+end
