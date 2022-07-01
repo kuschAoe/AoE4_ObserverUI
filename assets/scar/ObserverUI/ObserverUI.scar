@@ -15,6 +15,9 @@ function ObserverUI_OnInit()
 	UI_AddChild("", "XamlPresenter", "ObserveNPlayers", { IsHitTestVisible = false, Xaml = _ObserveNPlayersXaml})
 	
 	Set_ReplayStatViewer_And_ImprovedUI_Visibility(true)
+	
+	InitializeObserverUIDataContext()
+    Rule_AddInterval(UpdateObserverUIDataContext, 1)
 end
 
 _ToggleUIButtonDataContext = { 
