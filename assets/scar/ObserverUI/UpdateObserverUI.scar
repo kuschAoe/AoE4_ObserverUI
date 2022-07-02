@@ -11,6 +11,13 @@ _ResIndex = {
 	stone = 4
 }
 
+_AgeIcons = {
+	"icons/races/common/abilities/age_1",
+	"icons/races/common/abilities/age_2",
+	"icons/races/common/abilities/age_3",
+	"icons/races/common/abilities/age_4"
+}
+
 function AdaptIconPathForXaml(iconPath)
 	return string.format("pack://application:,,,/WPFGUI;component/%s.png", string.gsub(iconPath, "\\", "/" ))
 end
@@ -23,7 +30,7 @@ function InitializeObserverUIDataContext()
 			color = UI_GetColourAsString(Player_GetUIColour(playerTable.id)),
 			civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race)),
 			
-			age = 1,
+			age = "",
 			populationVsMaximumPopulation = "",
 			militaryPopulation = 0,
 			workerPopulation = 0,
@@ -50,7 +57,7 @@ function UpdateObserverUIDataContext()
 		playerTable.resources[_ResIndex.gold].amount = resources.gold
 		playerTable.resources[_ResIndex.stone].amount = resources.stone
 		
-		playerTable.age = Player_GetCurrentAge(player)
+		playerTable.age = AdaptIconPathForXaml(_AgeIcons[Player_GetCurrentAge(player)])
 		
 		local populationComposition = GetPopulationComposition(player)
 		
