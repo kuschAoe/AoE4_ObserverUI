@@ -8,7 +8,7 @@ function ObserverUI_OnInit()
 	print("ObserverUI_OnInit")
 	
 	if not UI_IsReplay() then
-		--return
+		return
 	end
 	
 	UI_AddChild("", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})

@@ -32,16 +32,19 @@ function InitializeObserverUIDataContext()
 			
 			age = "",
 			populationVsMaximumPopulation = "",
-			militaryPopulation = 0,
 			workerPopulation = 0,
-			idleWorkerPopulation = 0 
+			idleWorkerPopulation = 0,
+			militaryPopulation = 0,
+			siegePopulation = 0,
+			relics = 0,
+			relicsDeposited = 0
 		}
 		
 		local resources = {}
-		resources[_ResIndex.food] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_food_icon")}
-		resources[_ResIndex.wood] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_wood_icon")}
-		resources[_ResIndex.gold] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_gold_icon")}
-		resources[_ResIndex.stone] = {amount=0, icon=AdaptIconPathForXaml("icons/resources/resource_stone_icon")}
+		resources[_ResIndex.food] = {amount=0, workers=0, icon=AdaptIconPathForXaml("icons/resources/resource_food_icon")}
+		resources[_ResIndex.wood] = {amount=0, workers=0, icon=AdaptIconPathForXaml("icons/resources/resource_wood_icon")}
+		resources[_ResIndex.gold] = {amount=0, workers=0, icon=AdaptIconPathForXaml("icons/resources/resource_gold_icon")}
+		resources[_ResIndex.stone] = {amount=0, workers=0, icon=AdaptIconPathForXaml("icons/resources/resource_stone_icon")}
 		
 		_ObserverUIDataContext.players[index].resources = resources
 	end
@@ -50,24 +53,33 @@ end
 function UpdateObserverUIDataContext()
 	for index, playerTable in pairs(_ObserverUIDataContext.players) do
 		local player = PLAYERS[index].id
-		local resources = Player_GetResources(player)
-		
-		playerTable.resources[_ResIndex.food].amount = resources.food
-		playerTable.resources[_ResIndex.wood].amount = resources.wood
-		playerTable.resources[_ResIndex.gold].amount = resources.gold
-		playerTable.resources[_ResIndex.stone].amount = resources.stone
 		
 		playerTable.age = AdaptIconPathForXaml(_AgeIcons[Player_GetCurrentAge(player)])
 		
-		local populationComposition = GetPopulationComposition(player)
+		UpdateResources(playerTable, player)
 		
 		playerTable.populationVsMaximumPopulation = GetPopulationVsMaximumPopulation(player)
-		playerTable.militaryPopulation = populationComposition.militaryPopulation
-		playerTable.workerPopulation = populationComposition.workerPopulation
-		playerTable.idleWorkerPopulation = populationComposition.idleWorkerPopulaion 
+		local populationComposition = GetPopulationComposition(player)
+		
+		UpdatePopulationComposition(playerTable, player)
+		UpdateRelics(playerTable, player)
 	end
 	
 	UI_SetDataContext("ObserveNPlayers", _ObserverUIDataContext)
+end
+
+function UpdateResources(t, player)
+	local resources = Player_GetResources(player)
+	
+	t.resources[_ResIndex.food].amount = resources.food
+	t.resources[_ResIndex.wood].amount = resources.wood
+	t.resources[_ResIndex.gold].amount = resources.gold
+	t.resources[_ResIndex.stone].amount = resources.stone
+	
+	t.resources[_ResIndex.food].workers = Player_GetStateModelInt(player, "num_food_gatherers")
+	t.resources[_ResIndex.wood].workers = Player_GetStateModelInt(player, "num_wood_gatherers")
+	t.resources[_ResIndex.gold].workers = Player_GetStateModelInt(player, "num_gold_gatherers")
+	t.resources[_ResIndex.stone].workers = Player_GetStateModelInt(player, "num_stone_gatherers")
 end
 
 function GetPopulationVsMaximumPopulation(player)
@@ -78,12 +90,12 @@ function GetPopulationVsMaximumPopulation(player)
 end
 
 function GetPopulationComposition(player)
-	local allWorkers = SGroup_CreateUnique()
-	local allMilitary = SGroup_CreateUnique()
+	local workers = SGroup_CreateUnique()
+	local military = SGroup_CreateUnique()
 	
-	Player_GetAll(player, allWorkers)
-	SGroup_Filter(allWorkers, {"worker"}, FILTER_KEEP, allMilitary)
-	SGroup_Filter(allMilitary, {"military"}, FILTER_KEEP)
+	Player_GetAll(player, workers)
+	SGroup_Filter(workers, {"worker"}, FILTER_KEEP, military)
+	local workerPopulation = SGroup_CountPopulation(workers)
 	
 	local idleWorkerPopulation = 0
     local countIdleWorkerPopulation = function(sgroup, index, squad)
@@ -91,11 +103,45 @@ function GetPopulationComposition(player)
             idleWorkerPopulation = idleWorkerPopulation + Squad_Population(squad, CT_Personnel)
         end
     end
-    SGroup_ForEach(allWorkers, countIdleWorkerPopulation)
+    SGroup_ForEach(workers, countIdleWorkerPopulation)
 	
-	return {
-		workerPopulation = SGroup_CountPopulation(allWorkers),
-		idleWorkerPopulaion = idleWorkerPopulation,
-		militaryPopulation = SGroup_CountPopulation(allMilitary)
-	}
+	SGroup_Filter(military, {"military"}, FILTER_KEEP)
+	local militaryPopulation = SGroup_CountPopulation(military)
+	
+	SGroup_Filter(military, {"siege"}, FILTER_KEEP)
+	local siegePopulation = SGroup_CountPopulation(military)
+	
+	SGroup_Destroy(workers)
+	SGroup_Destroy(military)
+	
+	return workerPopulation, idleWorkerPopulation, militaryPopulation, siegePopulation
 end
+
+function UpdatePopulationComposition(t, player)
+	t.workerPopulation, t.idleWorkerPopulation, t.militaryPopulation, t.siegePopulation
+		= GetPopulationComposition(player)
+end
+
+function GetRelics(player)
+	local relics = 0
+	local relicsDeposited = 0
+	
+    local countRelics = function(egroup, index, entity)
+		local tempRelics = Entity_GetStateModelFloat(entity, "Relic_Count")
+		relics = relics + tempRelics
+		
+		if Entity_IsBuilding(entity) and not Entity_IsPartOfSquad(entity) then
+			relicsDeposited = relicsDeposited + tempRelics
+		end
+    end
+    local egroup = Player_GetAllEntities(player)
+	EGroup_ForEach(egroup, countRelics)
+	
+	return relics, relicsDeposited
+end
+
+function UpdateRelics(t, player)
+	t.relics, t.relicsDeposited
+		= GetRelics(player)
+end
+	
