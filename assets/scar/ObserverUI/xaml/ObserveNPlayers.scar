@@ -4,7 +4,7 @@ _ObserveNPlayersXaml =
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 		
     <StackPanel
-        HorizontalAlignment="Left" 
+        HorizontalAlignment="Center" 
         VerticalAlignment="Top">
         <ItemsControl ItemsSource="{Binding [players]}">
             <ItemsControl.ItemsPanel>
