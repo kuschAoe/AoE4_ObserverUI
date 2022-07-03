@@ -37,7 +37,9 @@ function InitializeObserverUIDataContext()
 			militaryPopulation = 0,
 			siegePopulation = 0,
 			relics = 0,
-			relicsDeposited = 0
+			relicsDeposited = 0,
+			upgradesQueued = {},
+			units = {}
 		}
 		
 		local resources = {}
@@ -63,6 +65,7 @@ function UpdateObserverUIDataContext()
 		
 		UpdatePopulationComposition(playerTable, player)
 		UpdateRelics(playerTable, player)
+		UpdateUnitsAndQueuedStuff(playerTable, player, PLAYERS[index].race)
 	end
 	
 	UI_SetDataContext("ObserveNPlayers", _ObserverUIDataContext)
@@ -144,4 +147,115 @@ function UpdateRelics(t, player)
 	t.relics, t.relicsDeposited
 		= GetRelics(player)
 end
+
+function DismissErrors(default, func)
+    local success, result = pcall(func)
+    if success then
+        return result
+    end
+    
+    return default
+end
+
+function GetIconNameFromSquadBlueprintUnsafe(pbg, race)
+	return BP_GetSquadUIInfo(pbg, race).iconName
+end
+
+function GetIconNameFromSquadBlueprint(pbg, race)
+    return DismissErrors(nil, function() return GetIconNameFromSquadBlueprintUnsafe(pbg, race) end)
+end
+
+function GetIconNameFromUpgradeBlueprintUnsafe(pbg)
+	return BP_GetUpgradeUIInfo(pbg).iconName
+end
+
+function GetIconNameFromUpgradeBlueprint(pbg)
+    return DismissErrors(nil, function() return GetIconNameFromUpgradeBlueprintUnsafe(pbg) end)
+end
+
+function IncreaseCountOfItemInTable(t, item)
+    if item ~= nil then
+        local count = t[item]
+        if count == nil then
+            count = 0
+        end
+        t[item] = count + 1
+    end
+end
+
+function GetUnits(palyer, race)
+	Player_GetAll(player)
 	
+	local units = {}
+    local countUnitsByIcon = function(sgroup, index, squad)
+        local bp = Squad_GetBlueprint(squad)
+        local icon = GetIconNameFromSquadBlueprint(bp, race)
+		IncreaseCountOfItemInTable(units, icon)
+    end
+    SGroup_ForEach(sg_allsquads, countUnitsByIcon)
+	
+	return units
+end
+
+function GetQueuedStuff(player, race)
+	local upgradesQueued = {}
+	local unitsQueued = {}
+    local countQueuedStuffByIcon = function(egroup, index, entity)
+        if Entity_HasProductionQueue(entity) and Entity_IsBuilding(entity) then
+            local queueSize = Entity_GetProductionQueueSize(entity)
+            for i = 0, (queueSize - 1) do
+                local queueItem = Entity_GetProductionQueueItem(entity, i)
+				
+				if queueItem.PropertyBagGroupType == PBGTYPE_Upgrade then
+                	table.insert(upgradesQueued, GetIconNameFromUpgradeBlueprint(queueItem))
+				elseif queueItem.PropertyBagGroupType == PBGTYPE_Squad then
+			        local icon = GetIconNameFromSquadBlueprint(queueItem, race)
+			        IncreaseCountOfItemInTable(unitsQueued, icon)
+				end
+            end
+        end
+    end
+	local buildings = Player_GetAllEntities(player);
+	EGroup_Filter(buildings, {"building"}, FILTER_KEEP)
+    EGroup_ForEach(buildings, countQueuedStuffByIcon)
+		
+	return unitsQueued, upgradesQueued
+end
+
+function UpdateUnitsAndQueuedStuff(t, player, race)
+	local units = GetUnits(player, race)
+	local unitsQueued, upgradesQueued = GetQueuedStuff(player, race)
+	
+	function GetQueuedUnitsCount(icon)
+		local count = unitsQueued[icon]
+		if count then
+			unitsQueued[icon] = nil
+			return count
+		end
+		return 0
+	end
+	
+	local unitsUi = {}
+	for icon, count in pairs(units) do
+		table.insert(unitsUi, {
+				icon = AdaptIconPathForXaml(icon), 
+				count = count, queued = 
+				GetQueuedUnitsCount(icon)})
+	end
+	for icon, count in pairs(unitsQueued) do
+		table.insert(unitsUi, {
+				icon = AdaptIconPathForXaml(icon), 
+				count = 0, 
+				queued = count})
+	end
+	
+	local upgradesQueuedUi = {}
+	for index, icon in pairs(upgradesQueued) do
+		table.insert(upgradesQueuedUi, {icon = AdaptIconPathForXaml(icon)})
+	end
+	
+	t.upgradesQueued = upgradesQueuedUi
+	t.units = unitsUi
+end
+
+
