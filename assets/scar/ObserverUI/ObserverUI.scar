@@ -1,4 +1,5 @@
 import("ObserverUI/xaml/ObserveNPlayers.scar")
+import("ObserverUI/xaml/Observe2Players.scar")
 import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/UpdateObserverUI.scar")
 
@@ -8,11 +9,16 @@ function ObserverUI_OnInit()
 	print("ObserverUI_OnInit")
 	
 	if not UI_IsReplay() then
-		return
+		--return
+	end
+	
+	local observeXaml = _ObserveNPlayersXaml
+	if World_GetPlayerCount() == 2 then
+		observeXaml = _Observe2PlayersXaml
 	end
 	
 	UI_AddChild("", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
-	UI_AddChild("", "XamlPresenter", "ObserveNPlayers", { IsHitTestVisible = false, Xaml = _ObserveNPlayersXaml})
+	UI_AddChild("", "XamlPresenter", "ObserverUI", { IsHitTestVisible = false, Xaml = observeXaml})
 	
 	Set_ReplayStatViewer_And_ImprovedUI_Visibility(true)
 	
@@ -45,7 +51,7 @@ function Set_ReplayStatViewer_And_ImprovedUI_Visibility(improvedUIIsVisible)
 end
 
 function ShowImprovedUI()
-	UI_SetPropertyValue("ObserveNPlayers", "Visibility", "Visible")
+	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Collapsed")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Collapsed")
@@ -54,7 +60,7 @@ function ShowImprovedUI()
 end
 
 function ShowClassicUI()
-	UI_SetPropertyValue("ObserveNPlayers", "Visibility", "Collapsed")
+	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Visible")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Visible")
 	UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Visible")
