@@ -1,7 +1,8 @@
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")
 import("ObserverUI/xaml/ToggleUIButton.scar")
-import("ObserverUI/UpdateObserverUI.scar")
+import("ObserverUI/ObserverUIUpdateUi.scar")
+import("ObserverUI/ObserverUIRules.scar")
 
 Core_RegisterModule("ObserverUI")
 
@@ -21,9 +22,6 @@ function ObserverUI_OnInit()
 	UI_AddChild("", "XamlPresenter", "ObserverUI", { IsHitTestVisible = false, Xaml = observeXaml})
 	
 	Set_ReplayStatViewer_And_ImprovedUI_Visibility(true)
-	
-	InitializeObserverUIDataContext()
-    Rule_AddInterval(UpdateObserverUIDataContext, 1)
 end
 
 _ToggleUIButtonDataContext = { 
@@ -51,6 +49,9 @@ function Set_ReplayStatViewer_And_ImprovedUI_Visibility(improvedUIIsVisible)
 end
 
 function ShowImprovedUI()
+	InitializeObserverUIDataContext()
+	InitializeObserverUIRules()
+	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Collapsed")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Collapsed")
@@ -60,6 +61,8 @@ function ShowImprovedUI()
 end
 
 function ShowClassicUI()
+	RemoveObserverUIRules()
+	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Visible")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Visible")

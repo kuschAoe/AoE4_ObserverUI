@@ -311,7 +311,7 @@ _Observe2PlayersXaml =
 						Content="{Binding [player1]}" />
 				
                 <Image Grid.Column="2" Grid.RowSpan="3" 
-						Height="60" Margin="5,0,5,0"
+						Height="60" Width="60" Margin="10,0,10,0"
 						HorizontalAlignment="Center" VerticalAlignment="Center"
 						Source="{Binding [player1] [age]}"/>
 				
@@ -381,7 +381,7 @@ _Observe2PlayersXaml =
 						Content="{Binding [player2]}" />
 				
                 <Image Grid.Column="1" Grid.RowSpan="3"
-						Height="60"  Margin="5,0,5,0"
+						Height="60" Width="60" Margin="10,0,10,0"
 						HorizontalAlignment="Center" VerticalAlignment="Center"
 						Source="{Binding [player2] [age]}"/>
 				

@@ -9,12 +9,15 @@ _ResIndex = {
 	stone = 4
 }
 
-_AgeIcons = {
-	"icons/races/common/abilities/age_1",
-	"icons/races/common/abilities/age_2",
-	"icons/races/common/abilities/age_3",
-	"icons/races/common/abilities/age_4"
-}
+_AgeIcons = {{},{},{},{}}
+_AgeIcons[1][false] = "icons/hud/age/age_display_persistent_1"
+_AgeIcons[1][true] = "icons/races/common/abilities/age_1"
+_AgeIcons[2][false] = "icons/hud/age/age_display_persistent_2"
+_AgeIcons[2][true] = "icons/races/common/abilities/age_2"
+_AgeIcons[3][false] = "icons/hud/age/age_display_persistent_3"
+_AgeIcons[3][true] = "icons/races/common/abilities/age_3"
+_AgeIcons[4][false] = "icons/hud/age/age_display_persistent_4"
+_AgeIcons[4][true] = "icons/races/common/abilities/age_4"
 
 function AdaptIconPathForXaml(iconPath)
 	return string.format("pack://application:,,,/WPFGUI;component/%s.png", string.gsub(iconPath, "\\", "/" ))
@@ -68,7 +71,7 @@ function UpdateObserverUIDataContext()
 	for index, playerTable in pairs(_ObserverUIDataContext.players) do
 		local player = PLAYERS[index].id
 		
-		playerTable.age = AdaptIconPathForXaml(_AgeIcons[Player_GetCurrentAge(player)])
+		playerTable.age = AdaptIconPathForXaml(_AgeIcons[Player_GetCurrentAge(player)][ObserverUI_IsPlayerUpping(player)])
 		
 		UpdateResources(playerTable, player)
 		

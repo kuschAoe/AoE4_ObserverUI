@@ -62,7 +62,7 @@ _ObserveNPlayersXaml =
 	                                <TextBlock Grid.Column="1" Margin="0,4,0,0" TextAlignment="Center"
 											Foreground="{Binding [color]}" Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
 											Text="{Binding [name]}"/>
-	                                <Image Grid.Column="2" Height="24" Margin="5,0,5,0" HorizontalAlignment="Right"
+	                                <Image Grid.Column="2" Height="24" Width="24" Margin="5,0,5,0" HorizontalAlignment="Right"
 											Source="{Binding [age]}"/>
 	                            </Grid>
 								
