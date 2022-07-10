@@ -10,7 +10,7 @@ function ObserverUI_OnInit()
 	print("ObserverUI_OnInit")
 	
 	if not UI_IsReplay() then
-		--return
+		return
 	end
 	
 	local observeXaml = _ObserveNPlayersXaml
