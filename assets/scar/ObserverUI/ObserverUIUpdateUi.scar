@@ -63,8 +63,26 @@ function InitializeObserverUIDataContext()
 		_ObserverUIDataContext.players[index].resources = resources
 	end
 	
+	PrepareObserverUIDataContextFor1v1()
+end
+
+_Players1v1AreSwapped = false
+
+function PrepareObserverUIDataContextFor1v1()
+	if _Players1v1AreSwapped then 
+		_ObserverUIDataContext.player1 = _ObserverUIDataContext.players[2]
+		_ObserverUIDataContext.player2 = _ObserverUIDataContext.players[1]
+		return
+	end
+	
 	_ObserverUIDataContext.player1 = _ObserverUIDataContext.players[1]
 	_ObserverUIDataContext.player2 = _ObserverUIDataContext.players[2]
+end
+
+function SwapPlayers1v1()
+	_Players1v1AreSwapped = not _Players1v1AreSwapped
+	PrepareObserverUIDataContextFor1v1()
+	UpdateObserverUIDataContext()
 end
 
 function UpdateObserverUIDataContext()
