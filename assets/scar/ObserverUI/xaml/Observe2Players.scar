@@ -262,7 +262,6 @@ _Observe2PlayersXaml =
 						Text="{Binding [name]}"/>
 				
 				<Rectangle Grid.Row="1" Fill="{Binding [color]}" Height="2"/>
-				
 	        </Grid>
 		</DataTemplate>
 		
@@ -277,6 +276,57 @@ _Observe2PlayersXaml =
             <GradientStop Offset="0" Color="#FF000000" />
             <GradientStop Offset="1" />
         </LinearGradientBrush>
+		
+		<DataTemplate x:Key="ObserverUIAge">
+			<Grid Height="69" Width="69" VerticalAlignment="Center">
+                <Image Height="69"
+						Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
+						RenderTransformOrigin="0.5,0.5"
+                       	Source="pack://application:,,,/WPFGUI;component/icons/HUD/age/age_display_afford_circle_glow.png">
+                    <Image.RenderTransform>
+                        <RotateTransform x:Name="ObserverUIAgeUppingGlow" Angle="0" />
+                    </Image.RenderTransform>
+                </Image>
+
+                <!--  can afford next age circle  -->
+                <Image Height="69"
+						Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
+						RenderTransformOrigin="0.5,0.5"
+                       	Source="pack://application:,,,/WPFGUI;component/icons/HUD/age/age_display_afford_circle.png">
+                    <Image.RenderTransform>
+                        <RotateTransform x:Name="ObserverUIAgeUppingCircle" Angle="0" />
+                    </Image.RenderTransform>
+                </Image>
+				
+                <Image	Height="30" Width="30"
+						HorizontalAlignment="Center" VerticalAlignment="Center"
+						Source="{Binding [age]}"/>
+	        </Grid>
+			
+			<DataTemplate.Triggers>
+				<DataTrigger Binding="{Binding [isUpping]}" Value="true">
+					<DataTrigger.EnterActions>
+                    	<BeginStoryboard Name="ObserverUIAgeUpAnimation">
+							<Storyboard>
+								<DoubleAnimation
+										Storyboard.TargetName="ObserverUIAgeUppingGlow"
+										Storyboard.TargetProperty="Angle"
+										From="0.0" To="360.0" Duration="0:0:4"
+										RepeatBehavior="Forever" />
+								<DoubleAnimation
+										Storyboard.TargetName="ObserverUIAgeUppingCircle"
+										Storyboard.TargetProperty="Angle"
+										From="0.0" To="360.0" Duration="0:0:4"
+										RepeatBehavior="Forever" />
+							</Storyboard>
+						</BeginStoryboard>
+					</DataTrigger.EnterActions>
+					<DataTrigger.ExitActions>
+						<StopStoryboard BeginStoryboardName="ObserverUIAgeUpAnimation"/>
+					</DataTrigger.ExitActions>
+				</DataTrigger>
+			</DataTemplate.Triggers>
+		</DataTemplate>
 	</Grid.Resources>
 	
 	<Grid.ColumnDefinitions>
@@ -316,10 +366,11 @@ _Observe2PlayersXaml =
 						ContentTemplate="{StaticResource ObserverUIResources}"
 						Content="{Binding [player1]}" />
 				
-                <Image Grid.Column="2" Grid.RowSpan="3" 
-						Height="60" Width="60" Margin="10,0,10,0"
+				<ContentControl	Grid.Column="2" Grid.RowSpan="3" 
+						Margin="0,0,10,0"
 						HorizontalAlignment="Center" VerticalAlignment="Center"
-						Source="{Binding [player1] [age]}"/>
+						ContentTemplate="{StaticResource ObserverUIAge}"
+						Content="{Binding [player1]}" />
 				
 				<Rectangle Grid.Row="1" Grid.ColumnSpan="2" Fill="#616C8C" Height="1.2" Margin="10,0,10,4"/>
 				
@@ -352,7 +403,7 @@ _Observe2PlayersXaml =
 						Content="{Binding [player1][unitsWorkers]}" />
 				
 				<ContentControl	Grid.Column="2" HorizontalAlignment="Right"
-						Margin="-2,0,-2,0"
+						Margin="0,0,-2,0"
 						ContentTemplate="{StaticResource ObserverUIUnits}"
 						Content="{Binding [player1][units]}" />
 			</Grid>
@@ -392,10 +443,11 @@ _Observe2PlayersXaml =
 						ContentTemplate="{StaticResource ObserverUIResources}"
 						Content="{Binding [player2]}" />
 				
-                <Image Grid.Column="1" Grid.RowSpan="3"
-						Height="60" Width="60" Margin="10,0,10,0"
+				<ContentControl	Grid.Column="1" Grid.RowSpan="3" 
+						Margin="10,0,0,0"
 						HorizontalAlignment="Center" VerticalAlignment="Center"
-						Source="{Binding [player2] [age]}"/>
+						ContentTemplate="{StaticResource ObserverUIAge}"
+						Content="{Binding [player2]}" />
 				
 				<Rectangle Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Fill="#616C8C" Height="1.2" Margin="10,0,10,4"/>
 				
@@ -428,7 +480,7 @@ _Observe2PlayersXaml =
 						Content="{Binding [player2][unitsWorkers]}" />
 
 				<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
-						 Margin="-2,0,-2,0"
+						 Margin="-2,0,0,0"
 						ContentTemplate="{StaticResource ObserverUIUnits}"
 						Content="{Binding [player2][units]}" />
 			</Grid>
