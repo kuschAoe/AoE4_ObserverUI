@@ -10,7 +10,7 @@ _Observe2PlayersXaml =
 				<ContentControl Template="{StaticResource CanvasBackgroundBox}" />
             	<Border BorderThickness="2" BorderBrush="{Binding [color]}"/>
 			</Grid>
-		</ControlTemplate>
+		</DataTemplate>
 		
 		<DataTemplate x:Key="ObserverUIResources">
             <ItemsControl ItemsSource="{Binding [resources]}">
@@ -199,7 +199,7 @@ _Observe2PlayersXaml =
 		</DataTemplate>
 		
 		<DataTemplate x:Key="ObserverUIUnits">
-	        <ItemsControl ItemsSource="{Binding [units]}" Margin="-2,0,-2,0">
+	        <ItemsControl ItemsSource="{Binding}">
 	            <ItemsControl.ItemsPanel>
 	                <ItemsPanelTemplate>
 	                    <DockPanel/>
@@ -215,11 +215,11 @@ _Observe2PlayersXaml =
 	            <ItemsControl.ItemTemplate>
 	                <DataTemplate>
 						<Grid Margin="2,4,2,0">
-							<Rectangle 
+							<Rectangle Name="UnitBackground1"
 									Width="{StaticResource HUDBuildQueueIconSize}"
            							Height="{StaticResource HUDBuildQueueIconSize}"
 									Fill="{StaticResource MilitaryButtonBgBrush}" />
-							<Rectangle 
+							<Rectangle Name="UnitBackground2"
 									Width="{StaticResource HUDBuildQueueIconSize}"
            							Height="{StaticResource HUDBuildQueueIconSize}"
 									Fill="{StaticResource MilitaryLightButtonBgHighlightBrush}" />
@@ -240,6 +240,12 @@ _Observe2PlayersXaml =
                                 	Text="{Binding [count], Converter={StaticResource CastToIntOperator}}" />
 							
 						</Grid>
+						<DataTemplate.Triggers>
+							<DataTrigger Binding="{Binding [civil]}" Value="true">
+        						<Setter TargetName="UnitBackground1" Property="Fill" Value="{StaticResource AbilityButtonBgBrush}"/>
+        						<Setter TargetName="UnitBackground2" Property="Fill" Value="{StaticResource AbilityButtonBgHighlightBrush}"/>
+							</DataTrigger>
+						</DataTemplate.Triggers>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
@@ -334,6 +340,7 @@ _Observe2PlayersXaml =
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				
 				<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
@@ -342,7 +349,12 @@ _Observe2PlayersXaml =
 				
 				<ContentControl	Grid.Column="1" HorizontalAlignment="Right"
 						ContentTemplate="{StaticResource ObserverUIUnits}"
-						Content="{Binding [player1]}" />
+						Content="{Binding [player1][unitsWorkers]}" />
+				
+				<ContentControl	Grid.Column="2" HorizontalAlignment="Right"
+						Margin="-2,0,-2,0"
+						ContentTemplate="{StaticResource ObserverUIUnits}"
+						Content="{Binding [player1][units]}" />
 			</Grid>
 		</Grid>
 	</Grid>
@@ -404,15 +416,21 @@ _Observe2PlayersXaml =
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto"/>
 					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
 				</Grid.ColumnDefinitions>
 				
-				<ContentControl	Grid.Column="1" HorizontalAlignment="Right"
+				<ContentControl	Grid.Column="2" HorizontalAlignment="Right"
 						ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
 						Content="{Binding [player2]}" />
 				
-				<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
+				<ContentControl	Grid.Column="1" HorizontalAlignment="Left"
 						ContentTemplate="{StaticResource ObserverUIUnits}"
-						Content="{Binding [player2]}" />
+						Content="{Binding [player2][unitsWorkers]}" />
+
+				<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
+						 Margin="-2,0,-2,0"
+						ContentTemplate="{StaticResource ObserverUIUnits}"
+						Content="{Binding [player2][units]}" />
 			</Grid>
 		</Grid>
 	</Grid>

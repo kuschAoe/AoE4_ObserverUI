@@ -51,7 +51,8 @@ function InitializeObserverUIDataContext()
 			relics = 0,
 			relicsDeposited = 0,
 			upgradesQueued = {},
-			units = {}
+			units = {},
+			unitsWorkers = {}
 		}
 		
 		local resources = {}
@@ -229,23 +230,26 @@ end
 function GetUnits(player, race)
 	Player_GetAll(player)
 	
-	local units = {}
-	local iconIsMilitary = {}
+	local military = {}
+	local civil = {}
     local countUnitsByIcon = function(sgroup, index, squad)
         local bp = Squad_GetBlueprint(squad)
         local icon = GetIconNameFromSquadBlueprint(bp, race)
-		IncreaseCountOfItemInTable(units, icon)
-		iconIsMilitary[icon] = HasMilitaryIcon(Squad_GetBlueprint(squad), race)
+		if HasMilitaryIcon(Squad_GetBlueprint(squad), race) then
+			IncreaseCountOfItemInTable(military, icon)
+		else
+			IncreaseCountOfItemInTable(civil, icon)
+		end
     end
     SGroup_ForEach(sg_allsquads, countUnitsByIcon)
 	
-	return units, iconIsMilitary
+	return military, civil
 end
 
 function GetQueuedStuff(player, race)
 	local upgradesQueued = {}
-	local unitsQueued = {}
-	local iconIsMilitary = {}
+	local militaryQueued = {}
+	local civilQueued = {}
     local countQueuedStuffByIcon = function(egroup, index, entity)
         if Entity_HasProductionQueue(entity) and Entity_IsBuilding(entity) then
             local queueSize = Entity_GetProductionQueueSize(entity)
@@ -255,9 +259,12 @@ function GetQueuedStuff(player, race)
 				if queueItem.PropertyBagGroupType == PBGTYPE_Upgrade then
                 	table.insert(upgradesQueued, GetIconNameFromUpgradeBlueprint(queueItem))
 				elseif queueItem.PropertyBagGroupType == PBGTYPE_Squad then
-			        local icon = GetIconNameFromSquadBlueprint(queueItem, race)
-			        IncreaseCountOfItemInTable(unitsQueued, icon)
-					iconIsMilitary[icon] = HasMilitaryIcon(queueItem, race)
+					local icon = GetIconNameFromSquadBlueprint(queueItem, race)
+					if HasMilitaryIcon(queueItem, race) then
+						IncreaseCountOfItemInTable(militaryQueued, icon)
+					else
+						IncreaseCountOfItemInTable(civilQueued, icon)
+					end
 				end
             end
         end
@@ -266,19 +273,14 @@ function GetQueuedStuff(player, race)
 	EGroup_Filter(buildings, {"building"}, FILTER_KEEP)
     EGroup_ForEach(buildings, countQueuedStuffByIcon)
 		
-	return unitsQueued, upgradesQueued, iconIsMilitary
+	return militaryQueued, civilQueued, upgradesQueued
 end
 
-function UpdateUnitsAndQueuedStuff(t, player, race)
-	local units, iconIsMilitary = GetUnits(player, race)
-	local unitsQueued, upgradesQueued, iconIsMilitaryTemp = GetQueuedStuff(player, race)
-	
-	for k,v in pairs(iconIsMilitaryTemp) do iconIsMilitary[k] = v end
-
+function BuildUnitsUiTable(units, queue)
 	function GetQueuedUnitsCount(icon)
-		local count = unitsQueued[icon]
+		local count = queue[icon]
 		if count then
-			unitsQueued[icon] = nil
+			queue[icon] = nil
 			return count
 		end
 		return 0
@@ -289,16 +291,25 @@ function UpdateUnitsAndQueuedStuff(t, player, race)
 		table.insert(unitsUi, {
 				icon = AdaptIconPathForXaml(icon), 
 				count = count, 
-				queued = GetQueuedUnitsCount(icon),
-				isMilitary = iconIsMilitary[icon]})
+				queued = GetQueuedUnitsCount(icon)})
 	end
-	for icon, count in pairs(unitsQueued) do
+	for icon, count in pairs(queue) do
 		table.insert(unitsUi, {
 				icon = AdaptIconPathForXaml(icon), 
 				count = 0, 
-				queued = count,
-				isMilitary = iconIsMilitary[icon]})
+				queued = count})
 	end
+	return unitsUi
+end
+
+function UpdateUnitsAndQueuedStuff(t, player, race)
+	local military, civil = GetUnits(player, race)
+	local militaryQueued, civilQueued, upgradesQueued = GetQueuedStuff(player, race)
+								
+	local militaryUi = BuildUnitsUiTable(military, militaryQueued)
+	local civilUi = BuildUnitsUiTable(civil, civilQueued)
+	for _, unit in pairs(militaryUi) do unit.civil = false end
+	for _, unit in pairs(civilUi) do unit.civil = true end
 	
 	local upgradesQueuedUi = {}
 	for index, icon in pairs(upgradesQueued) do
@@ -306,7 +317,8 @@ function UpdateUnitsAndQueuedStuff(t, player, race)
 	end
 	
 	t.upgradesQueued = upgradesQueuedUi
-	t.units = unitsUi
+	t.units = militaryUi
+	t.unitsWorkers = civilUi
 end
 
 
