@@ -91,9 +91,9 @@ function UpdateObserverUIDataContext()
 	for index, playerTable in pairs(_ObserverUIDataContext.players) do
 		local player = PLAYERS[index].id
 		
-		local isUpping = ObserverUI_IsPlayerUpping(player)
-		playerTable.age = _AgeIcons[Player_GetCurrentAge(player)][isUpping]
-		playerTable.isUpping = isUpping
+		local age = Player_GetCurrentAge(player)
+		UpdateIsUpping(playerTable, player, age)
+		playerTable.age = _AgeIcons[age][playerTable.isUpping]
 		
 		UpdateResources(playerTable, player)
 		
@@ -254,7 +254,7 @@ function GetQueuedStuff(player, race)
 	local militaryQueued = {}
 	local civilQueued = {}
     local countQueuedStuffByIcon = function(egroup, index, entity)
-        if Entity_HasProductionQueue(entity) and Entity_IsBuilding(entity) then
+        if Entity_HasProductionQueue(entity) then
             local queueSize = Entity_GetProductionQueueSize(entity)
             for i = 0, (queueSize - 1) do
                 local queueItem = Entity_GetProductionQueueItem(entity, i)
@@ -272,9 +272,9 @@ function GetQueuedStuff(player, race)
             end
         end
     end
-	local buildings = Player_GetAllEntities(player);
-	EGroup_Filter(buildings, {"building"}, FILTER_KEEP)
+	local buildings = Player_GetAllEntitiesFromType(player, "building");
     EGroup_ForEach(buildings, countQueuedStuffByIcon)
+	EGroup_Destroy(buildings)
 		
 	return militaryQueued, civilQueued, upgradesQueued
 end
@@ -324,4 +324,41 @@ function UpdateUnitsAndQueuedStuff(t, player, race)
 	t.unitsWorkers = civilUi
 end
 
+function AgeToRequiredEntityTypeForUpping(age)
+    local ageToType = {
+        "wonder_dark_age",
+        "wonder_feudal_age",
+        "wonder_castle_age"
+    }
+    return ageToType[age]
+end
 
+function UpdateIsUpping(t, player, age)
+	if Player_GetRaceName(player) ~= "abbasid" then
+		local ageUpBuilding = Player_GetAllEntitiesFromType(player, AgeToRequiredEntityTypeForUpping(age));
+		local isUpping = EGroup_Count(ageUpBuilding) > 0
+		EGroup_Destroy(ageUpBuilding)
+		
+		t.isUpping = isUpping
+		return
+	end
+	
+	local isUppingAbbasid = false
+    local isUppingAbbasidFunction = function(egroup, index, entity)
+        if Entity_HasProductionQueue(entity) then
+            local queueSize = Entity_GetProductionQueueSize(entity)
+            for i = 0, (queueSize - 1) do
+                local queueItem = Entity_GetProductionQueueItem(entity, i)
+				
+				if BP_IsUpgradeOfType(queueItem, "abbasid_wing_upgrade") and age < 4 then
+					isUppingAbbasid = true
+				end
+            end
+        end
+    end
+	local houseOfWisdom = Player_GetAllEntitiesFromType(player, "house_of_wisdom_abb");
+	EGroup_ForEach(houseOfWisdom, isUppingAbbasidFunction)
+	EGroup_Destroy(houseOfWisdom)
+	
+	t.isUpping = isUppingAbbasid
+end

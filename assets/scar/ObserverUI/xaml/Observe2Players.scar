@@ -298,7 +298,7 @@ _Observe2PlayersXaml =
                     </Image.RenderTransform>
                 </Image>
 				
-                <Image	Height="30" Width="30"
+                <Image	Height="30"
 						HorizontalAlignment="Center" VerticalAlignment="Center"
 						Source="{Binding [age]}"/>
 	        </Grid>
