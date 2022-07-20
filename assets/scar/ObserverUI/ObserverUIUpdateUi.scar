@@ -2,45 +2,49 @@ _ObserverUIDataContext = {
 	players = {}
 }
 
-_ResIndex = {
-	food = 1,
-	wood = 2,
-	gold = 3,
-	stone = 4
+ObserverUi_ResourceMapping = {
+	{ name = "food", enum = RT_Food},
+	{ name = "wood", enum = RT_Wood},
+	{ name = "gold", enum = RT_Gold},
+	{ name = "stone", enum = RT_Stone}
 }
 
 function AdaptIconPathForXaml(iconPath)
 	return string.format("pack://application:,,,/WPFGUI;component/%s.png", string.gsub(iconPath, "\\", "/" ))
 end
 
-_AgeIcons = {{},{},{},{}}
-_AgeIcons[1][false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_1")
-_AgeIcons[1][true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_1")
-_AgeIcons[2][false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_2")
-_AgeIcons[2][true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_2")
-_AgeIcons[3][false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_3")
-_AgeIcons[3][true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_3")
-_AgeIcons[4][false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_4")
-_AgeIcons[4][true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_4")
+_AgeIcons = {
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_1"), 
+		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_1")},
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_2"),
+		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_2")},
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_3"),
+		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_3")},
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_4"),
+		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_4")}
+}
 
-_RaceImage = {}
-_RaceImage["abbasid"] = AdaptIconPathForXaml("images/civ_flags/flag_abbasid")
-_RaceImage["chinese"] = AdaptIconPathForXaml("images/civ_flags/flag_chinese")
-_RaceImage["english"] = AdaptIconPathForXaml("images/civ_flags/flag_english")
-_RaceImage["french"] = AdaptIconPathForXaml("images/civ_flags/flag_french")
-_RaceImage["hre"] = AdaptIconPathForXaml("images/civ_flags/flag_hre")
-_RaceImage["mongol"] = AdaptIconPathForXaml("images/civ_flags/flag_mongol")
-_RaceImage["rus"] = AdaptIconPathForXaml("images/civ_flags/flag_rus")
-_RaceImage["sultanate"] = AdaptIconPathForXaml("images/civ_flags/flag_sultanates")
+_RaceImage = {
+	abbasid = AdaptIconPathForXaml("images/civ_flags/flag_abbasid"),
+	chinese = AdaptIconPathForXaml("images/civ_flags/flag_chinese"),
+	english = AdaptIconPathForXaml("images/civ_flags/flag_english"),
+	french = AdaptIconPathForXaml("images/civ_flags/flag_french"),
+	hre = AdaptIconPathForXaml("images/civ_flags/flag_hre"),
+	mongol = AdaptIconPathForXaml("images/civ_flags/flag_mongol"),
+	rus = AdaptIconPathForXaml("images/civ_flags/flag_rus"),
+	sultanate = AdaptIconPathForXaml("images/civ_flags/flag_sultanates")	
+} 
 
 function InitializeObserverUIDataContext()
 	for index, playerTable in pairs(PLAYERS) do
+		local raceName = Player_GetRaceName(playerTable.id)
 		
 		_ObserverUIDataContext.players[index] = {
 			name = playerTable.playerName,
 			color = UI_GetColourAsString(Player_GetUIColour(playerTable.id)),
+			
 			civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race)),
-			civImage = _RaceImage[Player_GetRaceName(playerTable.id)],
+			civImage = _RaceImage[raceName],
 			
 			age = "",
 			isUpping = false,
@@ -53,14 +57,14 @@ function InitializeObserverUIDataContext()
 			relicsDeposited = 0,
 			upgradesQueued = {},
 			units = {},
-			unitsWorkers = {}
+			unitsWorkers = {},
+			civSpecifics = { visible = raceName == "rus", icon = AdaptIconPathForXaml("icons/races/rus/abilities/hunting_boon"), text = "0"}
 		}
 		
 		local resources = {}
-		resources[_ResIndex.food] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_food_icon")}
-		resources[_ResIndex.wood] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_wood_icon")}
-		resources[_ResIndex.gold] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_gold_icon")}
-		resources[_ResIndex.stone] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_stone_icon")}
+		for i,mapping in ipairs(ObserverUi_ResourceMapping) do
+			resources[i] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_"..mapping.name.."_icon")}
+		end
 		
 		_ObserverUIDataContext.players[index].resources = resources
 	end
@@ -98,11 +102,11 @@ function UpdateObserverUIDataContext()
 		UpdateResources(playerTable, player)
 		
 		playerTable.populationVsMaximumPopulation = GetPopulationVsMaximumPopulation(player)
-		local populationComposition = GetPopulationComposition(player)
 		
 		UpdatePopulationComposition(playerTable, player)
 		UpdateRelics(playerTable, player)
 		UpdateUnitsAndQueuedStuff(playerTable, player, PLAYERS[index].race)
+		UpdateCivSpecifics(playerTable, player)
 	end
 	
 	UI_SetDataContext("ObserverUI", _ObserverUIDataContext)
@@ -111,20 +115,12 @@ end
 function UpdateResources(t, player)
 	local resources = Player_GetResources(player)
 	
-	t.resources[_ResIndex.food].amount = resources.food
-	t.resources[_ResIndex.wood].amount = resources.wood
-	t.resources[_ResIndex.gold].amount = resources.gold
-	t.resources[_ResIndex.stone].amount = resources.stone
-	
-	t.resources[_ResIndex.food].workers = Player_GetStateModelInt(player, "num_food_gatherers")
-	t.resources[_ResIndex.wood].workers = Player_GetStateModelInt(player, "num_wood_gatherers")
-	t.resources[_ResIndex.gold].workers = Player_GetStateModelInt(player, "num_gold_gatherers")
-	t.resources[_ResIndex.stone].workers = Player_GetStateModelInt(player, "num_stone_gatherers")
-	
-	t.resources[_ResIndex.food].income = tostring(math.floor(Player_GetResourceRate(player, RT_Food)*60)).."/min"
-	t.resources[_ResIndex.wood].income = tostring(math.floor(Player_GetResourceRate(player, RT_Wood)*60)).."/min"
-	t.resources[_ResIndex.gold].income = tostring(math.floor(Player_GetResourceRate(player, RT_Gold)*60)).."/min"
-	t.resources[_ResIndex.stone].income = tostring(math.floor(Player_GetResourceRate(player, RT_Stone)*60)).."/min"
+	local tResources = t.resources
+	for i,mapping in ipairs(ObserverUi_ResourceMapping) do
+		tResources[i].amount = resources[mapping.name]
+		tResources[i].workers = Player_GetStateModelInt(player, "num_"..mapping.name.."_gatherers")
+		tResources[i].income = tostring(math.floor(Player_GetResourceRate(player, mapping.enum)*60)).."/min"
+	end
 end
 
 function GetPopulationVsMaximumPopulation(player)
@@ -361,4 +357,12 @@ function UpdateIsUpping(t, player, age)
 	EGroup_Destroy(houseOfWisdom)
 	
 	t.isUpping = isUppingAbbasid
+end
+
+function UpdateCivSpecifics(t, player)
+	if Player_GetRaceName(player) ~= "rus" then
+		return
+	end
+	
+	t.civSpecifics.text = tostring(math.floor(Player_GetStateModelFloat(player, "master_hunter_bounty_total_rus")))
 end
