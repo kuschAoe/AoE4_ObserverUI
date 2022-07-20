@@ -1,7 +1,8 @@
 _ObserveNPlayersXaml = 
-[[<Panel
+[[<Grid
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:engineSharedEffects="clr-namespace:WPFGUI.Shared.Effects;assembly=EngineUI.Shaders">
 		
     <StackPanel
         HorizontalAlignment="Center" 
@@ -194,5 +195,5 @@ _ObserveNPlayersXaml =
             </ItemsControl.ItemTemplate>
         </ItemsControl>
     </StackPanel>
-</Panel>
+</Grid>
 ]]
