@@ -2,7 +2,7 @@
 <Mod xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/Essence.Editor.Modding">
 	<DataGenericPath>assets</DataGenericPath>
 	<DataIntermediatePath>cache</DataIntermediatePath>
-	<ID>d977fe0f-635c-4fcc-a7c5-c082f32b746f</ID>
+	<ID>6c6b0b4e-d594-40fc-a637-524ef5715b7e</ID>
 	<LocDBPath>locdb\ObserverUI.locdb</LocDBPath>
 	<Type>Extension</Type>
 </Mod>

@@ -48,8 +48,8 @@
 			<Parameters xmlns:d4p1="http://schemas.datacontract.org/2004/07/Essence.Editor.Bridge.Burning" i:type="d4p1:TextureBurnParameters">
 				<d4p1:AlphaBorder>0</d4p1:AlphaBorder>
 				<d4p1:AlphaBorderA>0</d4p1:AlphaBorderA>
+				<d4p1:BC7Compressor>bc7e</d4p1:BC7Compressor>
 				<d4p1:BinaryAlphaThreshold>127</d4p1:BinaryAlphaThreshold>
-				<d4p1:BurnAsV3>false</d4p1:BurnAsV3>
 				<d4p1:ColourBorder>0</d4p1:ColourBorder>
 				<d4p1:ColourBorderB>0</d4p1:ColourBorderB>
 				<d4p1:ColourBorderG>0</d4p1:ColourBorderG>
@@ -79,8 +79,8 @@
 			<Parameters xmlns:d4p1="http://schemas.datacontract.org/2004/07/Essence.Editor.Bridge.Burning" i:type="d4p1:TextureBurnParameters">
 				<d4p1:AlphaBorder>0</d4p1:AlphaBorder>
 				<d4p1:AlphaBorderA>0</d4p1:AlphaBorderA>
+				<d4p1:BC7Compressor>bc7e</d4p1:BC7Compressor>
 				<d4p1:BinaryAlphaThreshold>127</d4p1:BinaryAlphaThreshold>
-				<d4p1:BurnAsV3>false</d4p1:BurnAsV3>
 				<d4p1:ColourBorder>0</d4p1:ColourBorder>
 				<d4p1:ColourBorderB>0</d4p1:ColourBorderB>
 				<d4p1:ColourBorderG>0</d4p1:ColourBorderG>
@@ -113,6 +113,7 @@
 				<d4p1:ArchiveSignature i:nil="true" />
 				<d4p1:BlockSize>0</d4p1:BlockSize>
 				<d4p1:CreationPolicy>AlwaysCreate</d4p1:CreationPolicy>
+				<d4p1:DefaultCompressionType>ZLib</d4p1:DefaultCompressionType>
 				<d4p1:DefaultStorageType>StreamCompress</d4p1:DefaultStorageType>
 				<d4p1:DefaultVerificationType>SHA1Blocks</d4p1:DefaultVerificationType>
 				<d4p1:FileStorageSettings>
@@ -120,12 +121,14 @@
 						<d4p1:Extensions>.events;.info;.prefabdata;.scar;.scenref</d4p1:Extensions>
 						<d4p1:MaxSize>0</d4p1:MaxSize>
 						<d4p1:MinSize>0</d4p1:MinSize>
+						<d4p1:CompressionType>ZLib</d4p1:CompressionType>
 						<d4p1:StorageType>BufferCompress</d4p1:StorageType>
 					</d4p1:ArchiveParameters.FileStorageSetting>
 					<d4p1:ArchiveParameters.FileStorageSetting>
 						<d4p1:Extensions>.rrtex</d4p1:Extensions>
 						<d4p1:MaxSize>0</d4p1:MaxSize>
 						<d4p1:MinSize>0</d4p1:MinSize>
+						<d4p1:CompressionType>ZLib</d4p1:CompressionType>
 						<d4p1:StorageType>Store</d4p1:StorageType>
 					</d4p1:ArchiveParameters.FileStorageSetting>
 				</d4p1:FileStorageSettings>
