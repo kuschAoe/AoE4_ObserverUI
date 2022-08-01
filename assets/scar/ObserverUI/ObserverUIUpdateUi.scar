@@ -72,10 +72,20 @@ function InitializeObserverUIDataContext()
 	PrepareObserverUIDataContextFor1v1()
 end
 
-_Players1v1AreSwapped = false
+_Players1v1SwapPlayersDueToButton = false
 
 function PrepareObserverUIDataContextFor1v1()
-	if _Players1v1AreSwapped then 
+	if World_GetPlayerCount() ~= 2 then
+		return
+	end
+	
+	local startingPositionPlayer1 = Player_GetStartingPosition(PLAYERS[1].id)
+	local startingPositionPlayer2 = Player_GetStartingPosition(PLAYERS[2].id)
+	local Players1v1SwapPlayersDueToStartingPosition
+		= startingPositionPlayer1.z - startingPositionPlayer1.x <
+		  startingPositionPlayer2.z - startingPositionPlayer2.x
+		
+	if Players1v1SwapPlayersDueToStartingPosition ~= _Players1v1SwapPlayersDueToButton then 
 		_ObserverUIDataContext.player1 = _ObserverUIDataContext.players[2]
 		_ObserverUIDataContext.player2 = _ObserverUIDataContext.players[1]
 		return
@@ -86,7 +96,7 @@ function PrepareObserverUIDataContextFor1v1()
 end
 
 function SwapPlayers1v1()
-	_Players1v1AreSwapped = not _Players1v1AreSwapped
+	_Players1v1SwapPlayersDueToButton = not _Players1v1SwapPlayersDueToButton
 	PrepareObserverUIDataContextFor1v1()
 	UpdateObserverUIDataContext()
 end
