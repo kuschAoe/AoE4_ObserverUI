@@ -13,7 +13,7 @@ function AdaptIconPathForXaml(iconPath)
 	return string.format("pack://application:,,,/WPFGUI;component/%s.png", string.gsub(iconPath, "\\", "/" ))
 end
 
-_AgeIcons = {
+_AgeIconsForAnimation = {
 	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_1"), 
 		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_1")},
 	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_2"),
@@ -22,6 +22,17 @@ _AgeIcons = {
 		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_3")},
 	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_4"),
 		[true] = AdaptIconPathForXaml("icons/hud/age/age_display_afford_4")}
+}
+
+_AgeIcons = {
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_1"), 
+		[true] = AdaptIconPathForXaml("icons/races/common/abilities/age_1")},
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_2"),
+		[true] = AdaptIconPathForXaml("icons/races/common/abilities/age_2")},
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_3"),
+		[true] = AdaptIconPathForXaml("icons/races/common/abilities/age_3")},
+	{	[false] = AdaptIconPathForXaml("icons/hud/age/age_display_persistent_4"),
+		[true] = AdaptIconPathForXaml("icons/races/common/abilities/age_4")}
 }
 
 _RaceImage = {
@@ -46,7 +57,8 @@ function InitializeObserverUIDataContext()
 			civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race)),
 			civImage = _RaceImage[raceName],
 			
-			age = "",
+			ageIcon = "",
+			ageIconForAnimation = "",
 			isUpping = false,
 			populationVsMaximumPopulation = "",
 			workerPopulation = 0,
@@ -107,7 +119,8 @@ function UpdateObserverUIDataContext()
 		
 		local age = Player_GetCurrentAge(player)
 		UpdateIsUpping(playerTable, player, age)
-		playerTable.age = _AgeIcons[age][playerTable.isUpping]
+		playerTable.ageIcon = _AgeIcons[age][playerTable.isUpping]
+		playerTable.ageIconForAnimation = _AgeIconsForAnimation[age][playerTable.isUpping]
 		
 		UpdateResources(playerTable, player)
 		

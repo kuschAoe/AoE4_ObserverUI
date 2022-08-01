@@ -299,7 +299,7 @@ _Observe2PlayersXaml =
 				
                 <Image	Height="30"
 						HorizontalAlignment="Center" VerticalAlignment="Center"
-						Source="{Binding [age]}"/>
+						Source="{Binding [ageIconForAnimation]}"/>
 	        </Grid>
 			
 			<DataTemplate.Triggers>
@@ -329,20 +329,21 @@ _Observe2PlayersXaml =
 		
 		<DataTemplate x:Key="ObserverUICivSpecifics">
 			<Grid Visibility="{Binding [civSpecifics][visible], Converter={StaticResource BoolToVis}}">
-				<ContentControl	Width="120"
+				<ContentControl	Width="80"
 						ContentTemplate="{StaticResource ObserverUIBackgroundAndBorder}"
 						Content="{Binding}"/>
 				
-				<Grid Width="120">
+				<Grid Width="80">
 	                <Grid.ColumnDefinitions>
-	                    <ColumnDefinition Width="40" />
+	                    <ColumnDefinition Width="30" />
+	                    <ColumnDefinition Width="4" />
 	                    <ColumnDefinition Width="*" />
 	                </Grid.ColumnDefinitions>
 					
 	                <Image Grid.Column="0"
 	                        Height="30" HorizontalAlignment="Center" VerticalAlignment="Center"
 	                        Source="{Binding [civSpecifics][icon]}"/>
-	                <TextBlock Grid.Column="1"
+	                <TextBlock Grid.Column="2"
 	                        VerticalAlignment="Center"
 	                        Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
 	                        Text="{Binding [civSpecifics][text]}" />

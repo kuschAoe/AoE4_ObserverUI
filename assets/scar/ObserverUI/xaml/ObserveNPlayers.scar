@@ -64,7 +64,7 @@ _ObserveNPlayersXaml =
 											Foreground="{Binding [color]}" Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
 											Text="{Binding [name]}"/>
 	                                <Image Grid.Column="2" Height="24" Width="24" Margin="5,0,5,0" HorizontalAlignment="Right"
-											Source="{Binding [age]}"/>
+											Source="{Binding [ageIcon]}"/>
 	                            </Grid>
 								
 								<Rectangle Grid.Row="1" Fill="#616C8C" Height="1.2" Margin="10,2"/>
