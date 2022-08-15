@@ -1,5 +1,8 @@
+import("ObserverUI/Settings.scar")
+
 _ObserverUIDataContext = {
-	players = {}
+	players = {},
+	playersById = {}
 }
 
 ObserverUi_ResourceMapping = {
@@ -47,10 +50,12 @@ _RaceImage = {
 } 
 
 function InitializeObserverUIDataContext()
+	local observerUIDataContext = _ObserverUIDataContext
+	
 	for index, playerTable in pairs(PLAYERS) do
 		local raceName = Player_GetRaceName(playerTable.id)
 		
-		_ObserverUIDataContext.players[index] = {
+		 local data = {
 			name = playerTable.playerName,
 			color = UI_GetColourAsString(Player_GetUIColour(playerTable.id)),
 			
@@ -60,6 +65,8 @@ function InitializeObserverUIDataContext()
 			ageIcon = "",
 			ageIconForAnimation = "",
 			isUpping = false,
+			ageUpProgress = 0.0,
+			upAt = 0,
 			populationVsMaximumPopulation = "",
 			workerPopulation = 0,
 			idleWorkerPopulation = 0,
@@ -78,13 +85,15 @@ function InitializeObserverUIDataContext()
 			resources[i] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_"..mapping.name.."_icon")}
 		end
 		
-		_ObserverUIDataContext.players[index].resources = resources
+		data.resources = resources
+		
+		observerUIDataContext.players[index] = data
+		observerUIDataContext.playersById[playerTable.id.PlayerID] = data
 	end
+	_ObserverUIDataContext.messages = {}
 	
 	PrepareObserverUIDataContextFor1v1()
 end
-
-_Players1v1SwapPlayersDueToButton = false
 
 function PrepareObserverUIDataContextFor1v1()
 	if World_GetPlayerCount() ~= 2 then
@@ -97,7 +106,7 @@ function PrepareObserverUIDataContextFor1v1()
 		= startingPositionPlayer1.z - startingPositionPlayer1.x <
 		  startingPositionPlayer2.z - startingPositionPlayer2.x
 		
-	if Players1v1SwapPlayersDueToStartingPosition ~= _Players1v1SwapPlayersDueToButton then 
+	if Players1v1SwapPlayersDueToStartingPosition ~= ObserverUI_Settings.swapPlayers1v1 then 
 		_ObserverUIDataContext.player1 = _ObserverUIDataContext.players[2]
 		_ObserverUIDataContext.player2 = _ObserverUIDataContext.players[1]
 		return
@@ -108,7 +117,7 @@ function PrepareObserverUIDataContextFor1v1()
 end
 
 function SwapPlayers1v1()
-	_Players1v1SwapPlayersDueToButton = not _Players1v1SwapPlayersDueToButton
+	ObserverUI_Settings.swapPlayers1v1 = not ObserverUI_Settings.swapPlayers1v1
 	PrepareObserverUIDataContextFor1v1()
 	UpdateObserverUIDataContext()
 end
@@ -131,6 +140,8 @@ function UpdateObserverUIDataContext()
 		UpdateUnitsAndQueuedStuff(playerTable, player, PLAYERS[index].race)
 		UpdateCivSpecifics(playerTable, player)
 	end
+	
+	UpdateMessages()
 	
 	UI_SetDataContext("ObserverUI", _ObserverUIDataContext)
 end
@@ -343,48 +354,17 @@ function UpdateUnitsAndQueuedStuff(t, player, race)
 	t.unitsWorkers = civilUi
 end
 
-function AgeToRequiredEntityTypeForUpping(age)
-    local ageToType = {
-        "wonder_dark_age",
-        "wonder_feudal_age",
-        "wonder_castle_age"
-    }
-    return ageToType[age]
-end
-
 function UpdateIsUpping(t, player, age)
 	if age >= 4 then
+		t.ageUpProgress = 0.0
+		t.upAt = 0
 		t.isUpping = false
+
 		return
 	end
 	
-	if Player_GetRaceName(player) ~= "abbasid" then
-		local ageUpBuilding = Player_GetAllEntitiesFromType(player, AgeToRequiredEntityTypeForUpping(age));
-		local isUpping = EGroup_Count(ageUpBuilding) > 0
-		EGroup_Destroy(ageUpBuilding)
-		
-		t.isUpping = isUpping
-		return
-	end
-	
-	local isUppingAbbasid = false
-    local isUppingAbbasidFunction = function(egroup, index, entity)
-        if Entity_HasProductionQueue(entity) then
-            local queueSize = Entity_GetProductionQueueSize(entity)
-            for i = 0, (queueSize - 1) do
-                local queueItem = Entity_GetProductionQueueItem(entity, i)
-				
-				if BP_IsUpgradeOfType(queueItem, "abbasid_wing_upgrade") then
-					isUppingAbbasid = true
-				end
-            end
-        end
-    end
-	local houseOfWisdom = Player_GetAllEntitiesFromType(player, "house_of_wisdom_abb");
-	EGroup_ForEach(houseOfWisdom, isUppingAbbasidFunction)
-	EGroup_Destroy(houseOfWisdom)
-	
-	t.isUpping = isUppingAbbasid
+	t.isUpping, t.ageUpProgress, t.upAt = 
+		AgingUpProgress:GetForPlayer_IsAgingUp_Progress_EstimatedTimeOfCompletion(player)
 end
 
 function UpdateCivSpecifics(t, player)
@@ -393,4 +373,47 @@ function UpdateCivSpecifics(t, player)
 	end
 	
 	t.civSpecifics.text = tostring(math.floor(Player_GetStateModelFloat(player, "master_hunter_bounty_total_rus")))
+end
+
+AGE_TO_TEXT = {
+	[1] = "Dark Age",
+	[2] = "Feudal Age",
+	[3] = "Castle Age",
+	[4] = "Imperial Age"
+}
+
+function UpdateMessages()
+	local playersById = _ObserverUIDataContext.playersById
+	local messages = AgingUpTimings:GetMessages()
+	local messagesUi = {}
+	
+	for _, message in ipairs(messages) do
+		local messageUi = {}
+		if message.messageType == AgingUpTimings.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE then
+			messageUi.messageType = "ObserverUIMessageAgingUpTimeDifferenceBetween"
+			
+			messageUi.text = Player_GetDisplayName(message.firstPlayer).LocString .. " < " .. 
+				Player_GetDisplayName(message.secondPlayer).LocString .. ": " .. tostring(message.difference)
+			
+			messageUi.firstPlayerName = playersById[message.firstPlayer.PlayerID].name
+			messageUi.firstPlayerColor = playersById[message.firstPlayer.PlayerID].color
+			messageUi.secondPlayerName = playersById[message.secondPlayer.PlayerID].name
+			messageUi.secondPlayerColor = playersById[message.secondPlayer.PlayerID].color
+			messageUi.timeDifference = message.difference
+			messageUi.age = AGE_TO_TEXT[message.age]
+			
+		elseif message.messageType == AgingUpTimings.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME then
+			messageUi.messageType = "ObserverUIMessageAgingUpCanAffordTime"
+			
+			messageUi.text = Player_GetDisplayName(message.player).LocString .. ": " .. tostring(message.difference)
+			
+			messageUi.playerName = playersById[message.player.PlayerID].name
+			messageUi.playerColor = playersById[message.player.PlayerID].color
+			messageUi.timeDifference = message.difference
+		end
+		
+		table.insert(messagesUi, messageUi)
+	end
+	
+	_ObserverUIDataContext.messages = messagesUi
 end

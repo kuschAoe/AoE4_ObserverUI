@@ -47,8 +47,6 @@ _Observe2PlayersXaml =
                             <TextBlock Grid.Row="1" Grid.Column="1"
                                     Style="{StaticResource HUDGray80ParagraphTextBlock12ptStyle}"
                                     Text="{Binding [income]}" />
-							
-							PrimaryColorExtraLight
                         </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
@@ -277,30 +275,47 @@ _Observe2PlayersXaml =
         </LinearGradientBrush>
 		
 		<DataTemplate x:Key="ObserverUIAge">
-			<Grid Height="69" Width="69" VerticalAlignment="Center">
-                <Image Height="69"
-						Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
-						RenderTransformOrigin="0.5,0.5"
-                       	Source="pack://application:,,,/WPFGUI;component/icons/HUD/age/age_display_afford_circle_glow.png">
-                    <Image.RenderTransform>
-                        <RotateTransform x:Name="ObserverUIAgeUppingGlow" Angle="0" />
-                    </Image.RenderTransform>
-                </Image>
-
-                <!--  can afford next age circle  -->
-                <Image Height="69"
-						Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
-						RenderTransformOrigin="0.5,0.5"
-                       	Source="pack://application:,,,/WPFGUI;component/icons/HUD/age/age_display_afford_circle.png">
-                    <Image.RenderTransform>
-                        <RotateTransform x:Name="ObserverUIAgeUppingCircle" Angle="0" />
-                    </Image.RenderTransform>
-                </Image>
+			<Grid>
+				<Grid Height="68" Width="68" VerticalAlignment="Center"
+						 Grid.Row="1">
+	                <Image Height="68"
+							Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
+							RenderTransformOrigin="0.5,0.5"
+	                       	Source="pack://application:,,,/WPFGUI;component/icons/HUD/age/age_display_afford_circle_glow.png">
+	                    <Image.RenderTransform>
+	                        <RotateTransform x:Name="ObserverUIAgeUppingGlow" Angle="0" />
+	                    </Image.RenderTransform>
+	                </Image>
+	
+	                <!--  can afford next age circle  -->
+	                <Image Height="68"
+							Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
+							RenderTransformOrigin="0.5,0.5"
+	                       	Source="pack://application:,,,/WPFGUI;component/icons/HUD/age/age_display_afford_circle.png">
+	                    <Image.RenderTransform>
+	                        <RotateTransform x:Name="ObserverUIAgeUppingCircle" Angle="0" />
+	                    </Image.RenderTransform>
+	                </Image>
+					
+	                <Image	Height="30"
+							HorizontalAlignment="Center" VerticalAlignment="Center"
+							Source="{Binding [ageIconForAnimation]}"/>
+		        </Grid>
 				
-                <Image	Height="30"
-						HorizontalAlignment="Center" VerticalAlignment="Center"
-						Source="{Binding [ageIconForAnimation]}"/>
-	        </Grid>
+                <TextBlock Margin="0,-6,0,0"
+                        VerticalAlignment="Top"
+						HorizontalAlignment="Center"
+						Style="{StaticResource HUDCommandCardButtonTextBlockStyle}"
+                    	Text="{Binding [upAt], Converter={StaticResource ShorthandTimeFormat}}" />
+				
+                <ProgressBar Width="60" Height="8"
+						Margin="0,0,0,-2"
+                        VerticalAlignment="Bottom"
+						HorizontalAlignment="Center"
+                        Template="{StaticResource ConstructionProgressBar}"
+						Visibility="{Binding [isUpping], Converter={StaticResource BoolToVis}}"
+                        Value="{Binding [ageUpProgress]}" />
+			</Grid>
 			
 			<DataTemplate.Triggers>
 				<DataTrigger Binding="{Binding [isUpping]}" Value="true">
@@ -351,6 +366,44 @@ _Observe2PlayersXaml =
 			</Grid>
 		</DataTemplate>
 		
+		<DataTemplate x:Key="ObserverUIMessageAgingUpTimeDifferenceBetween">
+			<DockPanel>
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{Binding [secondPlayerColor]}"
+                    	Text="{Binding [secondPlayerName]}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" reached " />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text="{Binding [age]}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" " />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{DynamicResource Gray80Brush}"
+                    	Text="{Binding [timeDifference], Converter={StaticResource ShorthandTimeFormat}}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" after " />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{Binding [firstPlayerColor]}"
+                    	Text="{Binding [firstPlayerName]}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text="." />
+			</DockPanel>
+		</DataTemplate>
+		<DataTemplate x:Key="ObserverUIMessageAgingUpCanAffordTime">
+			<DockPanel>
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{Binding [playerColor]}"
+                    	Text="{Binding [playerName]}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" started aging up " />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{DynamicResource Gray80Brush}"
+                    	Text="{Binding [timeDifference], Converter={StaticResource ShorthandTimeFormat}}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" after they first could afford it." />
+			</DockPanel>
+		</DataTemplate>
+		
 	</Grid.Resources>
 	
 	<Grid.ColumnDefinitions>
@@ -358,6 +411,10 @@ _Observe2PlayersXaml =
 		<ColumnDefinition Width="200" />
 		<ColumnDefinition Width="*" />
 	</Grid.ColumnDefinitions>
+	<Grid.RowDefinitions>
+		<RowDefinition Height="2*" />
+		<RowDefinition Height="*" />
+	</Grid.RowDefinitions>
 	<Grid	Grid.Column="0"
 	        VerticalAlignment="Top">
 		
@@ -524,5 +581,39 @@ _Observe2PlayersXaml =
 			</Grid>
 		</Grid>
 	</Grid>
+	
+    <ItemsControl
+			Grid.Row="1" Grid.ColumnSpan="3"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Top"
+			ItemsSource="{Binding [messages]}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <DockPanel/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+		
+	    <ItemsControl.ItemContainerStyle>
+	      	<Style TargetType="ContentPresenter">
+	        	<Setter Property="DockPanel.Dock" Value="Top"/>
+	      	</Style>
+	    </ItemsControl.ItemContainerStyle>
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+				<ContentControl Name="ObserverUIMessage"
+						Content="{Binding}"/>
+				
+				<DataTemplate.Triggers>
+					<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageAgingUpTimeDifferenceBetween">
+						<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageAgingUpTimeDifferenceBetween}"/>
+					</DataTrigger>
+					<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageAgingUpCanAffordTime">
+						<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageAgingUpCanAffordTime}"/>
+					</DataTrigger>
+				</DataTemplate.Triggers>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
 </Grid>
 ]]

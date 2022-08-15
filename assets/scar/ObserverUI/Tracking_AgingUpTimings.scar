@@ -1,0 +1,202 @@
+AgingUpTimings = {
+	OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE = 1,
+	OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME = 2,
+	ofPlayer = {},
+	messages = {}
+}
+
+function AgingUpTimings:StartTracking()
+	if World_GetPlayerCount() > 2 then 
+		return 
+	end
+	
+	self:Initialize()
+	Rule_Add(Tracking_AgingUpTimings_Rule)
+end
+
+function AgingUpTimings:StopTracking()
+	if World_GetPlayerCount() > 2 then 
+		return 
+	end
+	
+	Rule_Remove(Tracking_AgingUpTimings_Rule)
+end
+
+function AgingUpTimings:Initialize()
+	for _, player in pairs(PLAYERS) do
+		local old = self.ofPlayer[player.id.PlayerID]
+		
+		local new = {
+			player = player.id,
+			age = Player_GetCurrentAge(player.id)
+		}
+		
+		if old then
+			new.reachedAgeAt = old.reachedAgeAt
+			new.canAffordNextAgeAt = old.canAffordNextAgeAt
+			new.canAffordMessageEmitted = old.canAffordMessageEmitted
+		end
+		
+		if new.reachedAgeAt == nil then
+			new.reachedAgeAt = {}
+			new.canAffordNextAgeAt = {}
+			new.canAffordMessageEmitted = {}
+		end
+		
+		self.ofPlayer[player.id.PlayerID] = new
+	end
+end
+
+function Tracking_AgingUpTimings_Rule()
+	local self = AgingUpTimings
+	
+	for _, player in pairs(PLAYERS) do
+		self:TrackForPlayer(player.id)
+	end
+end
+
+function AgingUpTimings:AbbasidPlayerCanAffordNextAge(player, age)
+	local requiredResources = {
+		{food = 400, gold = 200},
+		{food = 1200, gold = 600},
+		{food = 2400, gold = 1200}
+	}
+	
+	local food = Player_GetResource(player, RT_Food)
+	local gold = Player_GetResource(player, RT_Gold)
+	
+	return food >= requiredResources[age].food and gold >= requiredResources[age].gold 
+end
+
+function AgingUpTimings:NonAbbasidPlayerCanAffordNextAge(player, age)
+	local landmarkEntityType = AgingUpProgress.AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP[age]
+	local landmarkBps = Cardinal_ConvertTypeToEntityBlueprint(landmarkEntityType, player, true)
+	for _, landmarkBp in pairs(landmarkBps) do
+		if Player_CanConstruct(player, landmarkBp) then
+			return true
+		end	
+	end
+	return false
+end
+
+function AgingUpTimings:PlayerCanAffordNextAge(player, age)
+	if Player_GetRace(player) == RACE.ABBASID then
+		return self:AbbasidPlayerCanAffordNextAge(player, age)
+	end
+	return self:NonAbbasidPlayerCanAffordNextAge(player, age)
+end
+
+function AgingUpTimings:IsAgingUp(player, age)
+	if Player_GetRace(player) ~= RACE.ABBASID then
+		local ageUpBuilding = Player_GetAllEntitiesFromType(player, AgingUpProgress.AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP[age]);
+		local isAgingUp = EGroup_Count(ageUpBuilding) > 0
+		EGroup_Destroy(ageUpBuilding)
+		return isAgingUp
+	end
+	
+	local isAgingUpAbbasid = false
+    local isUppingAbbasidFunction = function(egroup, index, entity)
+        if Entity_HasProductionQueue(entity) then
+            local queueSize = Entity_GetProductionQueueSize(entity)
+            for i = 0, (queueSize - 1) do
+                local queueItem = Entity_GetProductionQueueItem(entity, i)
+				
+				if BP_IsUpgradeOfType(queueItem, "abbasid_wing_upgrade") and age < 4 then
+					isAgingUpAbbasid = true
+				end
+            end
+        end
+    end
+	local houseOfWisdom = Player_GetAllEntitiesFromType(player, "house_of_wisdom_abb");
+	EGroup_ForEach(houseOfWisdom, isUppingAbbasidFunction)
+	EGroup_Destroy(houseOfWisdom)
+	
+	return isAgingUpAbbasid
+end
+
+function AgingUpTimings:TrackForPlayer(player)
+	local agingUpTimingsOfPlayer = self.ofPlayer[player.PlayerID]
+	
+	local age = Player_GetCurrentAge(player)
+	
+	if age > agingUpTimingsOfPlayer.age then
+		agingUpTimingsOfPlayer.age = age
+		agingUpTimingsOfPlayer.reachedAgeAt[age] = World_GetGameTime()
+		
+		self:AddAgeUpTimeDifferenceBetweenPlayersMessage(age)
+	end
+		
+	if age > 3 then
+		return
+	end
+	
+	if self:IsAgingUp(player, age)
+			and agingUpTimingsOfPlayer.canAffordNextAgeAt[age] ~= nil
+			and agingUpTimingsOfPlayer.canAffordMessageEmitted[age] ~= true then
+		self:AddTimeBetweenCanAffordAndAgeUpMessage(player, age)
+		agingUpTimingsOfPlayer.canAffordMessageEmitted[age] = true
+	end
+	
+	if agingUpTimingsOfPlayer.canAffordNextAgeAt[age] == nil then
+		if self:PlayerCanAffordNextAge(player, age) then
+			agingUpTimingsOfPlayer.canAffordNextAgeAt[age] = World_GetGameTime()
+		end
+	end
+end
+
+function AgingUpTimings:AddAgeUpTimeDifferenceBetweenPlayersMessage(age)
+	local firstPlayerId, agingUpTimingsOfFirstPlayer = next(self.ofPlayer)
+	local secondPlayerId, agingUpTimingsOfSecondPlayer = next(self.ofPlayer, firstPlayerId)
+	
+	if agingUpTimingsOfSecondPlayer == nil then
+		return
+	end
+	
+	local reachedAgeAtOfFirstPlayer = agingUpTimingsOfFirstPlayer.reachedAgeAt[age]
+	local reachedAgeAtOfSecondPlayer = agingUpTimingsOfSecondPlayer.reachedAgeAt[age]
+	
+	if reachedAgeAtOfFirstPlayer == nil or reachedAgeAtOfSecondPlayer == nil then
+		return
+	end
+	
+	local difference = reachedAgeAtOfSecondPlayer - reachedAgeAtOfFirstPlayer
+	if reachedAgeAtOfFirstPlayer > reachedAgeAtOfSecondPlayer then
+		firstPlayerId, secondPlayerId = secondPlayerId, firstPlayerId
+		difference = -difference
+	end
+	
+	table.insert(self.messages, { 
+			messageType = self.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE,
+			firstPlayer = self.ofPlayer[firstPlayerId].player,
+			secondPlayer = self.ofPlayer[secondPlayerId].player,
+			timeOfMessage = World_GetGameTime(),
+			difference = difference,
+			age = age
+			})
+end
+
+function AgingUpTimings:AddTimeBetweenCanAffordAndAgeUpMessage(player, age)
+	local currentGameTime = World_GetGameTime()
+	local canAffordNextAgeAt = self.ofPlayer[player.PlayerID].canAffordNextAgeAt[age]
+	local difference = currentGameTime - canAffordNextAgeAt
+	
+	table.insert(self.messages, { 
+			messageType = self.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME,
+			player = player,
+			timeOfMessage = currentGameTime,
+			difference = difference
+			})
+end
+
+function AgingUpTimings:GetMessages()
+	local currentGameTime = World_GetGameTime()
+	local messages = {}
+	
+	for _, message in pairs(self.messages) do
+		if currentGameTime - message.timeOfMessage <= 15.0 then
+			table.insert(messages, message)
+		end
+	end
+	
+	return messages
+end

@@ -4,12 +4,12 @@ import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/xaml/SwapPlayers1v1Button.scar")
 import("ObserverUI/ObserverUIUpdateUi.scar")
 import("ObserverUI/ObserverUIRules.scar")
+import("ObserverUI/Tracking_AgingUpProgress.scar")
+import("ObserverUI/Tracking_AgingUpTimings.scar")
 
 Core_RegisterModule("ObserverUI")
 
 function ObserverUI_OnInit()
-	print("ObserverUI_OnInit")
-	
 	if not UI_IsReplay() then
 		return
 	end
@@ -18,11 +18,11 @@ function ObserverUI_OnInit()
 	if World_GetPlayerCount() == 2 then
 		observeXaml = _Observe2PlayersXaml
 		
-		UI_AddChild("", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
+		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
 	end
 	
-	UI_AddChild("", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
-	UI_AddChild("", "XamlPresenter", "ObserverUI", { IsHitTestVisible = false, Xaml = observeXaml})
+	UI_AddChild("ScarDefault", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
+	UI_AddChild("ScarDefault", "XamlPresenter", "ObserverUI", { IsHitTestVisible = false, Xaml = observeXaml})
 	
 	Set_ReplayStatViewer_And_ImprovedUI_Visibility(true)
 end
@@ -53,6 +53,8 @@ end
 
 function ShowImprovedUI()
 	InitializeObserverUIDataContext()
+	AgingUpProgress:StartTracking()
+	AgingUpTimings:StartTracking()
 	InitializeObserverUIRules()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
@@ -65,6 +67,8 @@ function ShowImprovedUI()
 end
 
 function ShowClassicUI()
+	AgingUpTimings:StopTracking()
+	AgingUpProgress:StopTracking()
 	RemoveObserverUIRules()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")

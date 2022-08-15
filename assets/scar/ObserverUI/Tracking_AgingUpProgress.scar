@@ -1,0 +1,182 @@
+AgingUpProgress = {
+	AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP = {
+        "wonder_dark_age",
+        "wonder_feudal_age",
+        "wonder_castle_age"
+    }
+}
+
+function AgingUpProgress:StartTracking()
+	self:Initialize()
+	Rule_AddInterval(Tracking_AgingUpProgress_ViaLandmark_Rule, AgingUpProgress:GetTrackingInterval())
+	Rule_Add(Tracking_AgingUpProgress_ViaHouseOfWisomWing_Rule)
+end
+
+function AgingUpProgress:StopTracking()
+	Rule_Remove(Tracking_AgingUpProgress_ViaLandmark_Rule)
+	Rule_Remove(Tracking_AgingUpProgress_ViaHouseOfWisomWing_Rule)
+end
+
+function AgingUpProgress:Initialize()
+	for index, player in pairs(PLAYERS) do
+		self[player.id.PlayerID] = {}
+	end
+end
+
+function AgingUpProgress:GetTrackingInterval()
+	return 6/8
+end
+
+function Tracking_AgingUpProgress_ViaLandmark_Rule()
+	local self = AgingUpProgress
+	
+	for index, player in pairs(PLAYERS) do
+		if player.race ~= RACE.ABBASID then
+			self:TrackForNonAbbasidPlayer(player.id)
+		end
+	end
+end
+
+function AgingUpProgress:TrackForNonAbbasidPlayer(player)
+	local age = Player_GetCurrentAge(player)
+	if age > 3 then
+		self[player.PlayerID] = {}
+		return
+	end
+	
+	local progressOfPlayer = self[player.PlayerID]
+	local newProgressOfPlayer = {}
+    local updateProgress = function(egroup, index, entity)
+		local entityProgress = { oldProgress = 0 }
+		if progressOfPlayer[entity.EntityID] ~= nil then
+			entityProgress.oldProgress = progressOfPlayer[entity.EntityID].progress
+		end
+		entityProgress.progress = Entity_GetBuildingProgress(entity)
+		
+		local speed = (entityProgress.progress - entityProgress.oldProgress) / self:GetTrackingInterval()
+		entityProgress.timeTillCompletion = (1 - entityProgress.progress) / speed
+		
+		newProgressOfPlayer[entity.EntityID] = entityProgress
+    end
+	local ageUpBuilding = Player_GetAllEntitiesFromType(player, self.AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP[age]);
+	EGroup_ForEach(ageUpBuilding, updateProgress)
+	EGroup_Destroy(ageUpBuilding)
+	
+	self[player.PlayerID] = newProgressOfPlayer
+end
+
+function AgingUpProgress:GetForNonAbbasidPlayer_IsAgingUp(player)
+	local progressOfPlayer = self[player.PlayerID]
+	return next(progressOfPlayer) ~= nil
+end
+
+function AgingUpProgress:GetForNonAbbasidPlayer_Progress_EstimatedTimeOfCompletion(player)
+	local progressOfPlayer = self[player.PlayerID]
+	
+	local progressIndex = next(progressOfPlayer)
+	if progressIndex == nil then
+		return 0, nil
+	end
+	local progress = progressOfPlayer[progressIndex]
+	
+	local progressIndex2 = next(progressOfPlayer, progressIndex)
+	if progressIndex2 then
+		local progress2 = progressOfPlayer[progressIndex2]
+		if progress2.timeTillCompletion < progress.timeTillCompletion then
+			progress = progress2
+		end
+	end
+	
+	local timeOfCompletion = progress.timeTillCompletion + World_GetGameTime()
+	return progress.progress, timeOfCompletion
+end
+
+function Tracking_AgingUpProgress_ViaHouseOfWisomWing_Rule()
+	local self = AgingUpProgress
+	
+	for index, player in pairs(PLAYERS) do
+		if player.race == RACE.ABBASID then
+			self:TrackForAbbasidPlayer(player.id)
+		end
+	end
+end
+
+function AgingUpProgress:TrackForAbbasidPlayer(player)
+	if Player_GetCurrentAge(player) > 3 then
+		self[player.PlayerID] = {}
+		return
+	end
+	
+	local isAtFirstPositionInProductionQueue = false
+	local isWingQueued = false
+    local isUppingAbbasidFunction = function(egroup, index, entity)
+        if Entity_HasProductionQueue(entity) then
+            local queueSize = Entity_GetProductionQueueSize(entity)
+            for i = (queueSize - 1), 0, -1 do
+                local queueItem = Entity_GetProductionQueueItem(entity, i)
+				
+				if BP_IsUpgradeOfType(queueItem, "abbasid_wing_upgrade") then
+					isWingQueued = true
+					if i == 0 then
+						isAtFirstPositionInProductionQueue = true
+					end
+				end
+            end
+        end
+    end
+	local houseOfWisdom = Player_GetAllEntitiesFromType(player, "house_of_wisdom_abb");
+	EGroup_ForEach(houseOfWisdom, isUppingAbbasidFunction)
+	EGroup_Destroy(houseOfWisdom)
+	
+	if not isWingQueued then
+		self[player.PlayerID] = {}
+		return
+	end
+	
+	local progress = self[player.PlayerID]
+	progress.isAgingUp = true
+	if progress.startedAt == nil then
+		progress.startedAt = World_GetGameTime()
+	end
+end
+
+function AgingUpProgress:GetForAbbasidPlayer_IsAgingUp(player)
+	local progressOfPlayer = self[player.PlayerID]
+	return progressOfPlayer.isAgingUp == true
+end
+
+function AgingUpProgress:GetForAbbasidPlayer_Progress_EstimatedTimeOfCompletion(player)
+	local progressOfPlayer = self[player.PlayerID]
+	
+	local progress = 0
+	local timeOfCompletion
+	if progressOfPlayer.startedAt ~= nil then
+		progress = (World_GetGameTime() - progressOfPlayer.startedAt) / 120
+		timeOfCompletion = progressOfPlayer.startedAt + 120
+	end
+	
+	return progress, timeOfCompletion
+end
+
+function AgingUpProgress:GetForPlayer_IsAgingUp(player)
+	local getForPlayer = AgingUpProgress.GetForNonAbbasidPlayer_IsAgingUp
+	if Player_GetRace(player) == RACE.ABBASID then
+		getForPlayer = AgingUpProgress.GetForAbbasidPlayer_IsAgingUp
+	end
+	
+	return getForPlayer(self, player)
+end
+
+function AgingUpProgress:GetForPlayer_IsAgingUp_Progress_EstimatedTimeOfCompletion(player)
+	local getForPlayer = AgingUpProgress.GetForNonAbbasidPlayer_Progress_EstimatedTimeOfCompletion
+	if Player_GetRace(player) == RACE.ABBASID then
+		getForPlayer = AgingUpProgress.GetForAbbasidPlayer_Progress_EstimatedTimeOfCompletion
+	end
+	
+	local progress, timeOfCompletion = getForPlayer(self, player)
+	if timeOfCompletion == math.huge then
+		timeOfCompletion = nil
+	end
+	
+	return self:GetForPlayer_IsAgingUp(player), 1.0 * progress, timeOfCompletion
+end
