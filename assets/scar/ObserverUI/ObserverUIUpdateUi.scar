@@ -6,10 +6,10 @@ _ObserverUIDataContext = {
 }
 
 ObserverUi_ResourceMapping = {
-	{ name = "food", enum = RT_Food},
-	{ name = "wood", enum = RT_Wood},
-	{ name = "gold", enum = RT_Gold},
-	{ name = "stone", enum = RT_Stone}
+	food = RT_Food,
+	wood = RT_Wood,
+	gold = RT_Gold,
+	stone = RT_Stone
 }
 
 function AdaptIconPathForXaml(iconPath)
@@ -81,8 +81,8 @@ function InitializeObserverUIDataContext()
 		}
 		
 		local resources = {}
-		for i,mapping in ipairs(ObserverUi_ResourceMapping) do
-			resources[i] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_"..mapping.name.."_icon")}
+		for key,enum in pairs(ObserverUi_ResourceMapping) do
+			resources[key] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_"..key.."_icon")}
 		end
 		
 		data.resources = resources
@@ -99,6 +99,8 @@ function PrepareObserverUIDataContextFor1v1()
 	if World_GetPlayerCount() ~= 2 then
 		return
 	end
+	
+	_ObserverUIDataContext.symmetricalUi = ObserverUI_Settings.symmetricalUi
 	
 	local startingPositionPlayer1 = Player_GetStartingPosition(PLAYERS[1].id)
 	local startingPositionPlayer2 = Player_GetStartingPosition(PLAYERS[2].id)
@@ -118,6 +120,12 @@ end
 
 function SwapPlayers1v1()
 	ObserverUI_Settings.swapPlayers1v1 = not ObserverUI_Settings.swapPlayers1v1
+	PrepareObserverUIDataContextFor1v1()
+	UpdateObserverUIDataContext()
+end
+
+function ToggleSymmetricalUi()
+	ObserverUI_Settings.symmetricalUi = not ObserverUI_Settings.symmetricalUi
 	PrepareObserverUIDataContextFor1v1()
 	UpdateObserverUIDataContext()
 end
@@ -150,10 +158,10 @@ function UpdateResources(t, player)
 	local resources = Player_GetResources(player)
 	
 	local tResources = t.resources
-	for i,mapping in ipairs(ObserverUi_ResourceMapping) do
-		tResources[i].amount = resources[mapping.name]
-		tResources[i].workers = Player_GetStateModelInt(player, "num_"..mapping.name.."_gatherers")
-		tResources[i].income = tostring(math.floor(Player_GetResourceRate(player, mapping.enum)*60)).."/min"
+	for key,enum in pairs(ObserverUi_ResourceMapping) do
+		tResources[key].amount = resources[key]
+		tResources[key].workers = Player_GetStateModelInt(player, "num_"..key.."_gatherers")
+		tResources[key].income = tostring(math.floor(Player_GetResourceRate(player, enum)*60)).."/min"
 	end
 end
 

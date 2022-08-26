@@ -2,6 +2,7 @@ import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")
 import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/xaml/SwapPlayers1v1Button.scar")
+import("ObserverUI/xaml/SymmetryButton.scar")
 import("ObserverUI/ObserverUIUpdateUi.scar")
 import("ObserverUI/ObserverUIRules.scar")
 import("ObserverUI/Tracking_AgingUpProgress.scar")
@@ -19,6 +20,7 @@ function ObserverUI_OnInit()
 		observeXaml = _Observe2PlayersXaml
 		
 		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
+		UI_AddChild("ScarDefault", "XamlPresenter", "SymmetryButton", { IsHitTestVisible = true, Xaml = _SymmetryButtonXaml, DataContext = UI_CreateDataContext(_SymmetryButtonDataContext)})
 	end
 	
 	UI_AddChild("ScarDefault", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
@@ -29,6 +31,10 @@ end
 
 _SwapPlayers1v1ButtonDataContext = { 
 	command = UI_CreateCommand("SwapPlayers1v1")
+}
+
+_SymmetryButtonDataContext = { 
+	command = UI_CreateCommand("ToggleSymmetricalUi")
 }
 
 _ToggleUIButtonDataContext = { 
@@ -59,6 +65,7 @@ function ShowImprovedUI()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Visible")
+	UI_SetPropertyValue("SymmetryButton", "Visibility", "Visible")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Collapsed")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Collapsed")
@@ -73,6 +80,7 @@ function ShowClassicUI()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Collapsed")
+	UI_SetPropertyValue("SymmetryButton", "Visibility", "Collapsed")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Visible")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Visible")
 	UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Visible")

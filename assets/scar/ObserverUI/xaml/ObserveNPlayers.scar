@@ -3,6 +3,32 @@ _ObserveNPlayersXaml =
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:engineSharedEffects="clr-namespace:WPFGUI.Shared.Effects;assembly=EngineUI.Shaders">
+	
+	<Grid.Resources>
+        <DataTemplate x:Key="ObserverUIResource">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0"
+                    	Width="25" Height="25"
+                    	HorizontalAlignment="Center"
+                    	VerticalAlignment="Center"
+                    	Source="{Binding [icon]}" />
+				
+                <TextBlock Grid.Column="0"
+						Foreground="White"
+						FontWeight="Bold"
+                    	Text="{Binding [workers], Converter={StaticResource CastToIntOperator}}" />
+
+                <TextBlock Grid.Column="1"
+                        Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+                        Text="{Binding [amount], Converter={StaticResource CastToIntOperator}}" />
+            </Grid>
+        </DataTemplate>
+	</Grid.Resources>
 		
     <StackPanel
         HorizontalAlignment="Center" 
@@ -78,33 +104,27 @@ _ObserveNPlayersXaml =
                                     </Grid.ColumnDefinitions>
 
 									<!-- resources -->
-                                    <ItemsControl Grid.Column="0" ItemsSource="{Binding [resources]}">
-	                                    <ItemsControl.ItemTemplate>
-	                                        <DataTemplate>
-	                                            <Grid>
-	                                                <Grid.ColumnDefinitions>
-	                                                    <ColumnDefinition Width="Auto" />
-	                                                    <ColumnDefinition Width="*" />
-	                                                </Grid.ColumnDefinitions>
-	
-	                                                <Image Grid.Column="0"
-	                                                    	Width="25" Height="25"
-	                                                    	HorizontalAlignment="Center"
-	                                                    	VerticalAlignment="Center"
-	                                                    	Source="{Binding [icon]}" />
-													
-	                                                <TextBlock Grid.Column="0"
-															Foreground="White"
-															FontWeight="Bold"
-	                                                    	Text="{Binding [workers], Converter={StaticResource CastToIntOperator}}" />
-	
-	                                                <TextBlock Grid.Column="1"
-	                                                        Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
-	                                                        Text="{Binding [amount], Converter={StaticResource CastToIntOperator}}" />
-	                                            </Grid>
-	                                        </DataTemplate>
-	                                    </ItemsControl.ItemTemplate>
-	                                </ItemsControl>
+	                                <Grid Grid.Column="0">
+	                                    <Grid.RowDefinitions>
+	                                        <RowDefinition Height="*" />
+	                                        <RowDefinition Height="*" />
+	                                        <RowDefinition Height="*" />
+	                                        <RowDefinition Height="*" />
+	                                    </Grid.RowDefinitions>
+										
+										<ContentControl	Grid.Row="0"
+												ContentTemplate="{StaticResource ObserverUIResource}"
+												Content="{Binding [resources][food]}" />
+										<ContentControl	Grid.Row="1"
+												ContentTemplate="{StaticResource ObserverUIResource}"
+												Content="{Binding [resources][wood]}" />
+										<ContentControl	Grid.Row="2"
+												ContentTemplate="{StaticResource ObserverUIResource}"
+												Content="{Binding [resources][gold]}" />
+										<ContentControl	Grid.Row="3"
+												ContentTemplate="{StaticResource ObserverUIResource}"
+												Content="{Binding [resources][stone]}" />
+									</Grid>
 	
 									<!-- population & relics -->
 	                                <Grid Grid.Column="2">

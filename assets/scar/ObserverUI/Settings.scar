@@ -1,3 +1,4 @@
 ObserverUI_Settings = {
-	swapPlayers1v1 = false
+	swapPlayers1v1 = false,
+	symmetricalUi = false
 }

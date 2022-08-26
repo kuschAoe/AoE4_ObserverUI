@@ -1,0 +1,20 @@
+_SymmetryButtonXaml = 
+[[<ToggleButton 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        
+        HorizontalAlignment="Right" 
+        VerticalAlignment="Bottom"
+        Margin="0,0,325,72"
+        
+        Height="36"
+        Width="36"
+
+        Style="{StaticResource SecondaryRaisedContentToggleButton}"
+        
+        Command="{Binding [command]}">
+    <TextBlock 
+            Style="{StaticResource HUDTitleAltTextBlockStyle}"
+            Text="Sy" />
+</ToggleButton>
+]]
