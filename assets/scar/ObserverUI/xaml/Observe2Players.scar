@@ -504,7 +504,7 @@ _Observe2PlayersXaml =
 						Foreground="{DynamicResource Gray80Brush}"
                     	Text="{Binding [timeDifference], Converter={StaticResource ShorthandTimeFormat}}" />
 				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
-                    	Text=" after they first could afford it." />
+                    	Text=" after they first could afford to." />
 			</DockPanel>
 		</DataTemplate>
 		
