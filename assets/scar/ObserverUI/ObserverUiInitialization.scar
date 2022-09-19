@@ -1,0 +1,17 @@
+import("ObserverUI/ObserverUIRuleSystem.scar")
+
+ObserverUiInitialization = {
+	Initializables = {}
+}
+
+function ObserverUiInitialization:AddInitializable(initializable)
+	table.insert(self.Initializables, initializable)
+end
+
+function ObserverUiInitialization:Initialize()
+	for i=1, #self.Initializables do
+		self.Initializables[i]:Initialize()
+	end
+	
+	ObserverUiRuleSystem:Initialize()
+end

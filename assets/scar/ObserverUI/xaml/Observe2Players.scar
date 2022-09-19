@@ -1,6 +1,7 @@
 _Observe2PlayersXaml = 
 [[<Grid	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib">
 	<Grid.Resources>
 		<DataTemplate x:Key="ObserverUIBackgroundAndBorder">
 			<Grid>
@@ -507,223 +508,395 @@ _Observe2PlayersXaml =
                     	Text=" after they first could afford to." />
 			</DockPanel>
 		</DataTemplate>
-		
 	</Grid.Resources>
 	
-	<Grid.ColumnDefinitions>
-		<ColumnDefinition Width="*" />
-		<ColumnDefinition Width="200" />
-		<ColumnDefinition Width="*" />
-	</Grid.ColumnDefinitions>
-	<Grid.RowDefinitions>
-		<RowDefinition Height="2*" />
-		<RowDefinition Height="*" />
-	</Grid.RowDefinitions>
-	<Grid	Grid.Column="0"
-	        VerticalAlignment="Top">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="200" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="2*" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
 		
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+		<Grid	Grid.Column="0"
+		        VerticalAlignment="Top">
 			
-			<ContentControl	ContentTemplate="{StaticResource ObserverUIBackgroundAndBorder}" Content="{Binding [player1]}"/>
-			<Image	HorizontalAlignment="Right"
-					OpacityMask="{StaticResource ObserverUIBrushOpaqueLeftToRight}"
-					Source="{Binding [player1][civImage]}"
-					Height="82" />
-			
-			<Grid Margin="2,2,2,2" HorizontalAlignment="Left">
+			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="*" />
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
 				
-				<ContentControl
-						ContentTemplate="{StaticResource ObserverUIResourcesFWGS}"
-						Content="{Binding [player1]}"
-						Visibility="{Binding [symmetricalUi], Converter={StaticResource InvBoolToVis}}"/>
-				<ContentControl
-						ContentTemplate="{StaticResource ObserverUIResourcesSWGF}"
-						Content="{Binding [player1]}" 
-						Visibility="{Binding [symmetricalUi], Converter={StaticResource BoolToVis}}"/>
+				<ContentControl	ContentTemplate="{StaticResource ObserverUIBackgroundAndBorder}" Content="{Binding [player1]}"/>
+				<Image	HorizontalAlignment="Right"
+						OpacityMask="{StaticResource ObserverUIBrushOpaqueLeftToRight}"
+						Source="{Binding [player1][civImage]}"
+						Height="82" />
 				
-				<Rectangle Grid.Row="1" Fill="#616C8C" Height="1.2" Margin="10,0,10,4"/>
+				<Grid Margin="2,2,2,2" HorizontalAlignment="Left">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					
+					<ContentControl
+							ContentTemplate="{StaticResource ObserverUIResourcesFWGS}"
+							Content="{Binding [player1]}"
+							Visibility="{Binding [symmetricalUi], Converter={StaticResource InvBoolToVis}}"/>
+					<ContentControl
+							ContentTemplate="{StaticResource ObserverUIResourcesSWGF}"
+							Content="{Binding [player1]}" 
+							Visibility="{Binding [symmetricalUi], Converter={StaticResource BoolToVis}}"/>
+					
+					<Rectangle Grid.Row="1" Fill="#616C8C" Height="1.2" Margin="10,0,10,4"/>
+					
+					<ContentControl	Grid.Row="2"
+							ContentTemplate="{StaticResource ObserverUIPopulation}"
+							Content="{Binding [player1]}"
+							Visibility="{Binding [symmetricalUi], Converter={StaticResource InvBoolToVis}}"/>
+					<ContentControl	Grid.Row="2"
+							ContentTemplate="{StaticResource ObserverUIPopulationReverse}"
+							Content="{Binding [player1]}"
+							Visibility="{Binding [symmetricalUi], Converter={StaticResource BoolToVis}}"/>
+					
+					<ContentControl	Grid.Column="1" Grid.RowSpan="3" 
+							Margin="0,0,10,0"
+							HorizontalAlignment="Center" VerticalAlignment="Center"
+							ContentTemplate="{StaticResource ObserverUIAge}"
+							Content="{Binding [player1]}" />
+					
+					<ContentControl Grid.Column="2" Grid.RowSpan="3"
+							ContentTemplate="{StaticResource ObserverUIName}"
+							Content="{Binding [player1]}" />
+				</Grid>
 				
-				<ContentControl	Grid.Row="2"
-						ContentTemplate="{StaticResource ObserverUIPopulation}"
-						Content="{Binding [player1]}"
-						Visibility="{Binding [symmetricalUi], Converter={StaticResource InvBoolToVis}}"/>
-				<ContentControl	Grid.Row="2"
-						ContentTemplate="{StaticResource ObserverUIPopulationReverse}"
-						Content="{Binding [player1]}"
-						Visibility="{Binding [symmetricalUi], Converter={StaticResource BoolToVis}}"/>
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					
+					<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
+							ContentTemplate="{StaticResource ObserverUICivSpecifics}"
+							Content="{Binding [player1]}"/>
+					
+					<ContentControl	Grid.Column="1" HorizontalAlignment="Right"
+							ContentTemplate="{StaticResource ObserverUIUnits}"
+							Content="{Binding [player1][unitsWorkers]}" />
+					
+					<ContentControl	Grid.Column="2" HorizontalAlignment="Right"
+							Margin="0,0,-2,0"
+							ContentTemplate="{StaticResource ObserverUIUnits}"
+							Content="{Binding [player1][units]}" />
+				</Grid>
 				
-				<ContentControl	Grid.Column="1" Grid.RowSpan="3" 
-						Margin="0,0,10,0"
-						HorizontalAlignment="Center" VerticalAlignment="Center"
-						ContentTemplate="{StaticResource ObserverUIAge}"
-						Content="{Binding [player1]}" />
-				
-				<ContentControl Grid.Column="2" Grid.RowSpan="3"
-						ContentTemplate="{StaticResource ObserverUIName}"
-						Content="{Binding [player1]}" />
-			</Grid>
-			
-			<Grid Grid.Row="1">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
-				
-				<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
-						ContentTemplate="{StaticResource ObserverUICivSpecifics}"
-						Content="{Binding [player1]}"/>
-				
-				<ContentControl	Grid.Column="1" HorizontalAlignment="Right"
-						ContentTemplate="{StaticResource ObserverUIUnits}"
-						Content="{Binding [player1][unitsWorkers]}" />
-				
-				<ContentControl	Grid.Column="2" HorizontalAlignment="Right"
-						Margin="0,0,-2,0"
-						ContentTemplate="{StaticResource ObserverUIUnits}"
-						Content="{Binding [player1][units]}" />
-			</Grid>
-			
-			<Grid Grid.Row="2">
-				<ContentControl	HorizontalAlignment="Left"
-						ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
-						Content="{Binding [player1]}" />
+				<Grid Grid.Row="2">
+					<ContentControl	HorizontalAlignment="Left"
+							ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
+							Content="{Binding [player1]}" />
+				</Grid>
 			</Grid>
 		</Grid>
-	</Grid>
-	
-	<Grid	Grid.Column="2" 
-	        VerticalAlignment="Top">
 		
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-		
-			<ContentControl	ContentTemplate="{StaticResource ObserverUIBackgroundAndBorder}" Content="{Binding [player2]}"/>
-			<Image	HorizontalAlignment="Left"
-					OpacityMask="{StaticResource ObserverUIBrushOpaqueRightToLeft}"
-					Source="{Binding [player2][civImage]}"
-					Height="82"/>
+		<Grid	Grid.Column="2" 
+		        VerticalAlignment="Top">
 			
-			<Grid Margin="2,2,2,2" HorizontalAlignment="Right">
+			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition Height="*" />
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				
-				<ContentControl	Grid.Column="2"
-						HorizontalAlignment="Right"
-						ContentTemplate="{StaticResource ObserverUIResourcesFWGS}"
-						Content="{Binding [player2]}"
-						Visibility="{Binding [symmetricalUi], Converter={StaticResource InvBoolToVis}}"/>
-				<ContentControl	Grid.Column="2"
-						HorizontalAlignment="Right"
-						ContentTemplate="{StaticResource ObserverUIResourcesFGWS}"
-						Content="{Binding [player2]}"
-						Visibility="{Binding [symmetricalUi], Converter={StaticResource BoolToVis}}"/>
-				
-				<Rectangle Grid.Column="2" Grid.Row="1" Fill="#616C8C" Height="1.2" Margin="10,0,10,4"/>
-				
-				<ContentControl	Grid.Column="2"	Grid.Row="2"
-						ContentTemplate="{StaticResource ObserverUIPopulation}"
-						Content="{Binding [player2]}" />
-				
-				<ContentControl	Grid.Column="1" Grid.RowSpan="3" 
-						Margin="10,0,0,0"
-						HorizontalAlignment="Center" VerticalAlignment="Center"
-						ContentTemplate="{StaticResource ObserverUIAge}"
-						Content="{Binding [player2]}" />
-				
-				<ContentControl Grid.RowSpan="3"
-						ContentTemplate="{StaticResource ObserverUIName}"
-						Content="{Binding [player2]}" />
-			</Grid>
 			
-			<Grid Grid.Row="1">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto"/>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
+				<ContentControl	ContentTemplate="{StaticResource ObserverUIBackgroundAndBorder}" Content="{Binding [player2]}"/>
+				<Image	HorizontalAlignment="Left"
+						OpacityMask="{StaticResource ObserverUIBrushOpaqueRightToLeft}"
+						Source="{Binding [player2][civImage]}"
+						Height="82"/>
 				
-				<ContentControl	Grid.Column="2" HorizontalAlignment="Left"
-						ContentTemplate="{StaticResource ObserverUICivSpecifics}"
-						Content="{Binding [player2]}"/>
+				<Grid Margin="2,2,2,2" HorizontalAlignment="Right">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					
+					<ContentControl	Grid.Column="2"
+							HorizontalAlignment="Right"
+							ContentTemplate="{StaticResource ObserverUIResourcesFWGS}"
+							Content="{Binding [player2]}"
+							Visibility="{Binding [symmetricalUi], Converter={StaticResource InvBoolToVis}}"/>
+					<ContentControl	Grid.Column="2"
+							HorizontalAlignment="Right"
+							ContentTemplate="{StaticResource ObserverUIResourcesFGWS}"
+							Content="{Binding [player2]}"
+							Visibility="{Binding [symmetricalUi], Converter={StaticResource BoolToVis}}"/>
+					
+					<Rectangle Grid.Column="2" Grid.Row="1" Fill="#616C8C" Height="1.2" Margin="10,0,10,4"/>
+					
+					<ContentControl	Grid.Column="2"	Grid.Row="2"
+							ContentTemplate="{StaticResource ObserverUIPopulation}"
+							Content="{Binding [player2]}" />
+					
+					<ContentControl	Grid.Column="1" Grid.RowSpan="3" 
+							Margin="10,0,0,0"
+							HorizontalAlignment="Center" VerticalAlignment="Center"
+							ContentTemplate="{StaticResource ObserverUIAge}"
+							Content="{Binding [player2]}" />
+					
+					<ContentControl Grid.RowSpan="3"
+							ContentTemplate="{StaticResource ObserverUIName}"
+							Content="{Binding [player2]}" />
+				</Grid>
 				
-				<ContentControl	Grid.Column="1" HorizontalAlignment="Left"
-						ContentTemplate="{StaticResource ObserverUIUnits}"
-						Content="{Binding [player2][unitsWorkers]}" />
-
-				<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
-						 Margin="-2,0,0,0"
-						ContentTemplate="{StaticResource ObserverUIUnits}"
-						Content="{Binding [player2][units]}" />
-			</Grid>
-			
-			<Grid Grid.Row="2">
-				<ContentControl	HorizontalAlignment="Right"
-						ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
-						Content="{Binding [player2]}" />
+				<Grid Grid.Row="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					
+					<ContentControl	Grid.Column="2" HorizontalAlignment="Left"
+							ContentTemplate="{StaticResource ObserverUICivSpecifics}"
+							Content="{Binding [player2]}"/>
+					
+					<ContentControl	Grid.Column="1" HorizontalAlignment="Left"
+							ContentTemplate="{StaticResource ObserverUIUnits}"
+							Content="{Binding [player2][unitsWorkers]}" />
+	
+					<ContentControl	Grid.Column="0" HorizontalAlignment="Left"
+							 Margin="-2,0,0,0"
+							ContentTemplate="{StaticResource ObserverUIUnits}"
+							Content="{Binding [player2][units]}" />
+				</Grid>
+				
+				<Grid Grid.Row="2">
+					<ContentControl	HorizontalAlignment="Right"
+							ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
+							Content="{Binding [player2]}" />
+				</Grid>
 			</Grid>
 		</Grid>
+		
+	    <ItemsControl
+				Grid.Row="1" Grid.ColumnSpan="3"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Top"
+				ItemsSource="{Binding [messages]}">
+	        <ItemsControl.ItemsPanel>
+	            <ItemsPanelTemplate>
+	                <DockPanel/>
+	            </ItemsPanelTemplate>
+	        </ItemsControl.ItemsPanel>
+			
+		    <ItemsControl.ItemContainerStyle>
+		      	<Style TargetType="ContentPresenter">
+		        	<Setter Property="DockPanel.Dock" Value="Top"/>
+		      	</Style>
+		    </ItemsControl.ItemContainerStyle>
+	
+	        <ItemsControl.ItemTemplate>
+	            <DataTemplate>
+					<ContentControl Name="ObserverUIMessage"
+							Content="{Binding}"/>
+					
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageAgingUpTimeDifferenceBetween">
+							<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageAgingUpTimeDifferenceBetween}"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageAgingUpCanAffordTime">
+							<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageAgingUpCanAffordTime}"/>
+						</DataTrigger>
+					</DataTemplate.Triggers>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</Grid>
 	
-    <ItemsControl
-			Grid.Row="1" Grid.ColumnSpan="3"
-			HorizontalAlignment="Center"
-			VerticalAlignment="Top"
-			ItemsSource="{Binding [messages]}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <DockPanel/>
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
+	<Grid Margin="0,620,0,0"
+        	HorizontalAlignment="Left"
+        	VerticalAlignment="Top">
+	
+	    <Decorator Name="EfficiencyStatisticsHeightRatioProxy"
+	               Height="1"
+	               Visibility="Hidden" />
+	    <Decorator Name="EfficiencyStatisticsHeightProxy" Visibility="Hidden">
+	        <Decorator.Height>
+	            <MultiBinding Converter="{StaticResource MultiLerp}">
+	                <Binding ElementName="EfficiencyStatisticsHeightRatioProxy" Path="Height" />
+	                <Binding ElementName="EfficiencyStatisticsExpanderButton" Path="ActualHeight" />
+	                <Binding ElementName="EfficiencyStatisticsStatisticsCanvas" Path="Height" />
+	            </MultiBinding>
+	        </Decorator.Height>
+	    </Decorator>
+	    <Decorator Name="EfficiencyStatisticsWidthProxy" Visibility="Hidden">
+	        <Decorator.Width>
+	            <MultiBinding Converter="{StaticResource MultiLerp}">
+	                <Binding ElementName="EfficiencyStatisticsHeightRatioProxy" Path="Height" />
+	                <Binding ElementName="EfficiencyStatisticsExpanderButton" Path="ActualWidth" />
+	                <Binding ElementName="EfficiencyStatisticsStatisticsCanvas" Path="Width" />
+	            </MultiBinding>
+	        </Decorator.Width>
+	    </Decorator>
 		
-	    <ItemsControl.ItemContainerStyle>
-	      	<Style TargetType="ContentPresenter">
-	        	<Setter Property="DockPanel.Dock" Value="Top"/>
-	      	</Style>
-	    </ItemsControl.ItemContainerStyle>
+		<Grid Width="{Binding ElementName=EfficiencyStatisticsWidthProxy, Path=Width}" 
+	            Height="{Binding ElementName=EfficiencyStatisticsHeightProxy, Path=Height}"
+	            HorizontalAlignment="Left"
+	            VerticalAlignment="Top">
+	
+		    <Grid ClipToBounds="True">
+	            <Canvas Name="EfficiencyStatisticsStatisticsCanvas"
+	                    Width="{Binding ElementName=EfficiencyStatisticsStatisticsInnerGrid, Path=ActualWidth}"
+	                    Height="{Binding ElementName=EfficiencyStatisticsStatisticsInnerGrid, Path=ActualHeight}"
+	                    ClipToBounds="True">
+	                <Grid x:Name="EfficiencyStatisticsStatisticsInnerGrid">
+	                    <Grid.ColumnDefinitions>
+	                        <ColumnDefinition Width="3" />
+	                        <ColumnDefinition Width="160" />
+	                        <ColumnDefinition Width="4" />
+	                        <ColumnDefinition Width="80" />
+	                        <ColumnDefinition Width="4" />
+	                        <ColumnDefinition Width="80" />
+	                        <ColumnDefinition Width="3" />
+	                    </Grid.ColumnDefinitions>
+	                    <Grid.RowDefinitions>
+	                        <RowDefinition Height="Auto" />
+	                        <RowDefinition Height="Auto" />
+	                        <RowDefinition Height="4" />
+	                        <RowDefinition Height="Auto" />
+	                        <RowDefinition Height="Auto" />
+	                        <RowDefinition Height="3" />
+	                    </Grid.RowDefinitions>
+	
+	                    <Rectangle Fill="#80000000" Grid.Column="2" Grid.ColumnSpan="5" Grid.RowSpan="2"/>
+	                    <Rectangle Fill="#80000000" Grid.Row="2" Grid.ColumnSpan="7" Grid.RowSpan="4"/>
+	
+					    <Rectangle Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" Fill="#000000" Width="2"/>
+	                    <Rectangle Grid.Column="4" Grid.Row="1" Grid.RowSpan="5" Fill="#000000" Width="2"/>
+	        
+	                    <Border Grid.Row="2" Grid.ColumnSpan="7" Grid.RowSpan="2" 
+	                            BorderBrush="{Binding [player1][color]}" 
+	                            BorderThickness="2,2,2,0"/>
+	                    <Border Grid.Row="4" Grid.ColumnSpan="7" Grid.RowSpan="2" 
+	                            BorderBrush="{Binding [player2][color]}" 
+	                            BorderThickness="2,0,2,2"/>
+	        
+	                    <TextBlock Grid.Column="3" Grid.ColumnSpan="3"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="Efficiency"/>
+	                    <TextBlock Grid.Column="3" Grid.ColumnSpan="3"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="Idle Time"/>
+	                    <TextBlock Grid.Column="3" Grid.Row="1"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Text="TC"/>
+	                    <TextBlock Grid.Column="5" Grid.Row="1"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Text="Worker"/>
+	        
+	                    <TextBlock Grid.Row="3" Grid.Column="1"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Text="{Binding [player1][name]}"/>
+	                    <TextBlock Grid.Row="3" Grid.Column="3"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="{Binding [player1][TownCenterEfficiency]}"/>
+	                    <TextBlock Grid.Row="3" Grid.Column="3"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="{Binding [player1][TownCenterIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
+	                    <TextBlock Grid.Row="3" Grid.Column="5"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="{Binding [player1][WorkerEfficiency]}"/>
+	                    <TextBlock Grid.Row="3" Grid.Column="5"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="{Binding [player1][WorkerIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
+	                    
+	                    <TextBlock Grid.Row="4" Grid.Column="1"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Text="{Binding [player2][name]}"/>
+	                    <TextBlock Grid.Row="4" Grid.Column="3"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="{Binding [player2][TownCenterEfficiency]}"/>
+	                    <TextBlock Grid.Row="4" Grid.Column="3"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="{Binding [player2][TownCenterIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
+	                    <TextBlock Grid.Row="4" Grid.Column="5"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="{Binding [player2][WorkerEfficiency]}"/>
+	                    <TextBlock Grid.Row="4" Grid.Column="5"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="{Binding [player2][WorkerIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
+	                    
+	                    <Button Opacity="0" 
+	                            Grid.Column="2" Grid.ColumnSpan="5" Grid.RowSpan="2"
+	                            Command="{Binding [EfficiencyStatisticsDisplayModeCommand]}"/>
+	                    <Button Opacity="0" 
+	                            Grid.Row="2" Grid.ColumnSpan="7" Grid.RowSpan="4"
+	                            Command="{Binding [EfficiencyStatisticsDisplayModeCommand]}"/>
+	                </Grid>
+	            </Canvas>
 
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-				<ContentControl Name="ObserverUIMessage"
-						Content="{Binding}"/>
-				
-				<DataTemplate.Triggers>
-					<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageAgingUpTimeDifferenceBetween">
-						<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageAgingUpTimeDifferenceBetween}"/>
-					</DataTrigger>
-					<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageAgingUpCanAffordTime">
-						<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageAgingUpCanAffordTime}"/>
-					</DataTrigger>
-				</DataTemplate.Triggers>
-			</DataTemplate>
-		</ItemsControl.ItemTemplate>
-	</ItemsControl>
+		        <ToggleButton x:Name="EfficiencyStatisticsExpanderButton"
+		                HorizontalAlignment="Left"
+		                VerticalAlignment="Top"
+		                IsChecked="True"
+		                Style="{StaticResource HUDExpanderToggleButtonWithBorderStyle}">
+		            <ToggleButton.Resources>
+		                <sys:Double x:Key="ExpandedToggleButtonGridAngleMin">45</sys:Double>
+		                <sys:Double x:Key="ExpandedToggleButtonGridAngleMax">225</sys:Double>
+		            </ToggleButton.Resources>
+		        </ToggleButton>
+		    </Grid>
+		</Grid>
+		
+	    <Grid.Triggers>
+	        <EventTrigger RoutedEvent="ToggleButton.Unchecked" SourceName="EfficiencyStatisticsExpanderButton">
+	            <BeginStoryboard>
+	                <Storyboard>
+	                    <DoubleAnimation BeginTime="0:0:0"
+	                                     EasingFunction="{StaticResource CircleEaseOut}"
+	                                     Storyboard.TargetName="EfficiencyStatisticsHeightRatioProxy" Storyboard.TargetProperty="Height"
+	                                     To="0" Duration="0:0:0.25" />
+	                </Storyboard>
+	            </BeginStoryboard>
+	        </EventTrigger>
+	        <EventTrigger RoutedEvent="ToggleButton.Checked" SourceName="EfficiencyStatisticsExpanderButton">
+	            <EventTrigger.EnterActions />
+	            <BeginStoryboard>
+	                <Storyboard>
+	                    <DoubleAnimation BeginTime="0:0:0"
+	                                     EasingFunction="{StaticResource CircleEaseOut}"
+	                                     Storyboard.TargetName="EfficiencyStatisticsHeightRatioProxy" Storyboard.TargetProperty="Height"
+	                                     To="1" Duration="0:0:0.25" />
+	                </Storyboard>
+	            </BeginStoryboard>
+	        </EventTrigger>
+	    </Grid.Triggers>
+	</Grid>
 </Grid>
 ]]

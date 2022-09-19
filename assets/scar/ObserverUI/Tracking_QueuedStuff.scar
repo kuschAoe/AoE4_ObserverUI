@@ -1,0 +1,45 @@
+QueuedStuff = {}
+
+ObserverUiInitialization:AddInitializable(QueuedStuff)
+
+function QueuedStuff:Initialize()
+	if World_GetPlayerCount() > 2 then 
+		return 
+	end
+	
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_Initialize(player)
+	end
+end
+
+function QueuedStuff:GetForPlayer(player)
+	if World_GetPlayerCount() > 2 then 
+		return {}
+	end
+	
+	return self[player.PlayerID]
+end
+
+function QueuedStuff:_Initialize(player)
+	local rule = function ()
+		self[player.PlayerID] = {} 
+	end
+	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, rule)
+	
+	local entity_GetProductionQueueSize = Entity_GetProductionQueueSize
+	local entity_GetProductionQueueItem = Entity_GetProductionQueueItem
+	local rule = function (entity)
+		local queuedStuff = self[player.PlayerID]
+        local queueSize = entity_GetProductionQueueSize(entity)
+        for i = 0, (queueSize - 1) do
+            local bp = entity_GetProductionQueueItem(entity, i)
+			if queuedStuff[bp.PropertyBagGroupID] then
+				queuedStuff[bp.PropertyBagGroupID].Count = queuedStuff[bp.PropertyBagGroupID].Count + 1
+			else
+				queuedStuff[bp.PropertyBagGroupID] = { Count = 1, Bp = bp} 
+			end
+        end
+	end
+	ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "BuildingWithQueue", rule)
+end

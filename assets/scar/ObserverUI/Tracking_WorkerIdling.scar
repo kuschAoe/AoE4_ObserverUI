@@ -1,0 +1,53 @@
+WorkerIdling = {}
+
+ObserverUiInitialization:AddInitializable(WorkerIdling)
+
+function WorkerIdling:Initialize()
+	if World_GetPlayerCount() > 2 then 
+		return 
+	end
+	
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_Initialize(player)
+	end
+end
+
+function WorkerIdling:GetForPlayer_IdleTime_Efficiency(player)
+	if World_GetPlayerCount() > 2 then 
+		return 0, 0 
+	end
+	
+	local idlingOfPlayer = self[player.PlayerID]
+	
+	local idleTime = (idlingOfPlayer.TicksTotal - idlingOfPlayer.TicksActive)/8
+	local efficiency = idlingOfPlayer.TicksActive/idlingOfPlayer.TicksTotal
+	
+	return idleTime, efficiency
+end
+
+function WorkerIdling:_Initialize(player)
+	local workerIdlingOfPlayer = {
+		TicksTotal = 0,
+		TicksActive = 0
+	}
+	self[player.PlayerID] = workerIdlingOfPlayer
+	
+	local squad_IsOfType = Squad_IsOfType
+	local squad_IsMoving = Squad_IsMoving
+	local squad_IsIdle = Squad_IsIdle
+	local squad_IsAttackMoving = Squad_IsAttackMoving
+	local rule = function (squad)
+		if not squad_IsOfType(squad, "trade_cart") then
+			workerIdlingOfPlayer.TicksTotal = workerIdlingOfPlayer.TicksTotal + 1
+			
+			if not squad_IsMoving(squad) 
+					and not squad_IsIdle(squad) 
+					and not squad_IsAttackMoving(squad) then
+				workerIdlingOfPlayer.TicksActive = workerIdlingOfPlayer.TicksActive + 1
+			end
+		end
+	end
+	
+	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "worker", rule)
+end

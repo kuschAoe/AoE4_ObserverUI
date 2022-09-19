@@ -1,0 +1,74 @@
+TownCenterIdling = {}
+
+ObserverUiInitialization:AddInitializable(TownCenterIdling)
+
+function TownCenterIdling:Initialize()
+	if World_GetPlayerCount() > 2 then 
+		return 
+	end
+	
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_Initialize(player)
+	end
+end
+
+function TownCenterIdling:GetForPlayer_IdleTime_Efficiency(player)
+	if World_GetPlayerCount() > 2 then 
+		return 0, 0 
+	end
+	
+	local townCenterIdlingOfPlayer = self[player.PlayerID]
+	
+	local idleTime = (townCenterIdlingOfPlayer.TicksTotal - townCenterIdlingOfPlayer.TicksActive)/8
+	local efficiency = townCenterIdlingOfPlayer.TicksActive/townCenterIdlingOfPlayer.TicksTotal
+	
+	return idleTime, efficiency
+end
+
+function TownCenterIdling:_Initialize(player)
+	local townCenterIdlingOfPlayer = {
+		TicksTotal = 0,
+		TicksActive = 0
+	}
+	self[player.PlayerID] = townCenterIdlingOfPlayer
+	
+	local entity_IsOfType = Entity_IsOfType
+	local entity_GetProductionQueueSize = Entity_GetProductionQueueSize
+	local rule = function (entity)
+		if entity_IsOfType(entity, "town_center") then
+			townCenterIdlingOfPlayer.TicksTotal = townCenterIdlingOfPlayer.TicksTotal + 1
+			if entity_GetProductionQueueSize(entity) > 0 then
+				townCenterIdlingOfPlayer.TicksActive = townCenterIdlingOfPlayer.TicksActive + 1
+			end
+		end
+	end
+	if Player_GetRace(player) == RACE.ENGLISH then
+		local entity_GetBlueprint = Entity_GetBlueprint
+		rule = function (entity)
+			if entity_IsOfType(entity, "town_center")
+					or entity_GetBlueprint(entity).PropertyBagGroupID == 166271 then --westminster_palace
+				townCenterIdlingOfPlayer.TicksTotal = townCenterIdlingOfPlayer.TicksTotal + 1
+				if entity_GetProductionQueueSize(entity) > 0 then
+					townCenterIdlingOfPlayer.TicksActive = townCenterIdlingOfPlayer.TicksActive + 1
+				end
+			end
+		end
+	end
+	if Player_GetRace(player) == RACE.HRE then
+		rule = function (entity)
+			if entity_IsOfType(entity, "town_center") then
+				local multiplier = 1
+				if Entity_GetBlueprint(entity).PropertyBagGroupID == 134920 then --hohenzollern_castle
+					multiplier = 3
+				end
+				townCenterIdlingOfPlayer.TicksTotal = townCenterIdlingOfPlayer.TicksTotal + multiplier
+				if entity_GetProductionQueueSize(entity) > 0 then
+					townCenterIdlingOfPlayer.TicksActive = townCenterIdlingOfPlayer.TicksActive + multiplier
+				end
+			end
+		end
+	end
+	
+	ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "BuildingWithQueue", rule)
+end

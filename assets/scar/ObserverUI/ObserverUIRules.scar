@@ -1,7 +1,0 @@
-function InitializeObserverUIRules()
-	Rule_AddInterval(UpdateObserverUIDataContext, 1)
-end
-
-function RemoveObserverUIRules()
-	Rule_Remove(UpdateObserverUIDataContext)
-end

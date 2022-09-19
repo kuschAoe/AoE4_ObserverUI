@@ -1,0 +1,56 @@
+PopulationComposition = {}
+
+ObserverUiInitialization:AddInitializable(PopulationComposition)
+
+function PopulationComposition:Initialize()
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_Initialize(player)
+	end
+end
+
+function PopulationComposition:GetForPlayer_Worker_WorkerIdle_MilitaryNonSiege_Siege(player)
+	local PopulationComposition = self[player.PlayerID]
+	return PopulationComposition.Worker, PopulationComposition.WorkerIdle, 
+		PopulationComposition.MilitaryNonSiege, PopulationComposition.Siege
+end
+
+function PopulationComposition:_Initialize(player)
+	local populationComposition = {
+		Worker = 0,
+		WorkerIdle = 0,
+		MilitaryNonSiege = 0,
+		Siege = 0
+	}
+	self[player.PlayerID] = populationComposition
+	
+	local rule = function ()
+		populationComposition.Worker = 0
+		populationComposition.WorkerIdle = 0
+		populationComposition.MilitaryNonSiege = 0
+		populationComposition.Siege = 0
+	end
+	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, rule)
+	
+	local squad_Population = Squad_Population
+	local squad_IsIdle = Squad_IsIdle
+	local rule = function (squad)
+		local population = squad_Population(squad, CT_Personnel)
+		populationComposition.Worker = populationComposition.Worker + population
+		if squad_IsIdle(squad) then
+			populationComposition.WorkerIdle = populationComposition.WorkerIdle + population
+		end
+	end
+	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "worker", rule)
+	
+	local squad_IsOfType = Squad_IsOfType
+	local rule = function (squad)
+		local population = squad_Population(squad, CT_Personnel)
+		if not squad_IsOfType(squad, "siege") then
+			populationComposition.MilitaryNonSiege = populationComposition.MilitaryNonSiege + population
+		else
+			populationComposition.Siege = populationComposition.Siege + population
+		end
+	end
+	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "NonWorker", rule)
+end

@@ -1,0 +1,50 @@
+RelicLocations = {}
+
+ObserverUiInitialization:AddInitializable(RelicLocations)
+
+function RelicLocations:Initialize()
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_Initialize(player)
+	end
+end
+
+function RelicLocations:GetForPlayer_Carried_Deposited(player)
+	local relicLocations = self[player.PlayerID]
+	return relicLocations.Carried, relicLocations.Deposited
+end
+
+function RelicLocations:_Initialize(player)
+    local relicLocations = {
+        Carried = 0,
+        Deposited = 0
+    }
+    self[player.PlayerID] = relicLocations
+    
+    local rule = function ()
+        relicLocations.Carried = 0
+        relicLocations.Deposited = 0
+    end
+    ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, rule)
+    
+    local entity_GetStateModelFloat = Entity_GetStateModelFloat
+    local squad_EntityAt = Squad_EntityAt
+    local squad_Count = Squad_Count
+    local rule = function (squad)
+        for i = 1, squad_Count(squad) do
+            local entity = squad_EntityAt(squad, i - 1)
+            local relics = entity_GetStateModelFloat(entity, "Relic_Count")
+            relicLocations.Carried = relicLocations.Carried + relics
+        end
+    end
+    ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "NonWorker", rule)
+    
+    local entity_IsPartOfSquad = Entity_IsPartOfSquad
+    local rule = function (entity)
+        if not entity_IsPartOfSquad(entity) then
+            local relics = entity_GetStateModelFloat(entity, "Relic_Count")
+            relicLocations.Deposited = relicLocations.Deposited + relics
+        end
+    end
+    ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "building", rule)
+end

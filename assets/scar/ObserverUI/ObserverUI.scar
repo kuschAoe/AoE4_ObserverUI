@@ -1,12 +1,20 @@
+import("ObserverUI/ObserverUiInitialization.scar")
+import("ObserverUI/Tracking_GameObjectRepository.scar")
+import("ObserverUI/Tracking_TownCenterIdling.scar")
+import("ObserverUI/Tracking_WorkerIdling.scar")
+import("ObserverUI/Tracking_AgingUpProgress.scar")
+import("ObserverUI/Tracking_AgingUpTimings.scar")
+import("ObserverUI/Tracking_RelicLocations.scar")
+import("ObserverUI/Tracking_PopulationComposition.scar")
+import("ObserverUI/Tracking_OwnedSquads.scar")
+import("ObserverUI/Tracking_QueuedStuff.scar")
+
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")
 import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/xaml/SwapPlayers1v1Button.scar")
 import("ObserverUI/xaml/SymmetryButton.scar")
 import("ObserverUI/ObserverUIUpdateUi.scar")
-import("ObserverUI/ObserverUIRules.scar")
-import("ObserverUI/Tracking_AgingUpProgress.scar")
-import("ObserverUI/Tracking_AgingUpTimings.scar")
 
 Core_RegisterModule("ObserverUI")
 
@@ -24,7 +32,7 @@ function ObserverUI_OnInit()
 	end
 	
 	UI_AddChild("ScarDefault", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
-	UI_AddChild("ScarDefault", "XamlPresenter", "ObserverUI", { IsHitTestVisible = false, Xaml = observeXaml})
+	UI_AddChild("ScarDefault", "XamlPresenter", "ObserverUI", { IsHitTestVisible = true, Xaml = observeXaml})
 	
 	Set_ReplayStatViewer_And_ImprovedUI_Visibility(true)
 end
@@ -59,9 +67,10 @@ end
 
 function ShowImprovedUI()
 	InitializeObserverUIDataContext()
-	AgingUpProgress:StartTracking()
-	AgingUpTimings:StartTracking()
-	InitializeObserverUIRules()
+	
+	ObserverUiRuleSystem:Reset()
+	ObserverUiRuleSystem:AddUiUpdateRule(UpdateObserverUIDataContext)
+	ObserverUiInitialization:Initialize()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Visible")
@@ -74,9 +83,7 @@ function ShowImprovedUI()
 end
 
 function ShowClassicUI()
-	AgingUpTimings:StopTracking()
-	AgingUpProgress:StopTracking()
-	RemoveObserverUIRules()
+	ObserverUiRuleSystem:Stop()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Collapsed")

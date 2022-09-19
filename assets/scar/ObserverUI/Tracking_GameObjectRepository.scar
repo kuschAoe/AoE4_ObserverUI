@@ -1,0 +1,83 @@
+GameObjectRepository = {
+	AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP = {
+        "wonder_dark_age",
+        "wonder_feudal_age",
+        "wonder_castle_age"
+    }
+}
+
+ObserverUiInitialization:AddInitializable(GameObjectRepository)
+
+function GameObjectRepository:Initialize()
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_Initialize(player)
+	end
+end
+
+function GameObjectRepository:_Initialize(player)
+	local gameObjectsOfPlayer = {}
+	self[player.PlayerID] = gameObjectsOfPlayer
+	
+	local preparation = function ()
+		gameObjectsOfPlayer.Age = Player_GetCurrentAge(player)
+	end
+	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+	
+	if Player_GetRace(player) == RACE.ABBASID then
+		local preparation = function ()
+			gameObjectsOfPlayer.HouseOfWisdom = nil
+		end
+		ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+		
+		local entity_GetBlueprint = Entity_GetBlueprint
+		local rule = function (entity)
+			if entity_GetBlueprint(entity).PropertyBagGroupID == 199772 then --house_of_wisdom
+				gameObjectsOfPlayer.HouseOfWisdom = entity
+			end
+		end
+		ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "BuildingWithQueue", rule)
+		return
+	end
+	
+	local entity_IsOfType = Entity_IsOfType
+	if Player_GetRace(player) == RACE.CHINESE then
+		local preparation = function ()
+			gameObjectsOfPlayer.LandmarkForNextAge = nil
+			gameObjectsOfPlayer.SecondLandmarkForNextAge = nil
+		end
+		ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+		
+		local rule = function (entity)
+			if gameObjectsOfPlayer.Age > 3 then
+				return
+			end
+			
+			if Entity_IsOfType(entity, self.AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP[gameObjectsOfPlayer.Age]) then
+				if not gameObjectsOfPlayer.LandmarkForNextAge then
+					gameObjectsOfPlayer.LandmarkForNextAge = entity
+				else
+					gameObjectsOfPlayer.SecondLandmarkForNextAge = entity
+				end
+			end
+		end
+		ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "building", rule)
+		return
+	end
+	
+	local preparation = function ()
+		gameObjectsOfPlayer.LandmarkForNextAge = nil
+	end
+	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+	
+	local rule = function (entity)
+		if gameObjectsOfPlayer.Age > 3 then
+			return
+		end
+		
+		if Entity_IsOfType(entity, self.AGE_TO_REQUIRED_ENTITY_TYPE_FOR_AGING_UP[gameObjectsOfPlayer.Age]) then
+			gameObjectsOfPlayer.LandmarkForNextAge = entity
+		end
+	end
+	ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "building", rule)
+end

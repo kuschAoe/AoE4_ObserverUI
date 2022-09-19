@@ -1,0 +1,136 @@
+ObserverUiRuleSystem = {
+	RulesForPlayer = {},
+}
+
+function ObserverUiRuleSystem:Initialize()
+	for i=1, #PLAYERS do
+		self:_InitializeDataStructure(PLAYERS[i].id.PlayerID)
+	end
+	
+	Rule_Add(_OneRuleToRingThemAll)
+end
+
+function ObserverUiRuleSystem:Reset()
+	Rule_Remove(_OneRuleToRingThemAll)
+	
+	self.RulesForPlayer = {}
+	self.UiUpdates = _DefaultFuncTable
+end
+
+function ObserverUiRuleSystem:Stop()
+	Rule_Pause(_OneRuleToRingThemAll)
+end
+
+function ObserverUiRuleSystem:Resume()
+	Rule_Unpause(_OneRuleToRingThemAll)
+end
+
+function ObserverUiRuleSystem:AddSquadRule(playerId, squadType, rule)
+	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForSquads", squadType)
+end
+
+function ObserverUiRuleSystem:AddEntityRule(playerId, entityType, rule)
+	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForEntities", entityType)
+end
+
+function ObserverUiRuleSystem:AddPreparationRule(playerId, rule)
+	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForPreparation")
+end
+
+function ObserverUiRuleSystem:AddProcessingRule(playerId, rule)
+	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForProcessing")
+end
+
+function ObserverUiRuleSystem:AddUiUpdateRule(rule)
+	self:_AddRule(nil, rule, "UiUpdates")
+end
+
+function _NoOp() end
+_DefaultFuncTable = { Func = _NoOp }
+_DefaultFuncMt = { __index = function () return _DefaultFuncTable end}
+
+function _OneRuleToRingThemAll()
+	local self = ObserverUiRuleSystem
+	local slot = World_GetGameTicks() & 7 --same as %8 but fast
+	
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		local rulesForPlayer = self.RulesForPlayer[player.PlayerID]
+		
+		rulesForPlayer.ForPreparation.Func()
+		SGroup_ForEach(Player_GetSquads(player), rulesForPlayer.RouterForSquads)
+		EGroup_ForEach(Player_GetEntities(player), rulesForPlayer.RouterForEntities)
+		rulesForPlayer.ForProcessing.Func()
+	end
+	
+	if slot == 0 or slot == 4 then
+		self.UiUpdates.Func()
+	end
+end
+
+function ObserverUiRuleSystem:_InitializeDataStructure(playerId)
+	if not self.RulesForPlayer[playerId] then
+		local forSquads = {}
+		setmetatable(forSquads, _DefaultFuncMt)
+		local forEntities = {}
+		setmetatable(forEntities, _DefaultFuncMt)
+		
+		local squad_IsOfType = Squad_IsOfType
+		local routerForSquads = function (group, index, squad)
+			forSquads[""].Func(squad)
+			if squad_IsOfType(squad, "worker") then
+				forSquads.worker.Func(squad)
+			else
+				forSquads.NonWorker.Func(squad)
+			end
+		end
+		local entity_IsOfType = Entity_IsOfType
+		local entity_IsProductionQueueAvailable = Entity_IsProductionQueueAvailable
+		local routerForEntities = function (group, index, entity)
+			if entity_IsOfType(entity, "building") then
+				forEntities.building.Func(entity)
+				
+				if entity_IsProductionQueueAvailable(entity) then
+					forEntities.BuildingWithQueue.Func(entity)
+				end
+			end
+		end
+		
+		self.RulesForPlayer[playerId] = { 
+			ForSquads = forSquads, 
+			ForEntities = forEntities,
+			RouterForSquads = routerForSquads,
+			RouterForEntities = routerForEntities,
+			ForPreparation = _DefaultFuncTable,
+			ForProcessing = _DefaultFuncTable
+		} 
+	end
+end
+
+function ObserverUiRuleSystem:_AddRule(playerId, rule, ...)
+	if playerId then
+		self:_InitializeDataStructure(playerId)
+	end
+	
+	local args = {...}
+	local argsSize = #args
+	local targetParent = self
+	for index = 1, argsSize - 1 do
+		targetParent = targetParent[args[index]]
+	end
+	if targetParent[args[argsSize]].Func == _NoOp then
+		targetParent[args[argsSize]] = { Func = rule }
+		return
+	end
+	if not targetParent[args[argsSize]].Funcs then
+		local funcs = { targetParent[args[argsSize]].Func, rule }
+		targetParent[args[argsSize]].Funcs = funcs
+		targetParent[args[argsSize]].Func = 
+			function (p) 
+				for i = 1, #funcs do funcs[i](p) end 
+			end
+		return
+	end
+	
+	table.insert(targetParent[args[argsSize]].Funcs, rule) 
+end
