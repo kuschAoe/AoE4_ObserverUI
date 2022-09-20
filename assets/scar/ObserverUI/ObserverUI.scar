@@ -11,6 +11,7 @@ import("ObserverUI/Tracking_RelicLocations.scar")
 import("ObserverUI/Tracking_PopulationComposition.scar")
 import("ObserverUI/Tracking_OwnedSquads.scar")
 import("ObserverUI/Tracking_QueuedStuff.scar")
+import("ObserverUI/Tracking_SquadLosses.scar")
 
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")

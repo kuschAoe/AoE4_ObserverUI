@@ -1,0 +1,57 @@
+SquadLosses = {}
+
+ObserverUiInitialization:AddInitializable(SquadLosses)
+
+function SquadLosses:Initialize()
+	for i=1, #PLAYERS do
+		local player = PLAYERS[i].id
+		self:_InitializeDataStructure(player)
+	end
+	
+	self:_InitializeRule()
+end
+
+function SquadLosses:Reset()
+	Rule_RemoveGlobalEvent(_OnSquadKilledRule)
+end
+
+function SquadLosses:GetForPlayer_Worker_Military(player)
+	local squadLosses = self[player.PlayerID]
+	return squadLosses.Worker, squadLosses.Military
+end
+
+function SquadLosses:_InitializeDataStructure(player)
+	local squadLossesOfPlayer = {
+		Worker = 0,
+		Military = 0
+	}
+	
+	self[player.PlayerID] = squadLossesOfPlayer
+end
+
+function SquadLosses:_InitializeRule()
+	local world_OwnsSquad = World_OwnsSquad
+	local squad_GetPlayerOwner = Squad_GetPlayerOwner
+	local squad_IsOfType = Squad_IsOfType
+	local onSquadKilledRule = function(context)
+	    if world_OwnsSquad(context.victim) then
+	        return
+	    end
+	
+	    local playerId = squad_GetPlayerOwner(context.victim).PlayerID
+		local squadLossesOfPlayer = SquadLosses[playerId]
+		
+	    if squad_IsOfType(context.victim, "worker") then
+	        squadLossesOfPlayer.Worker = squadLossesOfPlayer.Worker + 1
+	    elseif squad_IsOfType(context.victim, "military") then
+	        squadLossesOfPlayer.Military = squadLossesOfPlayer.Military + 1
+	    end
+	end
+	
+	self.Rule = onSquadKilledRule
+    Rule_AddGlobalEvent(_OnSquadKilledRule, GE_SquadKilled)
+end
+
+function _OnSquadKilledRule(context)
+	SquadLosses.Rule(context)
+end
