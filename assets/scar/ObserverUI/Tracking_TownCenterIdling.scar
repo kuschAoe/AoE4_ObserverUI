@@ -70,5 +70,5 @@ function TownCenterIdling:_Initialize(player)
 		end
 	end
 	
-	ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "BuildingWithQueue", rule)
+	ObserverUiRuleSystem:AddEntityDataGatheringRule(player.PlayerID, "BuildingWithQueue", rule)
 end

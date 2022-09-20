@@ -25,7 +25,7 @@ function OwnedSquads:_Initialize(player)
 	local rule = function ()
 		self[player.PlayerID] = {}
 	end
-	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, rule)
+	ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, rule)
 	
 	local squad_GetBlueprint = Squad_GetBlueprint
 	local rule = function (squad)
@@ -37,5 +37,5 @@ function OwnedSquads:_Initialize(player)
 			ownedSquads[bp.PropertyBagGroupID] = { Count = 1, Bp = bp} 
 		end
 	end
-	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "", rule)
+	ObserverUiRuleSystem:AddSquadDataGatheringRule(player.PlayerID, "", rule)
 end

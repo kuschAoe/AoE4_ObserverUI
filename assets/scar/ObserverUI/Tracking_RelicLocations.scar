@@ -25,7 +25,7 @@ function RelicLocations:_Initialize(player)
         relicLocations.Carried = 0
         relicLocations.Deposited = 0
     end
-    ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, rule)
+    ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, rule)
     
     local entity_GetStateModelFloat = Entity_GetStateModelFloat
     local squad_EntityAt = Squad_EntityAt
@@ -37,7 +37,7 @@ function RelicLocations:_Initialize(player)
             relicLocations.Carried = relicLocations.Carried + relics
         end
     end
-    ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "NonWorker", rule)
+    ObserverUiRuleSystem:AddSquadDataGatheringRule(player.PlayerID, "NonWorker", rule)
     
     local entity_IsPartOfSquad = Entity_IsPartOfSquad
     local rule = function (entity)
@@ -46,5 +46,5 @@ function RelicLocations:_Initialize(player)
             relicLocations.Deposited = relicLocations.Deposited + relics
         end
     end
-    ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "building", rule)
+    ObserverUiRuleSystem:AddEntityDataGatheringRule(player.PlayerID, "building", rule)
 end

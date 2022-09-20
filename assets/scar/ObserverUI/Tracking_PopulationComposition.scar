@@ -30,7 +30,7 @@ function PopulationComposition:_Initialize(player)
 		populationComposition.MilitaryNonSiege = 0
 		populationComposition.Siege = 0
 	end
-	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, rule)
+	ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, rule)
 	
 	local squad_Population = Squad_Population
 	local squad_IsIdle = Squad_IsIdle
@@ -41,7 +41,7 @@ function PopulationComposition:_Initialize(player)
 			populationComposition.WorkerIdle = populationComposition.WorkerIdle + population
 		end
 	end
-	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "worker", rule)
+	ObserverUiRuleSystem:AddSquadDataGatheringRule(player.PlayerID, "worker", rule)
 	
 	local squad_IsOfType = Squad_IsOfType
 	local rule = function (squad)
@@ -52,5 +52,5 @@ function PopulationComposition:_Initialize(player)
 			populationComposition.Siege = populationComposition.Siege + population
 		end
 	end
-	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "NonWorker", rule)
+	ObserverUiRuleSystem:AddSquadDataGatheringRule(player.PlayerID, "NonWorker", rule)
 end

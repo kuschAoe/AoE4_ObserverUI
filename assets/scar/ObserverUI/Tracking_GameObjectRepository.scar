@@ -22,13 +22,13 @@ function GameObjectRepository:_Initialize(player)
 	local preparation = function ()
 		gameObjectsOfPlayer.Age = Player_GetCurrentAge(player)
 	end
-	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+	ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, preparation)
 	
 	if Player_GetRace(player) == RACE.ABBASID then
 		local preparation = function ()
 			gameObjectsOfPlayer.HouseOfWisdom = nil
 		end
-		ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+		ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, preparation)
 		
 		local entity_GetBlueprint = Entity_GetBlueprint
 		local rule = function (entity)
@@ -36,7 +36,7 @@ function GameObjectRepository:_Initialize(player)
 				gameObjectsOfPlayer.HouseOfWisdom = entity
 			end
 		end
-		ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "BuildingWithQueue", rule)
+		ObserverUiRuleSystem:AddEntityDataGatheringRule(player.PlayerID, "BuildingWithQueue", rule)
 		return
 	end
 	
@@ -46,7 +46,7 @@ function GameObjectRepository:_Initialize(player)
 			gameObjectsOfPlayer.LandmarkForNextAge = nil
 			gameObjectsOfPlayer.SecondLandmarkForNextAge = nil
 		end
-		ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+		ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, preparation)
 		
 		local rule = function (entity)
 			if gameObjectsOfPlayer.Age > 3 then
@@ -61,14 +61,14 @@ function GameObjectRepository:_Initialize(player)
 				end
 			end
 		end
-		ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "building", rule)
+		ObserverUiRuleSystem:AddEntityDataGatheringRule(player.PlayerID, "building", rule)
 		return
 	end
 	
 	local preparation = function ()
 		gameObjectsOfPlayer.LandmarkForNextAge = nil
 	end
-	ObserverUiRuleSystem:AddPreparationRule(player.PlayerID, preparation)
+	ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, preparation)
 	
 	local rule = function (entity)
 		if gameObjectsOfPlayer.Age > 3 then
@@ -79,5 +79,5 @@ function GameObjectRepository:_Initialize(player)
 			gameObjectsOfPlayer.LandmarkForNextAge = entity
 		end
 	end
-	ObserverUiRuleSystem:AddEntityRule(player.PlayerID, "building", rule)
+	ObserverUiRuleSystem:AddEntityDataGatheringRule(player.PlayerID, "building", rule)
 end

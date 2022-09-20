@@ -49,5 +49,5 @@ function WorkerIdling:_Initialize(player)
 		end
 	end
 	
-	ObserverUiRuleSystem:AddSquadRule(player.PlayerID, "worker", rule)
+	ObserverUiRuleSystem:AddSquadDataGatheringRule(player.PlayerID, "worker", rule)
 end

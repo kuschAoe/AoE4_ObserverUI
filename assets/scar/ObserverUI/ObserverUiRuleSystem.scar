@@ -28,19 +28,19 @@ function ObserverUiRuleSystem:Resume()
 	Rule_Unpause(_OneRuleToRingThemAll)
 end
 
-function ObserverUiRuleSystem:AddSquadRule(playerId, squadType, rule)
+function ObserverUiRuleSystem:AddSquadDataGatheringRule(playerId, squadType, rule)
 	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForSquads", squadType)
 end
 
-function ObserverUiRuleSystem:AddEntityRule(playerId, entityType, rule)
+function ObserverUiRuleSystem:AddEntityDataGatheringRule(playerId, entityType, rule)
 	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForEntities", entityType)
 end
 
-function ObserverUiRuleSystem:AddPreparationRule(playerId, rule)
+function ObserverUiRuleSystem:AddDataGatheringPreparationRule(playerId, rule)
 	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForPreparation")
 end
 
-function ObserverUiRuleSystem:AddProcessingRule(playerId, rule)
+function ObserverUiRuleSystem:AddDataProcessingRule(playerId, rule)
 	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForProcessing")
 end
 
