@@ -181,7 +181,7 @@ _Observe2PlayersXaml =
                 <Image Grid.Column="3"
 						HorizontalAlignment="Right"
                         Height="28"
-                        Source="pack://application:,,,/WPFGUI;component/icons/races/common/abilities/leader_siege_damage.png"/>
+                        Source="pack://application:,,,/WPFGUI;component/icons/races/common/buildings/siege_workshop.png"/>
                 <TextBlock Grid.Column="4" 
 						HorizontalAlignment="Left" VerticalAlignment="Center"
                         Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
