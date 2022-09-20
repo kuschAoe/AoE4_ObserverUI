@@ -165,8 +165,6 @@ function UpdateObserverUIDataContext()
 	end
 	
 	UpdateMessages()
-	
-	UI_SetDataContext("ObserverUI", _ObserverUIDataContext)
 end
 
 function UpdateResources(t, player)
