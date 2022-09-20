@@ -73,7 +73,7 @@ function ShowImprovedUI()
 	InitializeObserverUIDataContext()
 	
 	ObserverUiInitialization:Reset()
-	ObserverUiRuleSystem:AddUiUpdateRule(UpdateObserverUIDataContext)
+	ObserverUiRuleSystem:AddUpdateUiDataContextRule(UpdateObserverUIDataContext)
 	ObserverUiInitialization:Initialize()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")

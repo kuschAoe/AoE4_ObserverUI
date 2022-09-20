@@ -16,7 +16,8 @@ function ObserverUiRuleSystem:Reset()
 	Rule_Remove(_OneRuleToRingThemAll)
 	
 	self.RulesForPlayer = {}
-	self.UiUpdates = _DefaultFuncTable
+	self.UpdateUiDataContexts = _DefaultFuncTable
+	self.ApplyUiDataContexts = _DefaultFuncTable
 end
 
 function ObserverUiRuleSystem:Stop()
@@ -43,8 +44,12 @@ function ObserverUiRuleSystem:AddProcessingRule(playerId, rule)
 	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForProcessing")
 end
 
-function ObserverUiRuleSystem:AddUiUpdateRule(rule)
-	self:_AddRule(nil, rule, "UiUpdates")
+function ObserverUiRuleSystem:AddUpdateUiDataContextRule(rule)
+	self:_AddRule(nil, rule, "UpdateUiDataContexts")
+end
+
+function ObserverUiRuleSystem:AddApplyUiDataContextRule(rule)
+	self:_AddRule(nil, rule, "ApplyUiDataContexts")
 end
 
 function _NoOp() end
@@ -66,7 +71,8 @@ function _OneRuleToRingThemAll()
 	end
 	
 	if slot == 0 or slot == 4 then
-		self.UiUpdates.Func()
+		self.UpdateUiDataContexts.Func()
+		self.ApplyUiDataContexts.Func()
 	end
 end
 
