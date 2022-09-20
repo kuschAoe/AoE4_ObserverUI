@@ -1,4 +1,7 @@
 import("ObserverUI/ObserverUiInitialization.scar")
+
+import("ObserverUI/ObserverUIRuleSystem.scar")
+
 import("ObserverUI/Tracking_GameObjectRepository.scar")
 import("ObserverUI/Tracking_TownCenterIdling.scar")
 import("ObserverUI/Tracking_WorkerIdling.scar")
@@ -68,7 +71,7 @@ end
 function ShowImprovedUI()
 	InitializeObserverUIDataContext()
 	
-	ObserverUiRuleSystem:Reset()
+	ObserverUiInitialization:Reset()
 	ObserverUiRuleSystem:AddUiUpdateRule(UpdateObserverUIDataContext)
 	ObserverUiInitialization:Initialize()
 	
@@ -83,7 +86,7 @@ function ShowImprovedUI()
 end
 
 function ShowClassicUI()
-	ObserverUiRuleSystem:Stop()
+	ObserverUiInitialization:Stop()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Collapsed")

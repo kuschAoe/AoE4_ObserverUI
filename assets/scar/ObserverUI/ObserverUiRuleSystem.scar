@@ -2,6 +2,8 @@ ObserverUiRuleSystem = {
 	RulesForPlayer = {},
 }
 
+ObserverUiInitialization:AddInitializable(ObserverUiRuleSystem)
+
 function ObserverUiRuleSystem:Initialize()
 	for i=1, #PLAYERS do
 		self:_InitializeDataStructure(PLAYERS[i].id.PlayerID)

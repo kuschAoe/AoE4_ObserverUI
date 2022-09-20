@@ -1,5 +1,3 @@
-import("ObserverUI/ObserverUIRuleSystem.scar")
-
 ObserverUiInitialization = {
 	Initializables = {}
 }
@@ -9,9 +7,26 @@ function ObserverUiInitialization:AddInitializable(initializable)
 end
 
 function ObserverUiInitialization:Initialize()
+	self:_Do("Initialize")
+end
+
+function ObserverUiInitialization:Reset()
+	self:_Do("Reset")
+end
+
+function ObserverUiInitialization:Resume()
+	self:_Do("Resume")
+end
+
+function ObserverUiInitialization:Stop()
+	self:_Do("Stop")
+end
+
+function ObserverUiInitialization:_Do(method)
 	for i=1, #self.Initializables do
-		self.Initializables[i]:Initialize()
+		local methodOfInitializable = self.Initializables[i][method]
+		if methodOfInitializable then
+			methodOfInitializable(self.Initializables[i])
+		end
 	end
-	
-	ObserverUiRuleSystem:Initialize()
 end
