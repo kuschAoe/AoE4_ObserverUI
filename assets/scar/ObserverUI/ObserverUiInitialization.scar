@@ -2,8 +2,8 @@ ObserverUiInitialization = {
 	Initializables = {}
 }
 
-function ObserverUiInitialization:AddInitializable(initializable)
-	table.insert(self.Initializables, initializable)
+function ObserverUiInitialization:AddInitializable(initializable, restrictTo2OrLessPlayers)
+	table.insert(self.Initializables, {initializable, restrictTo2OrLessPlayers})
 end
 
 function ObserverUiInitialization:Initialize()
@@ -23,10 +23,22 @@ function ObserverUiInitialization:Stop()
 end
 
 function ObserverUiInitialization:_Do(method)
+	local playerCount = #PLAYERS
+	
 	for i=1, #self.Initializables do
-		local methodOfInitializable = self.Initializables[i][method]
-		if methodOfInitializable then
-			methodOfInitializable(self.Initializables[i])
+		local initializable = self.Initializables[i][1]
+		local methodOfInitializable = initializable[method]
+		local methodPerPlayerOfInitializable = initializable[method.."PerPlayer"]
+		local restrictTo2OrLessPlayers = self.Initializables[i][2]
+		if playerCount <= 2 or not restrictTo2OrLessPlayers then
+			if methodOfInitializable then
+				methodOfInitializable(initializable)
+			end
+			if methodPerPlayerOfInitializable then
+				for playerIndex = 1, playerCount do
+					methodPerPlayerOfInitializable(initializable, playerIndex)
+				end
+			end
 		end
 	end
 end

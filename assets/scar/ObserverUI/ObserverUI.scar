@@ -30,7 +30,7 @@ Core_RegisterModule("ObserverUI")
 
 function ObserverUI_OnInit()
 	if not UI_IsReplay() then
-		--return
+		return
 	end
 	
 	local observeXaml = _ObserveNPlayersXaml
