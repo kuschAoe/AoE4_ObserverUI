@@ -2,6 +2,8 @@ import("ObserverUI/ObserverUiInitialization.scar")
 
 import("ObserverUI/ObserverUIRuleSystem.scar")
 
+import("ObserverUI/Settings.scar")
+
 import("ObserverUI/Tracking_GameObjectRepository.scar")
 import("ObserverUI/Tracking_TownCenterIdling.scar")
 import("ObserverUI/Tracking_WorkerIdling.scar")
@@ -13,18 +15,22 @@ import("ObserverUI/Tracking_OwnedSquads.scar")
 import("ObserverUI/Tracking_QueuedStuff.scar")
 import("ObserverUI/Tracking_SquadLosses.scar")
 
+import("ObserverUI/UiDataContext/ObserverUiDataContext.scar")
+import("ObserverUI/UiDataContext/UpdateUi_SquadLosses.scar")
+
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")
 import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/xaml/SwapPlayers1v1Button.scar")
 import("ObserverUI/xaml/SymmetryButton.scar")
+
 import("ObserverUI/ObserverUIUpdateUi.scar")
 
 Core_RegisterModule("ObserverUI")
 
 function ObserverUI_OnInit()
 	if not UI_IsReplay() then
-		return
+		--return
 	end
 	
 	local observeXaml = _ObserveNPlayersXaml
@@ -71,7 +77,7 @@ end
 
 function ShowImprovedUI()
 	InitializeObserverUIDataContext()
-	
+
 	ObserverUiInitialization:Reset()
 	ObserverUiRuleSystem:AddUpdateUiDataContextRule(UpdateObserverUIDataContext)
 	ObserverUiRuleSystem:AddApplyUiDataContextRule(function () UI_SetDataContext("ObserverUI", _ObserverUIDataContext) end)
