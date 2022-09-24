@@ -44,6 +44,10 @@ function ObserverUiRuleSystem:AddDataProcessingRule(playerId, rule)
 	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "ForProcessing")
 end
 
+function ObserverUiRuleSystem:AddUpdateUiDataContextForPlayerRule(playerId, rule)
+	self:_AddRule(playerId, rule, "RulesForPlayer", playerId, "UpdateUiDataContextsForPlayer")
+end
+
 function ObserverUiRuleSystem:AddUpdateUiDataContextRule(rule)
 	self:_AddRule(nil, rule, "UpdateUiDataContexts")
 end
@@ -60,6 +64,8 @@ function _OneRuleToRingThemAll()
 	local self = ObserverUiRuleSystem
 	local slot = World_GetGameTicks() & 7 --same as %8 but fast
 	
+	local isUiUpdateTick = slot == 0 or slot == 4
+	
 	for i=1, #PLAYERS do
 		local player = PLAYERS[i].id
 		local rulesForPlayer = self.RulesForPlayer[player.PlayerID]
@@ -68,9 +74,13 @@ function _OneRuleToRingThemAll()
 		SGroup_ForEach(Player_GetSquads(player), rulesForPlayer.RouterForSquads)
 		EGroup_ForEach(Player_GetEntities(player), rulesForPlayer.RouterForEntities)
 		rulesForPlayer.ForProcessing.Func()
+		
+		if isUiUpdateTick then
+			rulesForPlayer.UpdateUiDataContextsForPlayer.Func()
+		end
 	end
 	
-	if slot == 0 or slot == 4 then
+	if isUiUpdateTick then
 		self.UpdateUiDataContexts.Func()
 		self.ApplyUiDataContexts.Func()
 	end
@@ -110,7 +120,8 @@ function ObserverUiRuleSystem:_InitializeDataStructure(playerId)
 			RouterForSquads = routerForSquads,
 			RouterForEntities = routerForEntities,
 			ForPreparation = _DefaultFuncTable,
-			ForProcessing = _DefaultFuncTable
+			ForProcessing = _DefaultFuncTable,
+			UpdateUiDataContextsForPlayer = _DefaultFuncTable
 		} 
 	end
 end

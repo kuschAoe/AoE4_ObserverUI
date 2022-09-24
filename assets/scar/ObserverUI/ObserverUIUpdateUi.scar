@@ -1,10 +1,6 @@
-import("ObserverUI/Settings.scar")
-
-_ObserverUIDataContext = {
-	players = {},
-	playersById = {},
-	EfficiencyStatisticsDisplayModeCommand = UI_CreateCommand("EfficiencyStatisticsDisplayModeCommand")
-}
+_ObserverUIDataContext = ObserverUiDataContext
+_ObserverUIDataContext.playersById = {}
+_ObserverUIDataContext.EfficiencyStatisticsDisplayModeCommand = UI_CreateCommand("EfficiencyStatisticsDisplayModeCommand")
 
 ObserverUi_ResourceMapping = {
 	food = RT_Food,
@@ -59,34 +55,33 @@ function InitializeObserverUIDataContext()
 	for index, playerTable in pairs(PLAYERS) do
 		local raceName = Player_GetRaceName(playerTable.id)
 		
-		 local data = {
-			name = playerTable.playerName,
-			color = UI_GetColourAsString(Player_GetUIColour(playerTable.id)),
+		local data = observerUIDataContext.players[index]
+		data.name = playerTable.playerName
+		data.color = UI_GetColourAsString(Player_GetUIColour(playerTable.id))
 			
-			civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race)),
-			civImage = _RaceImage[raceName],
+		data.civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race))
+		data.civImage = _RaceImage[raceName]
 			
-			ageIcon = "",
-			ageIconForAnimation = "",
-			isUpping = false,
-			ageUpProgress = 0.0,
-			upAt = 0,
-			populationVsMaximumPopulation = "",
-			workerPopulation = 0,
-			idleWorkerPopulation = 0,
-			militaryPopulation = 0,
-			siegePopulation = 0,
-			relics = 0,
-			relicsDeposited = 0,
-			upgradesQueued = {},
-			units = {},
-			unitsWorkers = {},
-			civSpecifics = { visible = raceName == "rus", icon = AdaptIconPathForXaml("icons/races/rus/abilities/hunting_boon"), text = "0"},
-			WorkerIdleTime = 0,
-			WorkerEfficiency = 0,
-			TownCenterIdleTime = 0,
-			TownCenterEfficiency = 0
-		}
+		data.ageIcon = ""
+		data.ageIconForAnimation = ""
+		data.isUpping = false
+		data.ageUpProgress = 0.0
+		data.upAt = 0
+		data.populationVsMaximumPopulation = ""
+		data.workerPopulation = 0
+		data.idleWorkerPopulation = 0
+		data.militaryPopulation = 0
+		data.siegePopulation = 0
+		data.relics = 0
+		data.relicsDeposited = 0
+		data.upgradesQueued = {}
+		data.units = {}
+		data.unitsWorkers = {}
+		data.civSpecifics = { visible = raceName == "rus", icon = AdaptIconPathForXaml("icons/races/rus/abilities/hunting_boon"), text = "0"}
+		data.WorkerIdleTime = 0
+		data.WorkerEfficiency = 0
+		data.TownCenterIdleTime = 0
+		data.TownCenterEfficiency = 0
 		
 		local resources = {}
 		for key,enum in pairs(ObserverUi_ResourceMapping) do
@@ -145,7 +140,8 @@ function EfficiencyStatisticsDisplayModeCommand()
 end
 
 function UpdateObserverUIDataContext()
-	for index, playerTable in pairs(_ObserverUIDataContext.players) do
+	for index=1, #PLAYERS do
+		local playerTable = _ObserverUIDataContext.players[index]
 		local player = PLAYERS[index].id
 		
 		local age = Player_GetCurrentAge(player)
