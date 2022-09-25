@@ -267,6 +267,40 @@ _Observe2PlayersXaml =
 			</Grid>
 		</DataTemplate>
 		
+		<DataTemplate x:Key="ObserverUiVictoryCountdowns">
+	        <ItemsControl ItemsSource="{Binding [VictoryCountdownsContext]}">
+	            <ItemsControl.ItemsPanel>
+	                <ItemsPanelTemplate>
+	                    <DockPanel/>
+	                </ItemsPanelTemplate>
+	            </ItemsControl.ItemsPanel>
+				
+			    <ItemsControl.ItemContainerStyle>
+			      	<Style TargetType="ContentPresenter">
+			        	<Setter Property="DockPanel.Dock" Value="Bottom"/>
+			      	</Style>
+			    </ItemsControl.ItemContainerStyle>
+	
+	            <ItemsControl.ItemTemplate>
+	                <DataTemplate>
+			            <Grid Width="100" Margin="0,2,0,0">
+        					<Rectangle Fill="#80000000" Visibility="{Binding [ClosestTo0], Converter={StaticResource BoolToVis}}"/>
+							<Border BorderThickness="2" Margin="2" BorderBrush="{StaticResource PrimaryColorLightBrush}"/>
+							<Grid Margin="6">
+				                <Image Height="24" Width="24"
+				                    	HorizontalAlignment="Left"
+				                    	Source="{Binding [Icon]}" />
+				                <TextBlock
+										HorizontalAlignment="Right"
+				                        Style="{StaticResource nHUDTitleAltTextBlockStyle}"
+				                        Text="{Binding [TimeRemaining], Converter={StaticResource ShorthandTimeFormat}}" />
+							</Grid>
+			            </Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</DataTemplate>
+		
 		<DataTemplate x:Key="ObserverUIUpgradesQueued">
 	        <ItemsControl ItemsSource="{Binding [upgradesQueued]}" Margin="-2,0,-2,0">
 	            <ItemsControl.ItemsPanel>
@@ -605,7 +639,11 @@ _Observe2PlayersXaml =
 					<ContentControl	HorizontalAlignment="Left"
 							ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
 							Content="{Binding [player1]}" />
+					<ContentControl	HorizontalAlignment="Right"
+							ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
+							Content="{Binding [player1]}" />
 				</Grid>
+				
 			</Grid>
 		</Grid>
 		
@@ -689,6 +727,10 @@ _Observe2PlayersXaml =
 				<Grid Grid.Row="2">
 					<ContentControl	HorizontalAlignment="Right"
 							ContentTemplate="{StaticResource ObserverUIUpgradesQueued}"
+							Content="{Binding [player2]}" />
+					
+					<ContentControl	HorizontalAlignment="Left"
+							ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
 							Content="{Binding [player2]}" />
 				</Grid>
 			</Grid>

@@ -1,0 +1,59 @@
+UiVictoryCountdowns = {}
+
+ObserverUiInitialization:AddInitializable(UiVictoryCountdowns)
+
+function UiVictoryCountdowns:Initialize()
+	for i=1, #PLAYERS do
+		ObserverUiDataContext.players[i].VictoryCountdownsContext = {}
+	end
+	
+	local observerUiDataContext = ObserverUiDataContext
+	local timer_Exists = Timer_Exists
+	local timer_GetRemaining = Timer_GetRemaining
+	local world_GetPlayerIndex = World_GetPlayerIndex
+	local tableInsert = table.insert
+	local rule = function()
+		local closestTo0Countdown
+		
+		for i=1, #PLAYERS do
+			local victoryCountdownsContext = {}
+			observerUiDataContext.players[i].VictoryCountdownsContext = victoryCountdownsContext
+			
+			local wonder = PLAYERS[i]._wonder
+			if wonder and timer_Exists(wonder.timer_victory_deterministic) then
+				local victoryCountdown = { 
+					TimeRemaining = timer_GetRemaining(wonder.timer_victory_deterministic),
+					Icon = "pack://application:,,,/WPFGUI;component/icons/races/common/victory_conditions/victory_condition_wonder.png",
+					ClosestTo0 = false
+				}
+				victoryCountdownsContext[1] = victoryCountdown
+				
+				if not closestTo0Countdown or closestTo0Countdown.TimeRemaining > victoryCountdown.TimeRemaining then
+					closestTo0Countdown = victoryCountdown
+				end
+			end
+		end
+		
+	    if _religious and timer_Exists(_religious.timer_victory) then
+			local victoryCountdown = { 
+				TimeRemaining = timer_GetRemaining(_religious.timer_victory),
+				Icon = "pack://application:,,,/WPFGUI;component/icons/races/common/victory_conditions/victory_condition_religious.png",
+				ClosestTo0 = false
+			}
+			
+			if not closestTo0Countdown or closestTo0Countdown.TimeRemaining > victoryCountdown.TimeRemaining then
+				closestTo0Countdown = victoryCountdown
+			end
+			
+			local playerIndex = world_GetPlayerIndex(_religious.last_capturer)
+			tableInsert(observerUiDataContext.players[playerIndex].VictoryCountdownsContext,
+				victoryCountdown)
+	    end
+		
+		if closestTo0Countdown then
+			closestTo0Countdown.ClosestTo0 = true
+		end
+	end
+	
+	ObserverUiRuleSystem:AddUpdateUiDataContextRule(rule)
+end
