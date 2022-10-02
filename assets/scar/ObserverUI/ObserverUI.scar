@@ -14,10 +14,13 @@ import("ObserverUI/Tracking_PopulationComposition.scar")
 import("ObserverUI/Tracking_OwnedSquads.scar")
 import("ObserverUI/Tracking_QueuedStuff.scar")
 import("ObserverUI/Tracking_SquadLosses.scar")
+import("ObserverUI/Tracking_PopulationCapped.scar")
 
+import("ObserverUI/UiDataContext/Initialize_NumberOfPlayers.scar")
 import("ObserverUI/UiDataContext/ObserverUiDataContext.scar")
 import("ObserverUI/UiDataContext/UpdateUi_SquadLosses.scar")
 import("ObserverUI/UiDataContext/UpdateUi_VictoryCountdowns.scar")
+import("ObserverUI/UiDataContext/UpdateUi_PopulationCapped.scar")
 
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")

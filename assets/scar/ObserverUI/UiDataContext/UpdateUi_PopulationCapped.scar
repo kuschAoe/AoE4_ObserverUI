@@ -1,0 +1,24 @@
+UiPopulationCapped = {}
+
+ObserverUiInitialization:AddInitializable(UiPopulationCapped, true)
+
+function UiPopulationCapped:InitializePerPlayer(i)
+	local populationCappedContext = { 
+		Time = 0,
+		Percent = ""
+	}
+	ObserverUiDataContext.players[i].PopulationCapped
+		= populationCappedContext
+	
+	local populationCapped = PopulationCapped
+	local world_GetGameTime = World_GetGameTime 
+	local rule = function()
+		local time = populationCapped:GetForPlayer(i)
+		local timeTotal = world_GetGameTime()
+		
+		populationCappedContext.Time = time
+		populationCappedContext.Percent = string.format("%.1f%%", time/timeTotal * 100)
+	end
+	
+	ObserverUiRuleSystem:AddUpdateUiDataContextForPlayerRule(PLAYERS[i].id.PlayerID, rule)
+end

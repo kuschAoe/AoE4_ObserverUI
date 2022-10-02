@@ -1,0 +1,9 @@
+UiNumberOfPlayers = {}
+
+ObserverUiInitialization:AddInitializable(UiNumberOfPlayers)
+
+function UiNumberOfPlayers:Initialize()
+	for i = 8, #PLAYERS + 1, -1 do
+		ObserverUiDataContext.players[i] = nil
+	end
+end

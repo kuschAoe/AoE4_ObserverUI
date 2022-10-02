@@ -224,30 +224,41 @@ function HasMilitaryIcon(bp, race)
 	return BP_GetSquadUIInfo(bp, race).tooltipDataTemplate == "BuildingMilitaryDataTemplate"
 end
 
-function GetUnits(player, race)
+function AddOrAggregateCountWithExisting(t, icon, count)
+	if t[icon] then
+		t[icon] = t[icon] + count
+		return
+	end
+	t[icon] = count
+end
+
+function AddOrAggregateisMilitaryWithExisting(t, icon, isMilitary)
+	if t[icon] then
+		t[icon] = t[icon] and isMilitary
+		return
+	end
+	t[icon] = isMilitary
+end
+
+function GetUnits(player, race, isMilitary)
 	local ownedSquads = OwnedSquads:GetForPlayer(player)
-	local military = {}
-	local civil = {}
+	local units = {}
 	for _, stuff in pairs(ownedSquads) do
         local icon = GetIconNameFromSquadBlueprint(stuff.Bp, race)
 		if icon then
 			icon = AdaptIconPathForXaml(icon)
-			if HasMilitaryIcon(stuff.Bp, race) then
-				table.insert(military, {icon = icon, count = stuff.Count})
-			else
-				table.insert(civil, {icon = icon, count = stuff.Count})
-			end
+			AddOrAggregateCountWithExisting(units, icon, stuff.Count)
+			AddOrAggregateisMilitaryWithExisting(isMilitary, icon, HasMilitaryIcon(stuff.Bp, race))
 		end
 	end
 	
-	return military, civil
+	return units
 end
 
-function GetQueuedStuff(player, race)
+function GetQueuedStuff(player, race, isMilitary)
 	local queuedStuff = QueuedStuff:GetForPlayer(player)
 	local upgradesQueued = {}
-	local militaryQueued = {}
-	local civilQueued = {}
+	local queued = {}
 	for _, stuff in pairs(queuedStuff) do
 		if stuff.Bp.PropertyBagGroupType == PBGTYPE_Upgrade then
         	table.insert(upgradesQueued, {icon = AdaptIconPathForXaml(GetIconNameFromUpgradeBlueprint(stuff.Bp))})
@@ -255,49 +266,69 @@ function GetQueuedStuff(player, race)
 			local icon = GetIconNameFromSquadBlueprint(stuff.Bp, race)
 			if icon then
 				icon = AdaptIconPathForXaml(icon)
-				if HasMilitaryIcon(stuff.Bp, race) then
-					table.insert(militaryQueued, {icon = icon, count = stuff.Count})
-				else
-					table.insert(civilQueued, {icon = icon, count = stuff.Count})
-				end
+				AddOrAggregateCountWithExisting(queued, icon, stuff.Count)
+				AddOrAggregateisMilitaryWithExisting(isMilitary, icon, HasMilitaryIcon(stuff.Bp, race))
 			end
 		end
 	end
 		
-	return militaryQueued, civilQueued, upgradesQueued
+	return queued, upgradesQueued
 end
 
-function TakeQueuedUnitsCount(queue, icon)
-	for i = 1, #queue do
-		if queue[i].icon == icon then
-			local count = queue[i].count
-			queue[i].count = 0
-			return count
-		end
+function HashSetToArray(t)
+	local array = {}
+	for icon, count in pairs(t) do
+		table.insert(array, {icon = icon, count = count})
 	end
-	return 0
+	return array
 end
 
-function BuildUnitsUiTable(units, queue)
+function BuildUnitsUiTable(units, queued)
 	for i = 1, #units do
-		units[i].queued = TakeQueuedUnitsCount(queue, units[i].icon)
-	end
-	for i = 1, #queue do
-		if queue[i].count ~= 0 then
-			queue[i].queued = queue[i].count
-			queue[i].count = 0
-			table.insert(units, queue[i])
+		local queuedCount = queued[units[i].icon]
+		queued[units[i].icon] = nil
+		
+		if not queuedCount then 
+			queuedCount = 0
 		end
+		
+		units[i].queued = queuedCount
+	end
+	for icon, count in pairs(queued) do
+		if count ~= 0 then
+			table.insert(units, {icon = icon, count = 0, queued = count})
+		end
+	end
+	
+	for i = 1, #units do
+		units[i].countNot0 = units[i].count ~= 0
+		units[i].queuedNot0 = units[i].queued ~= 0 
 	end
 	return units
 end
 
+function SplitByIsMilitary(units, isMilitary)
+	local military = {}
+	local civil = {}
+	for i = 1, #units do
+		if isMilitary[units[i].icon] then
+			table.insert(military, units[i])
+		else
+			table.insert(civil, units[i])
+		end 
+	end
+	
+	return military, civil
+end
+
 function UpdateUnitsAndQueuedStuff(t, player, race)
-	local military, civil = GetUnits(player, race)
-	local militaryQueued, civilQueued, upgradesQueued = GetQueuedStuff(player, race)
+	local isMilitary = {}
+	local units = HashSetToArray(GetUnits(player, race, isMilitary))
+	local queued, upgradesQueued = GetQueuedStuff(player, race, isMilitary)
 								
-	local militaryUi = BuildUnitsUiTable(military, militaryQueued)
-	local civilUi = BuildUnitsUiTable(civil, civilQueued)
+	local ui = BuildUnitsUiTable(units, queued)
+	local militaryUi, civilUi = SplitByIsMilitary(ui, isMilitary)
+	
 	for i = 1, #militaryUi do militaryUi[i].civil = false end
 	for i = 1, #civilUi do civilUi[i].civil = true end
 	

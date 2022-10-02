@@ -368,12 +368,14 @@ _Observe2PlayersXaml =
 									VerticalAlignment="Top"
 									HorizontalAlignment="Left"
 									Style="{StaticResource HUDCommandCardButtonTextBlockStyle}"
-                                	Text="{Binding [queued], Converter={StaticResource CastToIntOperator}}" />
+                                	Text="{Binding [queued], Converter={StaticResource CastToIntOperator}}"
+									Visibility="{Binding [queuedNot0], Converter={StaticResource BoolToVis}}" />
                             <TextBlock 
 									VerticalAlignment="Bottom"
 									HorizontalAlignment="Right"
 									Style="{StaticResource HUDCommandCardButtonTextBlockStyle}"
-                                	Text="{Binding [count], Converter={StaticResource CastToIntOperator}}" />
+                                	Text="{Binding [count], Converter={StaticResource CastToIntOperator}}"
+									Visibility="{Binding [countNot0], Converter={StaticResource BoolToVis}}" />
 							
 						</Grid>
 						<DataTemplate.Triggers>
@@ -819,6 +821,8 @@ _Observe2PlayersXaml =
 	                        <ColumnDefinition Width="80" />
 	                        <ColumnDefinition Width="4" />
 	                        <ColumnDefinition Width="80" />
+	                        <ColumnDefinition Width="4" />
+	                        <ColumnDefinition Width="80" />
 	                        <ColumnDefinition Width="3" />
 	                    </Grid.ColumnDefinitions>
 	                    <Grid.RowDefinitions>
@@ -830,102 +834,125 @@ _Observe2PlayersXaml =
 	                        <RowDefinition Height="3" />
 	                    </Grid.RowDefinitions>
 	
-	                    <Rectangle Fill="#80000000" Grid.Column="2" Grid.ColumnSpan="9" Grid.RowSpan="2"/>
-	                    <Rectangle Fill="#80000000" Grid.Row="2" Grid.ColumnSpan="11" Grid.RowSpan="4"/>
+	                    <Rectangle Fill="#80000000" Grid.Column="2" Grid.ColumnSpan="11" Grid.RowSpan="2"/>
+	                    <Rectangle Fill="#80000000" Grid.Row="2" Grid.ColumnSpan="13" Grid.RowSpan="4"/>
 	
-					    <Rectangle Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" Fill="#000000" Width="2"/>
-	                    <Rectangle Grid.Column="4" Grid.Row="1" Grid.RowSpan="5" Fill="#000000" Width="2"/>
-					    <Rectangle Grid.Column="6" Grid.Row="0" Grid.RowSpan="6" Fill="#000000" Width="2"/>
-	                    <Rectangle Grid.Column="8" Grid.Row="1" Grid.RowSpan="5" Fill="#000000" Width="2"/>
-	        
-	                    <Border Grid.Row="2" Grid.ColumnSpan="11" Grid.RowSpan="2" 
+					    <Rectangle Grid.Column="2" Grid.Row="2" Grid.RowSpan="4" Fill="#808080" Width="2"/>
+	                    <Rectangle Grid.Column="4" Grid.Row="1" Grid.RowSpan="5" Fill="#808080" Width="2"/>
+					    <Rectangle Grid.Column="6" Grid.Row="0" Grid.RowSpan="6" Fill="#808080" Width="2"/>
+	                    <Rectangle Grid.Column="8" Grid.Row="0" Grid.RowSpan="6" Fill="#808080" Width="2"/>
+	                    <Rectangle Grid.Column="10" Grid.Row="1" Grid.RowSpan="5" Fill="#808080" Width="2"/>
+	                    
+	                    <Border Grid.Row="2" Grid.ColumnSpan="13" Grid.RowSpan="2" 
 	                            BorderBrush="{Binding [player1][color]}" 
 	                            BorderThickness="2,2,2,0"/>
-	                    <Border Grid.Row="4" Grid.ColumnSpan="11" Grid.RowSpan="2" 
+	                    <Border Grid.Row="4" Grid.ColumnSpan="13" Grid.RowSpan="2" 
 	                            BorderBrush="{Binding [player2][color]}" 
 	                            BorderThickness="2,0,2,2"/>
 	        
-	                    <TextBlock Grid.Column="3" Grid.ColumnSpan="3"
+	                    <TextBlock Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
 	                            Text="Efficiency"/>
-	                    <TextBlock Grid.Column="3" Grid.ColumnSpan="3"
+	                    <TextBlock Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
 	                            Text="Idle Time"/>
-	                    <TextBlock Grid.Column="3" Grid.Row="1"
+	                    <TextBlock Grid.Column="3" Grid.Row="1" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="TC"/>
-	                    <TextBlock Grid.Column="5" Grid.Row="1"
+	                    <TextBlock Grid.Column="5" Grid.Row="1" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="Worker"/>
-	                    <TextBlock Grid.Column="7" Grid.ColumnSpan="3"
+	                    <TextBlock Grid.Column="7" HorizontalAlignment="Right"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Text="Pop"/>
+	                    <TextBlock Grid.Column="7" Grid.Row="1" HorizontalAlignment="Right"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Text="Capped"/>
+	                    <TextBlock Grid.Column="9" Grid.ColumnSpan="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="Deaths"/>
-	                    <TextBlock Grid.Column="7" Grid.Row="1"
+	                    <TextBlock Grid.Column="9" Grid.Row="1" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="Eco"/>
-	                    <TextBlock Grid.Column="9" Grid.Row="1"
+	                    <TextBlock Grid.Column="11" Grid.Row="1" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="Military"/>
 	        
-	                    <TextBlock Grid.Row="3" Grid.Column="1"
+	                    <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="{Binding [player1][name]}"/>
-	                    <TextBlock Grid.Row="3" Grid.Column="3"
+	                    <TextBlock Grid.Row="3" Grid.Column="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
 	                            Text="{Binding [player1][TownCenterEfficiency]}"/>
-	                    <TextBlock Grid.Row="3" Grid.Column="3"
+	                    <TextBlock Grid.Row="3" Grid.Column="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
 	                            Text="{Binding [player1][TownCenterIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
-	                    <TextBlock Grid.Row="3" Grid.Column="5"
+	                    <TextBlock Grid.Row="3" Grid.Column="5" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
 	                            Text="{Binding [player1][WorkerEfficiency]}"/>
-	                    <TextBlock Grid.Row="3" Grid.Column="5"
+	                    <TextBlock Grid.Row="3" Grid.Column="5" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
 	                            Text="{Binding [player1][WorkerIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
-	                    <TextBlock Grid.Row="3" Grid.Column="7"
+	                    <TextBlock Grid.Row="3" Grid.Column="7" HorizontalAlignment="Right"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="{Binding [player1][PopulationCapped][Percent]}"/>
+	                    <TextBlock Grid.Row="3" Grid.Column="7" HorizontalAlignment="Right"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="{Binding [player1][PopulationCapped][Time], Converter={StaticResource ShorthandTimeFormat}}"/>
+	                    <TextBlock Grid.Row="3" Grid.Column="9" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="{Binding [player1][SquadLossesContext][Worker], Converter={StaticResource CastToIntOperator}}"/>
-	                    <TextBlock Grid.Row="3" Grid.Column="9"
+	                    <TextBlock Grid.Row="3" Grid.Column="11" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="{Binding [player1][SquadLossesContext][Military], Converter={StaticResource CastToIntOperator}}"/>
 	                    
-	                    <TextBlock Grid.Row="4" Grid.Column="1"
+	                    <TextBlock Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="{Binding [player2][name]}"/>
-	                    <TextBlock Grid.Row="4" Grid.Column="3"
+	                    <TextBlock Grid.Row="4" Grid.Column="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
 	                            Text="{Binding [player2][TownCenterEfficiency]}"/>
-	                    <TextBlock Grid.Row="4" Grid.Column="3"
+	                    <TextBlock Grid.Row="4" Grid.Column="3" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
 	                            Text="{Binding [player2][TownCenterIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
-	                    <TextBlock Grid.Row="4" Grid.Column="5"
+	                    <TextBlock Grid.Row="4" Grid.Column="5" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
 	                            Text="{Binding [player2][WorkerEfficiency]}"/>
-	                    <TextBlock Grid.Row="4" Grid.Column="5"
+	                    <TextBlock Grid.Row="4" Grid.Column="5" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
 	                            Text="{Binding [player2][WorkerIdleTime], Converter={StaticResource ShorthandTimeFormat}}"/>
-	                    <TextBlock Grid.Row="4" Grid.Column="7"
+	                    <TextBlock Grid.Row="4" Grid.Column="7" HorizontalAlignment="Right"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource BoolToVis}}"
+	                            Text="{Binding [player2][PopulationCapped][Percent]}"/>
+	                    <TextBlock Grid.Row="4" Grid.Column="7" HorizontalAlignment="Right"
+	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
+	                            Visibility="{Binding [ShowEfficiencyStatisticsInPercent], Converter={StaticResource InvBoolToVis}}"
+	                            Text="{Binding [player2][PopulationCapped][Time], Converter={StaticResource ShorthandTimeFormat}}"/>
+	                    <TextBlock Grid.Row="4" Grid.Column="9" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="{Binding [player2][SquadLossesContext][Worker], Converter={StaticResource CastToIntOperator}}"/>
-	                    <TextBlock Grid.Row="4" Grid.Column="9"
+	                    <TextBlock Grid.Row="4" Grid.Column="11" HorizontalAlignment="Right"
 	                            Style="{StaticResource HUDGray80BodyTextBlock18ptStyle}"
 	                            Text="{Binding [player2][SquadLossesContext][Military], Converter={StaticResource CastToIntOperator}}"/>
 	                    
 	                    <Button Opacity="0" 
-	                            Grid.Column="2" Grid.ColumnSpan="9" Grid.RowSpan="2"
+	                            Grid.Column="2" Grid.ColumnSpan="11" Grid.RowSpan="2"
 	                            Command="{Binding [EfficiencyStatisticsDisplayModeCommand]}"/>
 	                    <Button Opacity="0" 
-	                            Grid.Row="2" Grid.ColumnSpan="11" Grid.RowSpan="4"
+	                            Grid.Row="2" Grid.ColumnSpan="13" Grid.RowSpan="4"
 	                            Command="{Binding [EfficiencyStatisticsDisplayModeCommand]}"/>
 	                </Grid>
 	            </Canvas>

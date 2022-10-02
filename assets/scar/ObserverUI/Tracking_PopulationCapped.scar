@@ -1,0 +1,31 @@
+PopulationCapped = {}
+
+ObserverUiInitialization:AddInitializable(PopulationCapped, true)
+
+function PopulationCapped:InitializePerPlayer(i)
+	local populationCappedOfPlayer = {
+		Ticks = 0
+	}
+	self[i] = populationCappedOfPlayer
+	
+	local player = PLAYERS[i].id
+	
+	local getCurrentPopulationCap = Player_GetCurrentPopulationCap
+	if not getCurrentPopulationCap then
+		getCurrentPopulationCap = Player_GetMaxPopulation
+	end
+	local player_GetCurrentPopulation = Player_GetCurrentPopulation
+	local cT_Personnel = CT_Personnel
+	local rule = function ()
+		if getCurrentPopulationCap(player, cT_Personnel) == player_GetCurrentPopulation(player, cT_Personnel) then
+			populationCappedOfPlayer.Ticks = populationCappedOfPlayer.Ticks + 1
+		end
+	end
+	
+	ObserverUiRuleSystem:AddDataProcessingRule(player.PlayerID, rule)
+end
+
+function PopulationCapped:GetForPlayer(i)
+	local populationCappedOfPlayer = self[i]
+	return populationCappedOfPlayer.Ticks/8
+end

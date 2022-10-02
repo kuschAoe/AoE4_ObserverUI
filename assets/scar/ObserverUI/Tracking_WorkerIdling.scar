@@ -37,13 +37,23 @@ function WorkerIdling:_Initialize(player)
 	local squad_IsMoving = Squad_IsMoving
 	local squad_IsIdle = Squad_IsIdle
 	local squad_IsAttackMoving = Squad_IsAttackMoving
+	local squad_IsGatheringResourceType = Squad_IsGatheringResourceType
+	local rT_Food = RT_Food
+	local rT_Wood = RT_Wood
+	local rT_Gold = RT_Gold
+	local rT_Stone = RT_Stone
 	local rule = function (squad)
 		if not squad_IsOfType(squad, "trade_cart") then
 			workerIdlingOfPlayer.TicksTotal = workerIdlingOfPlayer.TicksTotal + 1
 			
 			if not squad_IsMoving(squad) 
 					and not squad_IsIdle(squad) 
-					and not squad_IsAttackMoving(squad) then
+					and not squad_IsAttackMoving(squad)
+					and ( squad_IsGatheringResourceType(squad, rT_Food)
+						or squad_IsGatheringResourceType(squad, rT_Wood) 
+						or squad_IsGatheringResourceType(squad, rT_Gold)
+						or squad_IsGatheringResourceType(squad, rT_Stone)
+						or squad_IsOfType(squad, "naval_fishing_ship")) then
 				workerIdlingOfPlayer.TicksActive = workerIdlingOfPlayer.TicksActive + 1
 			end
 		end
