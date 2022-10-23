@@ -1,0 +1,31 @@
+Core_RegisterModule("ObserverUI_GameStateTracking_Tribute")
+
+TRIBUTE_RESOURCES = {
+	"food",
+	"wood",
+	"gold",
+	"stone"
+}
+
+function ObserverUI_GameStateTracking_Tribute_OnTributeSent(tributes)
+	print("ObserverUI_GameStateTracking_Tribute_OnTributeSent")
+	
+	for i=1, #tributes do
+		local tribute = tributes[i]
+		
+		for r=1, #TRIBUTE_RESOURCES do
+			local resource = TRIBUTE_RESOURCES[r]
+			local amount = tribute[resource]
+			
+			if amount > 0 then
+				ObserverUiMessageSystem:AddMessage({
+					MessageType = ObserverUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_TRIBUTE,
+					Resource = resource,
+					Sender = tribute.sender.id,
+					Receiver = tribute.receiver.id,
+					Amount = amount
+				})
+			end
+		end
+	end
+end

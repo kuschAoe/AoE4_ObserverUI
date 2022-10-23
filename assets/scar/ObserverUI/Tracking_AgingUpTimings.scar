@@ -130,11 +130,10 @@ function AgingUpTimings:_AddAgeUpTimeDifferenceBetweenPlayersMessage(age)
 		difference = -difference
 	end
 	
-	table.insert(ObserverUiMessageSystem.Messages, { 
+	ObserverUiMessageSystem:AddMessage({ 
 		MessageType = ObserverUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE,
 		FirstPlayer = agingUpTimingsOfFirstPlayer.Player,
 		SecondPlayer = agingUpTimingsOfSecondPlayer.Player,
-		TimeOfMessage = World_GetGameTime(),
 		Difference = difference,
 		Age = age
 	})
@@ -143,12 +142,11 @@ end
 function AgingUpTimings:_AddTimeBetweenCanAffordAndAgeUpMessage(agingUpTimingsOfPlayer, age)
 	local currentGameTime = World_GetGameTime()
 	local canAffordNextAgeAt = agingUpTimingsOfPlayer.CanAffordNextAgeAt[age]
-	local difference = currentGameTime - canAffordNextAgeAt
+	local difference = World_GetGameTime() - canAffordNextAgeAt
 	
-	table.insert(ObserverUiMessageSystem.Messages, { 
+	ObserverUiMessageSystem:AddMessage({
 		MessageType = ObserverUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME,
 		Player = agingUpTimingsOfPlayer.Player,
-		TimeOfMessage = currentGameTime,
 		Difference = difference
 	})
 end
