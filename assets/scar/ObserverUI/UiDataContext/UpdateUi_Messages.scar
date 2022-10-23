@@ -1,0 +1,59 @@
+UiMessages = {
+	AGE_TO_TEXT = {
+		[1] = "Dark Age",
+		[2] = "Feudal Age",
+		[3] = "Castle Age",
+		[4] = "Imperial Age"
+	}
+}
+
+ObserverUiInitialization:AddInitializable(UiMessages)
+
+function UiMessages:Initialize()
+	ObserverUiDataContext.messages = {}
+	
+	local playersById = ObserverUIDataContextMappings.PlayersById
+	local observerUiMessageSystem = ObserverUiMessageSystem
+	local rule = function()
+		local messages = observerUiMessageSystem:GetMessages()
+		local messagesUi = {}
+		
+		for i = 1, #messages do
+			local message = messages[i]
+			local messageUi
+			
+			if message.MessageType == observerUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE then
+				local firstPlayer = playersById[message.FirstPlayer.PlayerID]
+				local secondPlayer = playersById[message.SecondPlayer.PlayerID]
+				
+				messageUi = {
+					messageType = "ObserverUIMessageAgingUpTimeDifferenceBetween",
+					
+					firstPlayerName = firstPlayer.name,
+					firstPlayerColor = firstPlayer.color,
+					secondPlayerName = secondPlayer.name,
+					secondPlayerColor = secondPlayer.color,
+					timeDifference = message.Difference,
+					age = self.AGE_TO_TEXT[message.Age]
+				}
+				
+			elseif message.MessageType == observerUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME then
+				local player = playersById[message.Player.PlayerID]
+				
+				messageUi = {
+					messageType = "ObserverUIMessageAgingUpCanAffordTime",
+					
+					playerName = player.name,
+					playerColor = player.color,
+					timeDifference = message.Difference
+				}
+			end
+			
+			messagesUi[i] = messageUi
+		end
+		
+		ObserverUiDataContext.messages = messagesUi
+	end
+	
+	ObserverUiRuleSystem:AddUpdateUiDataContextRule(rule)
+end

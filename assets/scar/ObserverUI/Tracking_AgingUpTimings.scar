@@ -1,8 +1,5 @@
 AgingUpTimings = {
-	OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE = 1,
-	OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME = 2,
 	OfPlayer = {},
-	Messages = {},
 	
 	REQUIRED_RESOURCES_FOR_NEXT_AGE_AS_ABBASID = {
 		{Food = 400, Gold = 200},
@@ -22,19 +19,6 @@ function AgingUpTimings:Initialize()
 		local player = PLAYERS[i].id
 		self:_Initialize(player)
 	end
-end
-
-function AgingUpTimings:GetMessages()
-	local currentGameTime = World_GetGameTime()
-	local messages = {}
-	
-	for i = 1, #self.Messages do
-		if currentGameTime - self.Messages[i].TimeOfMessage <= 15.0 then
-			table.insert(messages, self.Messages[i])
-		end
-	end
-	
-	return messages
 end
 
 function AgingUpTimings:_Initialize(player)
@@ -146,8 +130,8 @@ function AgingUpTimings:_AddAgeUpTimeDifferenceBetweenPlayersMessage(age)
 		difference = -difference
 	end
 	
-	table.insert(self.Messages, { 
-		MessageType = self.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE,
+	table.insert(ObserverUiMessageSystem.Messages, { 
+		MessageType = ObserverUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE,
 		FirstPlayer = agingUpTimingsOfFirstPlayer.Player,
 		SecondPlayer = agingUpTimingsOfSecondPlayer.Player,
 		TimeOfMessage = World_GetGameTime(),
@@ -161,8 +145,8 @@ function AgingUpTimings:_AddTimeBetweenCanAffordAndAgeUpMessage(agingUpTimingsOf
 	local canAffordNextAgeAt = agingUpTimingsOfPlayer.CanAffordNextAgeAt[age]
 	local difference = currentGameTime - canAffordNextAgeAt
 	
-	table.insert(self.Messages, { 
-		MessageType = self.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME,
+	table.insert(ObserverUiMessageSystem.Messages, { 
+		MessageType = ObserverUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME,
 		Player = agingUpTimingsOfPlayer.Player,
 		TimeOfMessage = currentGameTime,
 		Difference = difference

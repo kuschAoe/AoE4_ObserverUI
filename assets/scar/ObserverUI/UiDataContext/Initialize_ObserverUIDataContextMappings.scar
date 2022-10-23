@@ -1,0 +1,12 @@
+ObserverUIDataContextMappings = {
+	PlayersById = {},
+	PlayersByIndex = {}
+}
+
+ObserverUiInitialization:AddInitializable(ObserverUIDataContextMappings)
+
+function ObserverUIDataContextMappings:Initialize()
+	for i = 1, #PLAYERS do
+		self.PlayersById[PLAYERS[i].id.PlayerID] = ObserverUiDataContext.players[i]
+	end
+end

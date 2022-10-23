@@ -1,0 +1,19 @@
+ObserverUiMessageSystem = {
+	OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE = 1,
+	OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME = 2,
+	
+	Messages = {}
+}
+
+function ObserverUiMessageSystem:GetMessages()
+	local currentGameTime = World_GetGameTime()
+	local messages = {}
+	
+	for i = 1, #self.Messages do
+		if currentGameTime - self.Messages[i].TimeOfMessage <= 15.0 then
+			table.insert(messages, self.Messages[i])
+		end
+	end
+	
+	return messages
+end

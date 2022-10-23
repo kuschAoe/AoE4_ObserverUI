@@ -1,5 +1,4 @@
 _ObserverUIDataContext = ObserverUiDataContext
-_ObserverUIDataContext.playersById = {}
 _ObserverUIDataContext.EfficiencyStatisticsDisplayModeCommand = UI_CreateCommand("EfficiencyStatisticsDisplayModeCommand")
 
 ObserverUi_ResourceMapping = {
@@ -89,11 +88,7 @@ function InitializeObserverUIDataContext()
 		end
 		
 		data.resources = resources
-		
-		observerUIDataContext.players[index] = data
-		observerUIDataContext.playersById[playerTable.id.PlayerID] = data
 	end
-	_ObserverUIDataContext.messages = {}
 	
 	PrepareObserverUIDataContextFor1v1()
 end
@@ -159,8 +154,6 @@ function UpdateObserverUIDataContext()
 		UpdateCivSpecifics(playerTable, player)
 		UpdateEfficiencyStatistics(playerTable, player)
 	end
-	
-	UpdateMessages()
 end
 
 function UpdateResources(t, player)
@@ -355,47 +348,4 @@ function UpdateEfficiencyStatistics(playerTable, player)
 	playerTable.TownCenterEfficiency = string.format("%.1f%%", playerTable.TownCenterEfficiency * 100)
 	playerTable.WorkerIdleTime, playerTable.WorkerEfficiency = WorkerIdling:GetForPlayer_IdleTime_Efficiency(player)
 	playerTable.WorkerEfficiency = string.format("%.1f%%", playerTable.WorkerEfficiency * 100)
-end
-
-AGE_TO_TEXT = {
-	[1] = "Dark Age",
-	[2] = "Feudal Age",
-	[3] = "Castle Age",
-	[4] = "Imperial Age"
-}
-
-function UpdateMessages()
-	local playersById = _ObserverUIDataContext.playersById
-	local messages = AgingUpTimings:GetMessages()
-	local messagesUi = {}
-	
-	for _, message in ipairs(messages) do
-		local messageUi = {}
-		if message.MessageType == AgingUpTimings.OBSERVERUI_MESSAGE_TYPE_AGING_UP_TIME_DIFFERENCE then
-			messageUi.messageType = "ObserverUIMessageAgingUpTimeDifferenceBetween"
-			
-			messageUi.text = Player_GetDisplayName(message.FirstPlayer).LocString .. " < " .. 
-				Player_GetDisplayName(message.SecondPlayer).LocString .. ": " .. tostring(message.Difference)
-			
-			messageUi.firstPlayerName = playersById[message.FirstPlayer.PlayerID].name
-			messageUi.firstPlayerColor = playersById[message.FirstPlayer.PlayerID].color
-			messageUi.secondPlayerName = playersById[message.SecondPlayer.PlayerID].name
-			messageUi.secondPlayerColor = playersById[message.SecondPlayer.PlayerID].color
-			messageUi.timeDifference = message.Difference
-			messageUi.age = AGE_TO_TEXT[message.Age]
-			
-		elseif message.MessageType == AgingUpTimings.OBSERVERUI_MESSAGE_TYPE_AGING_UP_CAN_AFFORD_TIME then
-			messageUi.messageType = "ObserverUIMessageAgingUpCanAffordTime"
-			
-			messageUi.text = Player_GetDisplayName(message.Player).LocString .. ": " .. tostring(message.Difference)
-			
-			messageUi.playerName = playersById[message.Player.PlayerID].name
-			messageUi.playerColor = playersById[message.Player.PlayerID].color
-			messageUi.timeDifference = message.Difference
-		end
-		
-		table.insert(messagesUi, messageUi)
-	end
-	
-	_ObserverUIDataContext.messages = messagesUi
 end
