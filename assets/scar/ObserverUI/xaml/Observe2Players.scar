@@ -742,6 +742,7 @@ _Observe2PlayersXaml =
 				Grid.Row="1" Grid.ColumnSpan="3"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
+				IsHitTestVisible="False"
 				ItemsSource="{Binding [messages]}">
 	        <ItemsControl.ItemsPanel>
 	            <ItemsPanelTemplate>
