@@ -1,0 +1,8 @@
+ObserverUiConstants = {
+	RESOURCE_NAME_TO_ICON = {
+		food = "pack://application:,,,/WPFGUI;component/icons/resources/resource_food_icon.png",
+		wood = "pack://application:,,,/WPFGUI;component/icons/resources/resource_wood_icon.png",
+		gold = "pack://application:,,,/WPFGUI;component/icons/resources/resource_gold_icon.png",
+		stone = "pack://application:,,,/WPFGUI;component/icons/resources/resource_stone_icon.png"
+	}
+}

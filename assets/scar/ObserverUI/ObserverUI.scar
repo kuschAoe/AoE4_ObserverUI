@@ -1,3 +1,5 @@
+import("ObserverUI/ObserverUiConstants.scar")
+
 import("ObserverUI/ObserverUiInitialization.scar")
 
 import("ObserverUI/ObserverUIRuleSystem.scar")
@@ -5,6 +7,7 @@ import("ObserverUI/ObserverUIRuleSystem.scar")
 import("ObserverUI/ObserverUiMessageSystem.scar")
 import("ObserverUI/Settings.scar")
 
+import("ObserverUI/GameStateTracking/OnTributeSent.scar")
 import("ObserverUI/Tracking_GameObjectRepository.scar")
 import("ObserverUI/Tracking_TownCenterIdling.scar")
 import("ObserverUI/Tracking_WorkerIdling.scar")

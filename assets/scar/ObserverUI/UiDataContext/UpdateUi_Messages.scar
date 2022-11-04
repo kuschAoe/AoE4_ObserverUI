@@ -47,6 +47,21 @@ function UiMessages:Initialize()
 					playerColor = player.color,
 					timeDifference = message.Difference
 				}
+				
+			elseif message.MessageType == observerUiMessageSystem.OBSERVERUI_MESSAGE_TYPE_TRIBUTE then
+				local sender = playersById[message.Sender.PlayerID]
+				local receiver = playersById[message.Receiver.PlayerID]
+				
+				messageUi = {
+					messageType = "ObserverUIMessageTribute",
+					
+					SenderName = sender.name,
+					SenderColor = sender.color,
+					ReceiverName = receiver.name,
+					ReceiverColor = receiver.color,
+					ResourceIcon = ObserverUiConstants.RESOURCE_NAME_TO_ICON[message.Resource],
+					Amount = message.Amount
+				}
 			end
 			
 			messagesUi[i] = messageUi
