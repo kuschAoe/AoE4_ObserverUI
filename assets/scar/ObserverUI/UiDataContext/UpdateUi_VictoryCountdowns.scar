@@ -3,11 +3,11 @@ UiVictoryCountdowns = {}
 ObserverUiInitialization:AddInitializable(UiVictoryCountdowns)
 
 function UiVictoryCountdowns:Initialize()
+	local dataContextMappingsPlayersByIndex = ObserverUIDataContextMappings.PlayersByIndex
 	for i=1, #PLAYERS do
-		ObserverUiDataContext.players[i].VictoryCountdownsContext = {}
+		dataContextMappingsPlayersByIndex[i].VictoryCountdownsContext = {}
 	end
 	
-	local observerUiDataContext = ObserverUiDataContext
 	local timer_Exists = Timer_Exists
 	local timer_GetRemaining = Timer_GetRemaining
 	local world_GetPlayerIndex = World_GetPlayerIndex
@@ -17,7 +17,7 @@ function UiVictoryCountdowns:Initialize()
 		
 		for i=1, #PLAYERS do
 			local victoryCountdownsContext = {}
-			observerUiDataContext.players[i].VictoryCountdownsContext = victoryCountdownsContext
+			dataContextMappingsPlayersByIndex[i].VictoryCountdownsContext = victoryCountdownsContext
 			
 			local wonder = PLAYERS[i]._wonder
 			if wonder and timer_Exists(wonder.timer_victory_deterministic) then
@@ -46,7 +46,7 @@ function UiVictoryCountdowns:Initialize()
 			end
 			
 			local playerIndex = world_GetPlayerIndex(_religious.last_capturer)
-			tableInsert(observerUiDataContext.players[playerIndex].VictoryCountdownsContext,
+			tableInsert(dataContextMappingsPlayersByIndex[playerIndex].VictoryCountdownsContext,
 				victoryCountdown)
 	    end
 		

@@ -7,7 +7,7 @@ function UiPopulationCapped:InitializePerPlayer(i)
 		Time = 0,
 		Percent = ""
 	}
-	ObserverUiDataContext.players[i].PopulationCapped
+	ObserverUIDataContextMappings.PlayersByIndex[i].PopulationCapped
 		= populationCappedContext
 	
 	local populationCapped = PopulationCapped

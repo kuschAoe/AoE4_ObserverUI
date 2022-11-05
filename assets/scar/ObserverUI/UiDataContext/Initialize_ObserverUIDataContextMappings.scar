@@ -1,12 +1,49 @@
 ObserverUIDataContextMappings = {
 	PlayersById = {},
-	PlayersByIndex = {}
+	PlayersByIndex = {{}, {}, {}, {}, {}, {}, {}, {}}
 }
 
 ObserverUiInitialization:AddInitializable(ObserverUIDataContextMappings)
 
 function ObserverUIDataContextMappings:Initialize()
 	for i = 1, #PLAYERS do
-		self.PlayersById[PLAYERS[i].id.PlayerID] = ObserverUiDataContext.players[i]
+		self.PlayersById[PLAYERS[i].id.PlayerID] = self.PlayersByIndex[i]
 	end
+	
+	self.TeamConfiguration = self:_GetTeamConfiguration()
+	
+	if self.TeamConfiguration == ObserverUiConstants.TEAM_CONFIGURATIONS.ONE_V_ONE then
+		ObserverUiDataContext.player1 = ObserverUIDataContextMappings.PlayersByIndex[1]
+		ObserverUiDataContext.player2 = ObserverUIDataContextMappings.PlayersByIndex[2]
+		
+	elseif self.TeamConfiguration == ObserverUiConstants.TEAM_CONFIGURATIONS.TEAM_V_TEAM then
+		local teamLeft = {}
+		local teamRight = {}
+		
+		for i = 1, #TEAMS[1].players do
+			table.insert(teamLeft, self.PlayersById[TEAMS[1].players[i].id.PlayerID])
+		end
+		
+		for i = 1, #TEAMS[2].players do
+			table.insert(teamRight, self.PlayersById[TEAMS[2].players[i].id.PlayerID])
+		end
+		
+		ObserverUiDataContext.TeamLeft = teamLeft
+		ObserverUiDataContext.TeamRight = teamRight
+	else
+		ObserverUiDataContext.players = ObserverUIDataContextMappings.PlayersByIndex
+	end
+end
+
+function ObserverUIDataContextMappings:_GetTeamConfiguration()
+	local teamConfigurations = ObserverUiConstants.TEAM_CONFIGURATIONS
+	
+	if #TEAMS == 2 then
+		if #PLAYERS == 2 then
+			return teamConfigurations.ONE_V_ONE
+		end
+		return teamConfigurations.TEAM_V_TEAM
+	end
+	
+	return teamConfigurations.OTHER
 end

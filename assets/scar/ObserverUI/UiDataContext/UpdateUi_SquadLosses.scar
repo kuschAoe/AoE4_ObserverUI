@@ -7,7 +7,7 @@ function UiSquadLosses:InitializePerPlayer(i)
 		Worker = 0, 
 		Military = 0
 	}
-	ObserverUiDataContext.players[i].SquadLossesContext
+	ObserverUIDataContextMappings.PlayersByIndex[i].SquadLossesContext
 		= squadLossesContext
 	
 	local squadLosses = SquadLosses

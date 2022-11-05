@@ -4,5 +4,11 @@ ObserverUiConstants = {
 		wood = "pack://application:,,,/WPFGUI;component/icons/resources/resource_wood_icon.png",
 		gold = "pack://application:,,,/WPFGUI;component/icons/resources/resource_gold_icon.png",
 		stone = "pack://application:,,,/WPFGUI;component/icons/resources/resource_stone_icon.png"
+	},
+	
+	TEAM_CONFIGURATIONS = {
+		OTHER = 0,
+		ONE_V_ONE = 1,
+		TEAM_V_TEAM = 2
 	}
 }

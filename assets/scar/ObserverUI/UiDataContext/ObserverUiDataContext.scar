@@ -1,3 +1,1 @@
-ObserverUiDataContext = {
-	players = {{}, {}, {}, {}, {}, {}, {}, {}}
-}
+ObserverUiDataContext = {}

@@ -48,13 +48,14 @@ _RaceImage = {
 } 
 
 function InitializeObserverUIDataContext()
+	local dataContextMappingsPlayersByIndex = ObserverUIDataContextMappings.PlayersByIndex
 	local observerUIDataContext = _ObserverUIDataContext
 	observerUIDataContext.ShowEfficiencyStatisticsInPercent = ObserverUI_Settings.ShowEfficiencyStatisticsInPercent
 	
 	for index, playerTable in pairs(PLAYERS) do
 		local raceName = Player_GetRaceName(playerTable.id)
 		
-		local data = observerUIDataContext.players[index]
+		local data = dataContextMappingsPlayersByIndex[index]
 		data.name = playerTable.playerName
 		data.color = UI_GetColourAsString(Player_GetUIColour(playerTable.id))
 			
@@ -107,13 +108,10 @@ function PrepareObserverUIDataContextFor1v1()
 		  startingPositionPlayer2.z - startingPositionPlayer2.x
 		
 	if Players1v1SwapPlayersDueToStartingPosition ~= ObserverUI_Settings.swapPlayers1v1 then 
-		_ObserverUIDataContext.player1 = _ObserverUIDataContext.players[2]
-		_ObserverUIDataContext.player2 = _ObserverUIDataContext.players[1]
+		_ObserverUIDataContext.player1 = _ObserverUIDataContext.player2
+		_ObserverUIDataContext.player2 = _ObserverUIDataContext.player1
 		return
 	end
-	
-	_ObserverUIDataContext.player1 = _ObserverUIDataContext.players[1]
-	_ObserverUIDataContext.player2 = _ObserverUIDataContext.players[2]
 end
 
 function SwapPlayers1v1()
@@ -136,7 +134,7 @@ end
 
 function UpdateObserverUIDataContext()
 	for index=1, #PLAYERS do
-		local playerTable = _ObserverUIDataContext.players[index]
+		local playerTable = ObserverUIDataContextMappings.PlayersByIndex[index]
 		local player = PLAYERS[index].id
 		
 		local age = Player_GetCurrentAge(player)
