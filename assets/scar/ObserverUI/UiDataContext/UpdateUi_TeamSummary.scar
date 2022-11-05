@@ -1,0 +1,92 @@
+UiTeamSummary = {}
+
+ObserverUiInitialization:AddInitializable(UiTeamSummary)
+
+function UiTeamSummary:Initialize(i)
+	if #TEAMS ~= 2 then
+		return
+	end
+	
+	local teamSummaryLeft = {
+		Color = UI_GetColourAsString(Player_GetUIColour(TEAMS[1].players[1].id)), 
+		IdleWorkerCount = 0, 
+		WorkerPopulation = 0, 
+		MilitaryPopulation = 0, 
+		SiegePopulation = 0, 
+		MilitaryNoSiegePopulation = 0
+	}
+	local teamSummaryRight = {
+		Color = UI_GetColourAsString(Player_GetUIColour(TEAMS[2].players[1].id)), 
+		IdleWorkerCount = 0, 
+		WorkerPopulation = 0, 
+		MilitaryPopulation = 0, 
+		SiegePopulation = 0, 
+		MilitaryNoSiegePopulation = 0
+	}
+	local teamSummary = {
+		CombinedWorkerPop = 1,
+		CombinedMilitaryPop = 1
+	}
+	ObserverUiDataContext.TeamSummaryLeft = teamSummaryLeft
+	ObserverUiDataContext.TeamSummaryRight = teamSummaryRight
+	ObserverUiDataContext.TeamSummary = teamSummary
+	
+	local populationComposition = PopulationComposition
+	local teams = TEAMS
+	local rule = function()
+		local teamIdleWorkerCount = 0
+		local teamWorkerPopulation = 0
+		local teamMilitaryPopulation = 0
+		local teamSiegePopulation = 0
+		local teamMilitaryNoSiegePopulation = 0
+		
+		for i = 1, #teams[1].players do
+			local workerPopulation, idleWorkerCount, 
+				militaryNoSiegePopulation, siegePopulation = 
+					populationComposition:GetForPlayer_Worker_WorkerIdle_MilitaryNonSiege_Siege(
+						teams[1].players[i].id)
+			
+			teamIdleWorkerCount = teamIdleWorkerCount + idleWorkerCount 
+			teamWorkerPopulation = teamWorkerPopulation + workerPopulation 
+			teamMilitaryPopulation = teamMilitaryPopulation + militaryNoSiegePopulation + siegePopulation 
+			teamSiegePopulation = teamSiegePopulation + siegePopulation 
+			teamMilitaryNoSiegePopulation = teamMilitaryNoSiegePopulation + militaryNoSiegePopulation
+		end
+		teamSummaryLeft.IdleWorkerCount = teamIdleWorkerCount
+		teamSummaryLeft.WorkerPopulation = teamWorkerPopulation
+		teamSummaryLeft.MilitaryPopulation = teamMilitaryPopulation
+		teamSummaryLeft.SiegePopulation = teamSiegePopulation
+		teamSummaryLeft.MilitaryNoSiegePopulation = teamMilitaryNoSiegePopulation
+		
+		teamIdleWorkerCount = 0
+		teamWorkerPopulation = 0
+		teamMilitaryPopulation = 0
+		teamSiegePopulation = 0
+		teamMilitaryNoSiegePopulation = 0
+		
+		for i = 1, #teams[2].players do
+			local workerPopulation, idleWorkerCount, 
+				militaryNoSiegePopulation, siegePopulation = 
+					populationComposition:GetForPlayer_Worker_WorkerIdle_MilitaryNonSiege_Siege(
+						teams[2].players[i].id)
+			
+			teamIdleWorkerCount = teamIdleWorkerCount + idleWorkerCount 
+			teamWorkerPopulation = teamWorkerPopulation + workerPopulation 
+			teamMilitaryPopulation = teamMilitaryPopulation + militaryNoSiegePopulation + siegePopulation 
+			teamSiegePopulation = teamSiegePopulation + siegePopulation 
+			teamMilitaryNoSiegePopulation = teamMilitaryNoSiegePopulation + militaryNoSiegePopulation
+		end
+		teamSummaryRight.IdleWorkerCount = teamIdleWorkerCount
+		teamSummaryRight.WorkerPopulation = teamWorkerPopulation
+		teamSummaryRight.MilitaryPopulation = teamMilitaryPopulation
+		teamSummaryRight.SiegePopulation = teamSiegePopulation
+		teamSummaryRight.MilitaryNoSiegePopulation = teamMilitaryNoSiegePopulation
+		
+		teamSummary.CombinedWorkerPop = 
+			teamSummaryLeft.WorkerPopulation + teamSummaryRight.WorkerPopulation
+		teamSummary.CombinedMilitaryPop = 
+			teamSummaryLeft.MilitaryPopulation + teamSummaryRight.MilitaryPopulation
+	end
+	
+	ObserverUiRuleSystem:AddUpdateUiDataContextRule(rule)
+end

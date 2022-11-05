@@ -1,0 +1,562 @@
+XamlTeamVTeam = 
+[[<Grid
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:engineSharedEffects="clr-namespace:WPFGUI.Shared.Effects;assembly=EngineUI.Shaders">
+	
+	<Grid.Resources>
+        <DataTemplate x:Key="ObserverUIResource">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0"
+                    	Width="25" Height="25"
+                    	HorizontalAlignment="Center"
+                    	VerticalAlignment="Center"
+                    	Source="{Binding [icon]}" />
+				
+                <TextBlock Grid.Column="0"
+						Foreground="White"
+						FontWeight="Bold"
+                    	Text="{Binding [workers], Converter={StaticResource CastToIntOperator}}" />
+
+                <TextBlock Grid.Column="1"
+                        Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+                        Text="{Binding [amount], Converter={StaticResource CastToIntOperator}}" />
+            </Grid>
+        </DataTemplate>
+		
+		<DataTemplate x:Key="ObserverUiTeam">
+			<ItemsControl ItemsSource="{Binding}">
+	            <ItemsControl.ItemsPanel>
+	                <ItemsPanelTemplate>
+	                    <StackPanel Orientation="Horizontal"/>
+	                </ItemsPanelTemplate>
+	            </ItemsControl.ItemsPanel>
+	
+	            <ItemsControl.ItemTemplate>
+	                <DataTemplate>
+						<Grid Width="240">
+							
+	                        <!-- Background & Border -->
+	            			<Rectangle Fill="{DynamicResource TertiaryColorBrush}" />
+							<ContentControl Template="{StaticResource CanvasBackgroundBox}" />
+			            	<Border BorderThickness="2">
+								<Border.BorderBrush>
+						            <LinearGradientBrush Opacity="0.7" StartPoint="0,0" EndPoint="0.1,1">
+						                <GradientStop Offset="0.1" Color="#2B3143" />
+						                <GradientStop Offset="0.32" Color="#616C8C" />
+						                <GradientStop Offset="0.63" Color="#616C8C" />
+						                <GradientStop Offset="0.9" Color="#2B3143" />
+						            </LinearGradientBrush>
+								</Border.BorderBrush>
+							</Border>
+				            <Border BorderThickness="2">
+								<Border.BorderBrush>
+						            <ImageBrush 
+				                        ImageSource="pack://application:,,,/WPFGUI;component/icons/HUD/backgrounds/canvas_texture_312x312.png" Opacity="0.5"
+				                        TileMode="Tile" Viewport="0,0,1350,1350"
+				                        ViewportUnits="Absolute" />
+								</Border.BorderBrush>
+				                <Border.Effect>
+				                    <engineSharedEffects:OverlayFlatEffect Overlay="{DynamicResource TertiaryColorExtraLight}" />
+				                </Border.Effect>
+				            </Border>
+						
+	                    	<ContentControl Margin="2,2,0,0">
+		                        <Grid>
+		                            <Grid.RowDefinitions>
+		                                <RowDefinition Height="Auto" />
+		                                <RowDefinition Height="Auto" />
+		                                <RowDefinition Height="Auto" />
+		                            </Grid.RowDefinitions>
+		
+		                            <!-- Flag Name Age -->
+		                            <Grid Grid.Row="0">
+		                                <Grid.ColumnDefinitions>
+		                                    <ColumnDefinition Width="Auto" />
+		                                    <ColumnDefinition Width="*" />
+		                                    <ColumnDefinition Width="Auto" />
+		                                </Grid.ColumnDefinitions>
+		                                <Image Grid.Column="0" Height="20" Margin="5,0,5,0" VerticalAlignment="Center" 
+												Source="{Binding [civIcon]}"/>
+		                                <TextBlock Grid.Column="1" Margin="0,4,0,0" TextAlignment="Center"
+												Foreground="{Binding [color]}" Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+												Text="{Binding [name]}"/>
+		                                <Image Grid.Column="2" Height="24" Width="24" Margin="5,0,5,0" HorizontalAlignment="Right"
+												Source="{Binding [ageIcon]}"/>
+		                            </Grid>
+									
+									<Rectangle Grid.Row="1" Fill="#616C8C" Height="1.2" Margin="10,2"/>
+	
+									<!-- player stats -->
+	                                <Grid Grid.Row="2">
+	                                    <Grid.ColumnDefinitions>
+	                                        <ColumnDefinition Width="3*" />
+	                                        <ColumnDefinition Width="2" />
+	                                        <ColumnDefinition Width="4*" />
+	                                    </Grid.ColumnDefinitions>
+	
+										<!-- resources -->
+		                                <Grid Grid.Column="0">
+		                                    <Grid.RowDefinitions>
+		                                        <RowDefinition Height="*" />
+		                                        <RowDefinition Height="*" />
+		                                        <RowDefinition Height="*" />
+		                                        <RowDefinition Height="*" />
+		                                    </Grid.RowDefinitions>
+											
+											<ContentControl	Grid.Row="0"
+													ContentTemplate="{StaticResource ObserverUIResource}"
+													Content="{Binding [resources][food]}" />
+											<ContentControl	Grid.Row="1"
+													ContentTemplate="{StaticResource ObserverUIResource}"
+													Content="{Binding [resources][wood]}" />
+											<ContentControl	Grid.Row="2"
+													ContentTemplate="{StaticResource ObserverUIResource}"
+													Content="{Binding [resources][gold]}" />
+											<ContentControl	Grid.Row="3"
+													ContentTemplate="{StaticResource ObserverUIResource}"
+													Content="{Binding [resources][stone]}" />
+										</Grid>
+		
+										<!-- population & relics -->
+		                                <Grid Grid.Column="2">
+		                                    <Grid.RowDefinitions>
+		                                        <RowDefinition Height="*" />
+		                                        <RowDefinition Height="*" />
+		                                        <RowDefinition Height="*" />
+		                                        <RowDefinition Height="*" />
+		                                    </Grid.RowDefinitions>
+		                                    <Grid.ColumnDefinitions>
+		                                        <ColumnDefinition Width="Auto" />
+		                                        <ColumnDefinition Width="*" />
+		                                        <ColumnDefinition Width="Auto" />
+		                                        <ColumnDefinition Width="*" />
+		                                    </Grid.ColumnDefinitions>
+											
+											<Grid Grid.Row="0" Grid.ColumnSpan="4">
+			                                    <Grid.ColumnDefinitions>
+			                                        <ColumnDefinition Width="Auto" />
+			                                        <ColumnDefinition Width="Auto" />
+			                                    </Grid.ColumnDefinitions>
+			                                    <Image Grid.Column="0"
+				                                        Height="30"	Margin="0,-6,0,0"
+				                                        Source="pack://application:,,,/WPFGUI;component/icons/resources/resource_popcap.png"/>
+			                                    <TextBlock Grid.Column="1"
+			                                            VerticalAlignment="Center"
+			                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+			                                            Text="{Binding [populationVsMaximumPopulation]}" />
+											</Grid>
+		                                            
+		                                    <Image Grid.Column="0" Grid.Row="1" 
+			                                        Height="30"
+			                                        Margin="0,-6,0,0"
+			                                        Source="pack://application:,,,/WPFGUI;component/icons/resources/resource_villager.png"/>
+		                                    <TextBlock Grid.Column="1" Grid.Row="1"
+		                                            VerticalAlignment="Center"
+		                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+		                                            Text="{Binding [workerPopulation], Mode=OneWay, Converter={StaticResource CastToIntOperator}}" />
+		                                    <Image Grid.Column="2" Grid.Row="1" 
+			                                        Height="30"
+			                                        Margin="5,-6,0,0"
+			                                        Source="pack://application:,,,/WPFGUI;component/icons/resources/resource_idle_villager.png"/>
+		                                    <TextBlock Grid.Column="3" Grid.Row="1"
+		                                            VerticalAlignment="Center"
+		                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+		                                            Text="{Binding [idleWorkerPopulation], Mode=OneWay, Converter={StaticResource CastToIntOperator}}" />
+												
+											
+		                                    <Image Grid.Column="0" Grid.Row="2" 
+			                                        Height="30"
+			                                        Margin="0,-6,0,0"
+			                                        Source="pack://application:,,,/WPFGUI;component/icons/resources/resource_military.png"/>
+		                                    <TextBlock Grid.Column="1" Grid.Row="2"
+		                                            VerticalAlignment="Center"
+		                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+		                                            Text="{Binding [militaryPopulation], Mode=OneWay, Converter={StaticResource CastToIntOperator}}" />
+		                                    <Image Grid.Column="2" Grid.Row="2" 
+			                                        Height="24"
+			                                        Margin="5,0,0,0"
+			                                        Source="pack://application:,,,/WPFGUI;component/icons/races/common/buildings/siege_workshop.png"/>
+		                                    <TextBlock Grid.Column="3" Grid.Row="2"
+		                                            VerticalAlignment="Center"
+		                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+		                                            Text="{Binding [siegePopulation], Mode=OneWay, Converter={StaticResource CastToIntOperator}}" />
+											
+		                                    <Image Grid.Column="0" Grid.Row="3" 
+			                                        Height="24"
+			                                        Source="pack://application:,,,/WPFGUI;component/icons/races/common/abilities/create_relic.png"/>
+		                                    <TextBlock Grid.Column="1" Grid.Row="3"
+		                                            VerticalAlignment="Center"
+		                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+		                                            Text="{Binding [relics], Mode=OneWay, Converter={StaticResource CastToIntOperator}}" />
+		                                    <Image Grid.Column="2" Grid.Row="3" 
+			                                        Height="24"
+			                                        Margin="5,0,0,0"
+			                                        Source="pack://application:,,,/WPFGUI;component/icons/races/common/abilities/deposit_relic.png"/>
+		                                    <TextBlock Grid.Column="3" Grid.Row="3"
+		                                            VerticalAlignment="Center"
+		                                            Style="{StaticResource nHUDBaseHeavyTextBlockStyle}"
+		                                            Text="{Binding [relicsDeposited], Mode=OneWay, Converter={StaticResource CastToIntOperator}}" />
+											
+	                                    </Grid>
+	                                </Grid>
+	                        	</Grid>
+	                    	</ContentControl>
+	                    </Grid>
+	                </DataTemplate>
+	            </ItemsControl.ItemTemplate>
+	        </ItemsControl>
+		</DataTemplate>
+		
+		<DataTemplate x:Key="ObserverUIMessageTribute">
+			<DockPanel>
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{Binding [SenderColor]}"
+                    	Text="{Binding [SenderName]}" />
+				
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" sent " />
+				
+                <Image Width="25" Height="25"
+                    	Source="{Binding [ResourceIcon]}" />
+				
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{DynamicResource Gray80Brush}"
+                    	Text="{Binding [Amount], Converter={StaticResource CastToIntOperator}}" />
+				
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text=" to " />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+						Foreground="{Binding [ReceiverColor]}"
+                    	Text="{Binding [ReceiverName]}" />
+				<TextBlock Style="{StaticResource HUDWhiteBodyTextBlock18ptSemiBoldStyle}"
+                    	Text="." />
+			</DockPanel>
+		</DataTemplate>
+		
+		<DataTemplate x:Key="CasterAgeImageTemplate" DataType="{x:Type casterModel:CasterTeamModel}">
+	        <Image Name="AgeIcon" Height="32" Source="../../../icons/caster_mode/balance_panel/age_1.png" />
+	        <DataTemplate.Triggers>
+	            <DataTrigger Binding="{Binding CurrentAge}" Value="{x:Static casterModel:CasterAge.FeudalAge}">
+	                <Setter TargetName="AgeIcon" Property="Source" Value="../../../icons/caster_mode/balance_panel/age_2.png" />
+	            </DataTrigger>
+	            <DataTrigger Binding="{Binding CurrentAge}" Value="{x:Static casterModel:CasterAge.CastleAge}">
+	                <Setter TargetName="AgeIcon" Property="Source" Value="../../../icons/caster_mode/balance_panel/age_3.png" />
+	            </DataTrigger>
+	            <DataTrigger Binding="{Binding CurrentAge}" Value="{x:Static casterModel:CasterAge.ImperialAge}">
+	                <Setter TargetName="AgeIcon" Property="Source" Value="../../../icons/caster_mode/balance_panel/age_4.png" />
+	            </DataTrigger>
+	        </DataTemplate.Triggers>
+	    </DataTemplate>
+	    
+	    <DataTemplate x:Key="ObserverUiBalancePanel">
+	        <DataTemplate.Resources>
+	
+	            <LinearGradientBrush x:Key="RightBarBrush">
+	                <GradientStop Offset="0" Color="{Binding [TeamSummaryRight][Color]}"/>
+	                <GradientStop Offset="1" Color="#FF888888"/>
+	            </LinearGradientBrush>
+	            
+	            <DropShadowEffect x:Key="DropShadow" BlurRadius="0.5" ShadowDepth="1.5"  />
+	            <Style x:Key="PrimaryText" TargetType="TextBlock">
+	                <Setter Property="FontSize" Value="20"/>
+	                <Setter Property="Foreground" Value="#FFFFFF"/>
+	                <Setter Property="FontWeight" Value="Bold" />
+	                <Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
+	                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+	                <Setter Property="Margin" Value="0,0,0,0"/>
+	            </Style>
+	            <Style x:Key="SecondaryText" TargetType="TextBlock">
+	                <Setter Property="FontSize" Value="18"/>
+	                <Setter Property="Foreground" Value="#C2C2C2"/>
+	                <Setter Property="FontStyle" Value="Italic" />
+	                <Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
+	                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+	                <Setter Property="Margin" Value="0,0,0,0"/>
+	            </Style>
+	            <Style x:Key="TimeText" TargetType="TextBlock">
+	                <Setter Property="FontSize" Value="18"/>
+	                <Setter Property="Foreground" Value="#FFFFFF"/>
+	                <Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
+	                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+	                <Setter Property="Margin" Value="0,0,0,0"/>
+	            </Style>
+	
+	            <SolidColorBrush x:Key="BalanceBorderBrush" Color="#5e6989"/>
+	            <SolidColorBrush x:Key="BalanceTickBrush" Color="#41485C"/>
+	        </DataTemplate.Resources>
+	        
+	        <Grid>
+	            <Grid HorizontalAlignment="Center">
+	                <Border Margin="32,0,32,0" Width="312" Height="140" Style="{StaticResource CasterPanelBorder}">
+	                    <Grid>
+	                        <Grid.Background>
+	                            <ImageBrush ImageSource="pack://application:,,,/WPFGUI;component/icons/caster_mode/balance_panel/background.png" TileMode="Tile"
+	                                Viewport="0,0,128,138" ViewportUnits="Absolute" />
+	                        </Grid.Background>
+	                        <StackPanel>
+	                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,0">
+	                                <StackPanel Name="LeftIdleCount" Width="50" Orientation="Horizontal">
+	                                    <TextBlock Text="{Binding [TeamSummaryLeft][IdleWorkerCount], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11144600}" TextAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource SecondaryText}"/>
+	                                    <Image Margin="2,0,0,3" Height="20" Source="../../../icons/caster_mode/balance_panel/idle_villager_count.png" VerticalAlignment="Bottom"/>
+	                                </StackPanel>
+	                                <TextBlock Width="50" Text="{Binding [TeamSummaryLeft][WorkerPopulation], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11144600}" TextAlignment="Right" VerticalAlignment="Bottom" Style="{StaticResource PrimaryText}"/>
+	                                <Image Height="42" Source="../../../icons/caster_mode/balance_panel/villager_count.png">
+	                                    <Image.RenderTransform>
+	                                        <TranslateTransform X="1"/>
+	                                    </Image.RenderTransform>
+	                                </Image>
+	                                <TextBlock Width="50" Text="{Binding [TeamSummaryRight][WorkerPopulation], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11144600}" TextAlignment="Left"  VerticalAlignment="Bottom" Style="{StaticResource PrimaryText}"/>
+	                                <StackPanel Name="RightIdleCount" Width="50" Orientation="Horizontal" FlowDirection="RightToLeft">
+	                                    <Image Margin="2,0,0,3" Height="20" Source="../../../icons/caster_mode/balance_panel/idle_villager_count.png" VerticalAlignment="Bottom"/>
+	                                    <TextBlock Text="{Binding [TeamSummaryRight][IdleWorkerCount], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11144600}" TextAlignment="Left" VerticalAlignment="Bottom" Style="{StaticResource SecondaryText}" />
+	                                </StackPanel>
+	                            </StackPanel>
+	                            <!-- population bars -->
+	                            <StackPanel Width="232" Canvas.Top="200">
+	                                <Grid>
+	                                    <Border Height="10" HorizontalAlignment="Left" BorderBrush="{StaticResource BalanceBorderBrush}" BorderThickness="1">
+	                                        <Border.Width>
+	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
+	                                                <Binding Path="[TeamSummaryLeft][WorkerPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
+	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                            </MultiBinding>
+	                                        </Border.Width>
+	                                        <Grid>
+	                                            <Rectangle Fill="{Binding [TeamSummaryLeft][Color]}" />
+	                                            <Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
+	                                                <Rectangle.RenderTransform>
+	                                                    <ScaleTransform ScaleX="-1" />
+	                                                </Rectangle.RenderTransform>
+	                                            </Rectangle>
+	                                        </Grid>
+	                                    </Border>
+	                                    <Border Height="10" HorizontalAlignment="Left" BorderThickness="1">
+	                                        <Border.Width>
+	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
+	                                                <Binding Path="[TeamSummaryLeft][IdleWorkerCount]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
+	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                            </MultiBinding>
+	                                        </Border.Width>
+	                                        <Border.Background>
+	                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+	                                                <LinearGradientBrush.GradientStops>
+	                                                    <GradientStop Color="#30000000" Offset="0" />
+	                                                    <GradientStop Color="#40000000" Offset="0.90" />
+	                                                    <GradientStop Color="#60000000" Offset="0.95" />
+	                                                    <GradientStop Color="#60000000" Offset="1" />
+	                                                </LinearGradientBrush.GradientStops>
+	                                            </LinearGradientBrush>
+	                                        </Border.Background>
+	                                    </Border>
+	                                    
+	                                    <Border Height="10" HorizontalAlignment="Right" BorderBrush="{StaticResource BalanceBorderBrush}" BorderThickness="1">
+	                                        <Border.Width>
+	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
+	                                                <Binding Path="[TeamSummaryRight][WorkerPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
+	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                            </MultiBinding>
+	                                        </Border.Width>
+	                                        <Grid>
+	                                            <Rectangle Fill="{Binding [TeamSummaryRight][Color]}" />
+	                                            <Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
+	                                                <Rectangle.RenderTransform>
+	                                                    <ScaleTransform ScaleX="1" />
+	                                                </Rectangle.RenderTransform>
+	                                            </Rectangle>
+	                                        </Grid>
+	                                    </Border>
+	                                    <Border Height="10" HorizontalAlignment="Right" BorderThickness="1">
+	                                        <Border.Width>
+	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
+	                                                <Binding Path="[TeamSummaryRight][IdleWorkerCount]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
+	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                            </MultiBinding>
+	                                        </Border.Width>
+	                                        <Border.Background>
+	                                            <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+	                                                <LinearGradientBrush.GradientStops>
+	                                                    <GradientStop Color="#30000000" Offset="0" />
+	                                                    <GradientStop Color="#40000000" Offset="0.90" />
+	                                                    <GradientStop Color="#60000000" Offset="0.95" />
+	                                                    <GradientStop Color="#60000000" Offset="1" />
+	                                                </LinearGradientBrush.GradientStops>
+	                                            </LinearGradientBrush>
+	                                        </Border.Background>
+	                                    </Border>
+	                                    <Path HorizontalAlignment="Center" VerticalAlignment="Top" Data="M3,8 L6,0 L0,0 Z" Fill="{StaticResource BalanceTickBrush}" />
+	
+	                                    <Path HorizontalAlignment="Left" Margin="77,0,0,0" VerticalAlignment="Top" Data="M0,5 L-3,0 L3,0 Z" Fill="{StaticResource BalanceTickBrush}" />
+	                                    <Path HorizontalAlignment="Left" Margin="155,0,0,0" VerticalAlignment="Top" Data="M0,5 L-3,0 L3,0 Z" Fill="{StaticResource BalanceTickBrush}" />
+	                                </Grid>
+	                                <Grid Margin="0,4,0,0">
+	                                    <Border Height="10" HorizontalAlignment="Left" BorderBrush="{StaticResource BalanceBorderBrush}" BorderThickness="1">
+	                                        <Border.Width>
+	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
+	                                                <Binding Path="[TeamSummaryLeft][MilitaryPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
+	                                                <Binding Path="[TeamSummary][CombinedMilitaryPop]" />
+	                                            </MultiBinding>
+	                                        </Border.Width>
+	                                        <Grid>
+	                                            <Rectangle Fill="{Binding [TeamSummaryLeft][Color]}" />
+	                                            <Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
+	                                                <Rectangle.RenderTransform>
+	                                                    <ScaleTransform ScaleX="-1" />
+	                                                </Rectangle.RenderTransform>
+	                                            </Rectangle>
+	                                        </Grid>
+	                                    </Border>
+	                                    <Border Height="10" HorizontalAlignment="Right" BorderBrush="{StaticResource BalanceBorderBrush}" BorderThickness="1">
+	                                        <Border.Width>
+	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
+	                                                <Binding Path="[TeamSummaryRight][MilitaryPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
+	                                                <Binding Path="[TeamSummary][CombinedMilitaryPop]" />
+	                                            </MultiBinding>
+	                                        </Border.Width>
+	                                        <Grid>
+	                                            <Rectangle Fill="{Binding [TeamSummaryRight][Color]}" />
+	                                            <Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
+	                                                <Rectangle.RenderTransform>
+	                                                    <ScaleTransform ScaleX="1" />
+	                                                </Rectangle.RenderTransform>
+	                                            </Rectangle>
+	                                        </Grid>
+	                                    </Border>
+	                                    <Path HorizontalAlignment="Center" VerticalAlignment="Bottom" Data="M3,0 L6,8 L0,8 Z" Fill="{StaticResource BalanceTickBrush}" />
+	
+	                                    <Path HorizontalAlignment="Left" Margin="77,0,0,0" VerticalAlignment="Bottom" Data="M0,0 L-3,5 L3,5 Z" Fill="{StaticResource BalanceTickBrush}" />
+	                                    <Path HorizontalAlignment="Left" Margin="155,0,0,0" VerticalAlignment="Bottom" Data="M0,0 L-3,5 L3,5 Z" Fill="{StaticResource BalanceTickBrush}" />
+	                                </Grid>
+	                            </StackPanel>
+	                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+	                                <StackPanel Name="LeftSiegePop" Width="60" Orientation="Horizontal">
+	                                    <Image Height="26" Source="../../../icons/caster_mode/balance_panel/siege_population.png"/>
+	                                    <TextBlock VerticalAlignment="Center" Text="{Binding [TeamSummaryLeft][SiegePopulation], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11232238}" FontStyle="Italic" FontSize="18"  TextAlignment="Left" Foreground="#FFD6D6D6" />
+	                                </StackPanel>
+	                                <TextBlock VerticalAlignment="Center" Width="46" Text="{Binding [TeamSummaryLeft][MilitaryNoSiegePopulation], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11144600}" TextAlignment="Right" Style="{StaticResource PrimaryText}"/>
+	                                <Image Margin="0" Height="42" Source="../../../icons/caster_mode/balance_panel/military_population.png"/>
+	                                <TextBlock VerticalAlignment="Center" Width="46" Text="{Binding [TeamSummaryRight][MilitaryNoSiegePopulation], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11144600}" TextAlignment="Left"  Style="{StaticResource PrimaryText}"/>
+	                                <StackPanel Name="RightSiegePop" Width="60" Orientation="Horizontal" FlowDirection="RightToLeft">
+	                                    <Image Height="26" Source="../../../icons/caster_mode/balance_panel/siege_population.png"/>
+	                                    <TextBlock VerticalAlignment="Center" Text="{Binding [TeamSummaryRight][SiegePopulation], Converter={StaticResource LocalizedStringConverter}, ConverterParameter=$11232237}" FontStyle="Italic" FontSize="18"  TextAlignment="Left" Foreground="#FFD6D6D6" FlowDirection="LeftToRight" />
+	                                </StackPanel>
+	                            </StackPanel>
+	                            <StackPanel Margin="0,-4,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+	                                <StackPanel Orientation="Horizontal" Width="80" FlowDirection="RightToLeft" Visibility="Hidden">
+	                                    <Image Width="24" Source="../../../icons/common/orders/back.png" RenderTransformOrigin=".5,.5">
+	                                        <Image.RenderTransform>
+	                                            <RotateTransform Angle="-90"/>
+	                                        </Image.RenderTransform>
+	                                    </Image>
+	                                    <TextBlock HorizontalAlignment="Right" Text="78%" FontStyle="Italic" FontSize="18" FlowDirection="LeftToRight"/>
+	                                </StackPanel>
+	                                <TextBlock Width="140" Text="{Binding ElapsedTime, Source={x:Static hudModels:HUDModel.Instance}, Converter={StaticResource ShorthandTimeFormat}}" TextAlignment="Center"  VerticalAlignment="Top" Style="{StaticResource TimeText}"/>
+	                                <StackPanel Orientation="Horizontal" Width="80" Visibility="Hidden">
+	                                    <Image Width="24" Source="../../../icons/common/orders/back.png" RenderTransformOrigin=".5,.5">
+	                                        <Image.RenderTransform>
+	                                            <RotateTransform Angle="90"/>
+	                                        </Image.RenderTransform>
+	                                    </Image>
+	                                </StackPanel>
+	                            </StackPanel>
+	                        </StackPanel>
+	                    </Grid>
+	                </Border>
+	                <Grid  HorizontalAlignment="Left" Margin="7,0,0,24">
+	                    <Ellipse Width="52" Height="52" Style="{StaticResource CasterEllipse}" />
+	                    <ContentControl Content="{Binding [TeamSummaryLeft]}" ContentTemplate="{DynamicResource CasterAgeImageTemplate}" />
+	                </Grid>
+	                <Grid  HorizontalAlignment="Right" Margin="0,0,7,24">
+	                    <Ellipse Width="52" Height="52" Style="{StaticResource CasterEllipse}" />
+	                    <ContentControl Content="{Binding [TeamSummaryRight]}" ContentTemplate="{DynamicResource CasterAgeImageTemplate}" />
+	                </Grid>
+	            </Grid>
+	        </Grid>
+	
+	        <DataTemplate.Triggers>
+	            <DataTrigger Binding="{Binding [TeamSummaryLeft][IdleWorkerCount]}" Value="0">
+	                <Setter TargetName="LeftIdleCount"  Property="Visibility" Value="Hidden" />
+	            </DataTrigger>
+	            <DataTrigger Binding="{Binding [TeamSummaryRight][IdleWorkerCount]}" Value="0">
+	                <Setter TargetName="RightIdleCount" Property="Visibility" Value="Hidden" />
+	            </DataTrigger>
+	            <DataTrigger Binding="{Binding [TeamSummaryLeft][SiegePopulation]}" Value="0">
+	                <Setter TargetName="LeftSiegePop"  Property="Visibility" Value="Hidden" />
+	            </DataTrigger>
+	            <DataTrigger Binding="{Binding [TeamSummaryRight][SiegePopulation]}" Value="0">
+	                <Setter TargetName="RightSiegePop" Property="Visibility" Value="Hidden" />
+	            </DataTrigger>
+	        </DataTemplate.Triggers>
+	    </DataTemplate>
+	</Grid.Resources>
+	
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="2*" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		
+	    <Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+	        
+			<ContentControl	HorizontalAlignment="Left" VerticalAlignment="Top"
+					ContentTemplate="{StaticResource ObserverUiTeam}"
+					Content="{Binding [TeamLeft]}" />
+			<ContentControl	Grid.Column="1"
+					HorizontalAlignment="Center" VerticalAlignment="Top"
+					Margin="0,-2,0,0"
+					ContentTemplate="{StaticResource ObserverUiBalancePanel}"
+					Content="{Binding}" />
+			<ContentControl	Grid.Column="2"
+					HorizontalAlignment="Right" VerticalAlignment="Top"
+					ContentTemplate="{StaticResource ObserverUiTeam}"
+					Content="{Binding [TeamRight]}" />
+			
+	    </Grid>
+		
+	    <ItemsControl
+				Grid.Row="1"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Top"
+				IsHitTestVisible="False"
+				ItemsSource="{Binding [messages]}">
+	        <ItemsControl.ItemsPanel>
+	            <ItemsPanelTemplate>
+	                <DockPanel/>
+	            </ItemsPanelTemplate>
+	        </ItemsControl.ItemsPanel>
+			
+		    <ItemsControl.ItemContainerStyle>
+		      	<Style TargetType="ContentPresenter">
+		        	<Setter Property="DockPanel.Dock" Value="Top"/>
+		      	</Style>
+		    </ItemsControl.ItemContainerStyle>
+	
+	        <ItemsControl.ItemTemplate>
+	            <DataTemplate>
+					<ContentControl Name="ObserverUIMessage"
+							Content="{Binding}"/>
+					
+					<DataTemplate.Triggers>
+						<DataTrigger Binding="{Binding [messageType]}" Value="ObserverUIMessageTribute">
+							<Setter TargetName="ObserverUIMessage" Property="ContentTemplate" Value="{StaticResource ObserverUIMessageTribute}"/>
+						</DataTrigger>
+					</DataTemplate.Triggers>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+	</Grid>
+</Grid>
+]]

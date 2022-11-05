@@ -27,9 +27,11 @@ import("ObserverUI/UiDataContext/UpdateUi_Messages.scar")
 import("ObserverUI/UiDataContext/UpdateUi_SquadLosses.scar")
 import("ObserverUI/UiDataContext/UpdateUi_VictoryCountdowns.scar")
 import("ObserverUI/UiDataContext/UpdateUi_PopulationCapped.scar")
+import("ObserverUI/UiDataContext/UpdateUi_TeamSummary.scar")
 
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")
+import("ObserverUI/xaml/TeamVTeam.scar")
 import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/xaml/SwapPlayers1v1Button.scar")
 import("ObserverUI/xaml/SymmetryButton.scar")
@@ -49,6 +51,9 @@ function ObserverUI_OnInit()
 		
 		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
 		UI_AddChild("ScarDefault", "XamlPresenter", "SymmetryButton", { IsHitTestVisible = true, Xaml = _SymmetryButtonXaml, DataContext = UI_CreateDataContext(_SymmetryButtonDataContext)})
+	end
+	if #TEAMS == 2 then
+		observeXaml = XamlTeamVTeam
 	end
 	
 	UI_AddChild("ScarDefault", "XamlPresenter", "ToggleUIButton", { IsHitTestVisible = true, Xaml = _ToggleUIButtonXaml, DataContext = UI_CreateDataContext(_ToggleUIButtonDataContext)})
