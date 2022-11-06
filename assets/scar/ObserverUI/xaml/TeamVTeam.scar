@@ -527,6 +527,31 @@ XamlTeamVTeam =
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</DataTemplate>
+		
+		<DataTemplate x:Key="ObserverUiLandmarkVictory">
+            <Grid Width="100" Margin="0,2,0,0" 
+					Visibility="{Binding [Visible], Converter={StaticResource BoolToVis}}">
+				<Rectangle Fill="#80000000"/>
+				<Border BorderThickness="2" Margin="2" BorderBrush="{StaticResource PrimaryColorLightBrush}"/>
+				<Grid Margin="6">
+	                <Image Height="24" Width="24"
+	                    	HorizontalAlignment="Left"
+	                    	Source="pack://application:,,,/WPFGUI;component/icons/races/common/victory_conditions/victory_condition_conquest.png" />
+					
+					<DockPanel HorizontalAlignment="Right">
+						<TextBlock
+		                        Style="{StaticResource nHUDTitleAltTextBlockStyle}"
+		                        Text="{Binding [Destroyed], Converter={StaticResource CastToIntOperator}}" />
+						<TextBlock
+		                        Style="{StaticResource nHUDTitleAltTextBlockStyle}"
+		                        Text="/" />
+						<TextBlock
+		                        Style="{StaticResource nHUDTitleAltTextBlockStyle}"
+		                        Text="{Binding [Built], Converter={StaticResource CastToIntOperator}}" />
+					</DockPanel>
+				</Grid>
+            </Grid>
+		</DataTemplate>
 	</Grid.Resources>
 	
 	<Grid>
@@ -549,6 +574,7 @@ XamlTeamVTeam =
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				
@@ -558,6 +584,9 @@ XamlTeamVTeam =
 				<ContentControl	Grid.Row="1" HorizontalAlignment="Right"
 						ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
 						Content="{Binding [TeamSummaryLeft]}" />
+				<ContentControl	Grid.Row="2" HorizontalAlignment="Right"
+						ContentTemplate="{StaticResource ObserverUiLandmarkVictory}"
+						Content="{Binding [TeamSummaryRight][LandmarkVictory]}" />
 		    </Grid>
 				
 			<ContentControl	Grid.Column="1"
@@ -570,6 +599,7 @@ XamlTeamVTeam =
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				
@@ -580,6 +610,9 @@ XamlTeamVTeam =
 				<ContentControl	Grid.Row="1" HorizontalAlignment="Left"
 						ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
 						Content="{Binding [TeamSummaryRight]}" />
+				<ContentControl	Grid.Row="2" HorizontalAlignment="Left"
+						ContentTemplate="{StaticResource ObserverUiLandmarkVictory}"
+						Content="{Binding [TeamSummaryLeft][LandmarkVictory]}" />
 		    </Grid>
 			
 	    </Grid>

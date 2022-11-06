@@ -1,0 +1,34 @@
+UiLandmarkVictory = {}
+
+ObserverUiInitialization:AddInitializable(UiLandmarkVictory)
+
+function UiLandmarkVictory:Initialize()
+	if not Core_IsModuleRegistered("Conquest") then
+		return
+	end
+	
+	local teamSummariesByIndex = ObserverUIDataContextMappings.TeamSummariesByIndex
+	for t=1, #teamSummariesByIndex do
+		teamSummariesByIndex[t].LandmarkVictory = {
+			Visible = false,
+			Built = 0,
+			Destroyed = 0
+		}
+	end
+	
+	local teams = TEAMS
+	local conquest_GetAllyLandmarkCount = Conquest_GetAllyLandmarkCount
+	local rule = function()
+		
+		for t=1, #teamSummariesByIndex do
+			local landmarkVictory = conquest_GetAllyLandmarkCount(teams[t].players[1])
+			local dataContext = teamSummariesByIndex[t].LandmarkVictory
+			
+			dataContext.Visible = landmarkVictory.built >= landmarkVictory.remaining * 2
+			dataContext.Built = landmarkVictory.built
+			dataContext.Destroyed = landmarkVictory.built - landmarkVictory.remaining
+		end
+	end
+	
+	ObserverUiRuleSystem:AddUpdateUiDataContextRule(rule)
+end

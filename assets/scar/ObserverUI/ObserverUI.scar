@@ -28,6 +28,7 @@ import("ObserverUI/UiDataContext/UpdateUi_SquadLosses.scar")
 import("ObserverUI/UiDataContext/UpdateUi_VictoryCountdowns.scar")
 import("ObserverUI/UiDataContext/UpdateUi_PopulationCapped.scar")
 import("ObserverUI/UiDataContext/UpdateUi_TeamSummary.scar")
+import("ObserverUI/UiDataContext/UpdateUi_LandmarkVictory.scar")
 
 import("ObserverUI/xaml/ObserveNPlayers.scar")
 import("ObserverUI/xaml/Observe2Players.scar")
