@@ -51,8 +51,7 @@ function ObserverUI_OnInit()
 		
 		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
 		UI_AddChild("ScarDefault", "XamlPresenter", "SymmetryButton", { IsHitTestVisible = true, Xaml = _SymmetryButtonXaml, DataContext = UI_CreateDataContext(_SymmetryButtonDataContext)})
-	end
-	if #TEAMS == 2 then
+	elseif #TEAMS == 2 then
 		observeXaml = XamlTeamVTeam
 	end
 	

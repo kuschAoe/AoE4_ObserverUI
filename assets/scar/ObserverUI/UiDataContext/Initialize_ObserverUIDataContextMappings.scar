@@ -1,6 +1,7 @@
 ObserverUIDataContextMappings = {
 	PlayersById = {},
-	PlayersByIndex = {{}, {}, {}, {}, {}, {}, {}, {}}
+	PlayersByIndex = {{}, {}, {}, {}, {}, {}, {}, {}},
+	TeamSummariesByIndex = {{}, {}}
 }
 
 ObserverUiInitialization:AddInitializable(ObserverUIDataContextMappings)
@@ -16,6 +17,9 @@ function ObserverUIDataContextMappings:Initialize()
 		ObserverUiDataContext.player1 = ObserverUIDataContextMappings.PlayersByIndex[1]
 		ObserverUiDataContext.player2 = ObserverUIDataContextMappings.PlayersByIndex[2]
 		
+		ObserverUiDataContext.TeamSummaryLeft = self.TeamSummariesByIndex[1]
+		ObserverUiDataContext.TeamSummaryRight = self.TeamSummariesByIndex[2]
+		
 	elseif self.TeamConfiguration == ObserverUiConstants.TEAM_CONFIGURATIONS.TEAM_V_TEAM then
 		local teamLeft = {}
 		local teamRight = {}
@@ -30,8 +34,12 @@ function ObserverUIDataContextMappings:Initialize()
 		
 		ObserverUiDataContext.TeamLeft = teamLeft
 		ObserverUiDataContext.TeamRight = teamRight
+		
+		ObserverUiDataContext.TeamSummaryLeft = self.TeamSummariesByIndex[1]
+		ObserverUiDataContext.TeamSummaryRight = self.TeamSummariesByIndex[2]
 	else
 		ObserverUiDataContext.players = ObserverUIDataContextMappings.PlayersByIndex
+		self.TeamSummariesByIndex = {}
 	end
 end
 

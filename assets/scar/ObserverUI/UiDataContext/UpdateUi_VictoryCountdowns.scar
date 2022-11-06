@@ -3,33 +3,29 @@ UiVictoryCountdowns = {}
 ObserverUiInitialization:AddInitializable(UiVictoryCountdowns)
 
 function UiVictoryCountdowns:Initialize()
-	local dataContextMappingsPlayersByIndex = ObserverUIDataContextMappings.PlayersByIndex
-	for i=1, #PLAYERS do
-		dataContextMappingsPlayersByIndex[i].VictoryCountdownsContext = {}
+	local teamSummariesByIndex = ObserverUIDataContextMappings.TeamSummariesByIndex
+	for t=1, #teamSummariesByIndex do
+		teamSummariesByIndex[t].VictoryCountdownsContext = {}
 	end
 	
+	local teams = TEAMS
 	local timer_Exists = Timer_Exists
 	local timer_GetRemaining = Timer_GetRemaining
-	local world_GetPlayerIndex = World_GetPlayerIndex
 	local tableInsert = table.insert
 	local rule = function()
-		local closestTo0Countdown
 		
-		for i=1, #PLAYERS do
-			local victoryCountdownsContext = {}
-			dataContextMappingsPlayersByIndex[i].VictoryCountdownsContext = victoryCountdownsContext
+		for t=1, #teamSummariesByIndex do
+			teamSummariesByIndex[t].VictoryCountdownsContext = {}
 			
-			local wonder = PLAYERS[i]._wonder
-			if wonder and timer_Exists(wonder.timer_victory_deterministic) then
-				local victoryCountdown = { 
-					TimeRemaining = timer_GetRemaining(wonder.timer_victory_deterministic),
-					Icon = "pack://application:,,,/WPFGUI;component/icons/races/common/victory_conditions/victory_condition_wonder.png",
-					ClosestTo0 = false
-				}
-				victoryCountdownsContext[1] = victoryCountdown
-				
-				if not closestTo0Countdown or closestTo0Countdown.TimeRemaining > victoryCountdown.TimeRemaining then
-					closestTo0Countdown = victoryCountdown
+			for p=1, #teams[t].players do
+				local wonder = teams[t].players[p]._wonder
+				if wonder and timer_Exists(wonder.timer_victory_deterministic) then
+					local victoryCountdown = { 
+						TimeRemaining = timer_GetRemaining(wonder.timer_victory_deterministic),
+						Icon = "pack://application:,,,/WPFGUI;component/icons/races/common/victory_conditions/victory_condition_wonder.png",
+						ClosestTo0 = false
+					}
+					tableInsert(teamSummariesByIndex[t].VictoryCountdownsContext, victoryCountdown)
 				end
 			end
 		end
@@ -41,17 +37,30 @@ function UiVictoryCountdowns:Initialize()
 				ClosestTo0 = false
 			}
 			
-			if not closestTo0Countdown or closestTo0Countdown.TimeRemaining > victoryCountdown.TimeRemaining then
-				closestTo0Countdown = victoryCountdown
+			for t=1, #teamSummariesByIndex do
+				for p=1, #teams[t].players do
+					if _religious.last_capturer == teams[t].players[p].id then
+						tableInsert(teamSummariesByIndex[t].VictoryCountdownsContext, victoryCountdown)
+						break
+					end
+				end
 			end
-			
-			local playerIndex = world_GetPlayerIndex(_religious.last_capturer)
-			tableInsert(dataContextMappingsPlayersByIndex[playerIndex].VictoryCountdownsContext,
-				victoryCountdown)
 	    end
 		
-		if closestTo0Countdown then
-			closestTo0Countdown.ClosestTo0 = true
+		local leastTimeRemaining = nil
+		local criticalVictoryCountdown = nil
+		for t=1, #teamSummariesByIndex do
+			local victoryCountdownsContext = teamSummariesByIndex[t].VictoryCountdownsContext
+			for i=1, #victoryCountdownsContext do
+				local victoryCountdown = victoryCountdownsContext[i]
+				if not leastTimeRemaining or victoryCountdown.TimeRemaining < leastTimeRemaining then
+					leastTimeRemaining = victoryCountdown.TimeRemaining
+					criticalVictoryCountdown = victoryCountdown
+				end
+			end
+		end
+		if criticalVictoryCountdown then
+			criticalVictoryCountdown.ClosestTo0 = true
 		end
 	end
 	

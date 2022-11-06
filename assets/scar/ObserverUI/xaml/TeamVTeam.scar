@@ -324,7 +324,7 @@ XamlTeamVTeam =
 	                                        <Border.Width>
 	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
 	                                                <Binding Path="[TeamSummaryLeft][WorkerPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
-	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                                <Binding Path="[AllPlayersSummary][CombinedWorkerPop]" />
 	                                            </MultiBinding>
 	                                        </Border.Width>
 	                                        <Grid>
@@ -340,7 +340,7 @@ XamlTeamVTeam =
 	                                        <Border.Width>
 	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
 	                                                <Binding Path="[TeamSummaryLeft][IdleWorkerCount]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
-	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                                <Binding Path="[AllPlayersSummary][CombinedWorkerPop]" />
 	                                            </MultiBinding>
 	                                        </Border.Width>
 	                                        <Border.Background>
@@ -359,7 +359,7 @@ XamlTeamVTeam =
 	                                        <Border.Width>
 	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
 	                                                <Binding Path="[TeamSummaryRight][WorkerPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
-	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                                <Binding Path="[AllPlayersSummary][CombinedWorkerPop]" />
 	                                            </MultiBinding>
 	                                        </Border.Width>
 	                                        <Grid>
@@ -375,7 +375,7 @@ XamlTeamVTeam =
 	                                        <Border.Width>
 	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
 	                                                <Binding Path="[TeamSummaryRight][IdleWorkerCount]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
-	                                                <Binding Path="[TeamSummary][CombinedWorkerPop]" />
+	                                                <Binding Path="[AllPlayersSummary][CombinedWorkerPop]" />
 	                                            </MultiBinding>
 	                                        </Border.Width>
 	                                        <Border.Background>
@@ -399,7 +399,7 @@ XamlTeamVTeam =
 	                                        <Border.Width>
 	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
 	                                                <Binding Path="[TeamSummaryLeft][MilitaryPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
-	                                                <Binding Path="[TeamSummary][CombinedMilitaryPop]" />
+	                                                <Binding Path="[AllPlayersSummary][CombinedMilitaryPop]" />
 	                                            </MultiBinding>
 	                                        </Border.Width>
 	                                        <Grid>
@@ -415,7 +415,7 @@ XamlTeamVTeam =
 	                                        <Border.Width>
 	                                            <MultiBinding Converter="{StaticResource MultiDivideOperator}">
 	                                                <Binding Path="[TeamSummaryRight][MilitaryPopulation]" Converter="{StaticResource MultiplyOperator}" ConverterParameter="233" />
-	                                                <Binding Path="[TeamSummary][CombinedMilitaryPop]" />
+	                                                <Binding Path="[AllPlayersSummary][CombinedMilitaryPop]" />
 	                                            </MultiBinding>
 	                                        </Border.Width>
 	                                        <Grid>
@@ -493,6 +493,40 @@ XamlTeamVTeam =
 	            </DataTrigger>
 	        </DataTemplate.Triggers>
 	    </DataTemplate>
+		
+		<DataTemplate x:Key="ObserverUiVictoryCountdowns">
+	        <ItemsControl ItemsSource="{Binding [VictoryCountdownsContext]}">
+	            <ItemsControl.ItemsPanel>
+	                <ItemsPanelTemplate>
+	                    <DockPanel/>
+	                </ItemsPanelTemplate>
+	            </ItemsControl.ItemsPanel>
+				
+			    <ItemsControl.ItemContainerStyle>
+			      	<Style TargetType="ContentPresenter">
+			        	<Setter Property="DockPanel.Dock" Value="Bottom"/>
+			      	</Style>
+			    </ItemsControl.ItemContainerStyle>
+	
+	            <ItemsControl.ItemTemplate>
+	                <DataTemplate>
+			            <Grid Width="100" Margin="0,2,0,0">
+        					<Rectangle Fill="#80000000" Visibility="{Binding [ClosestTo0], Converter={StaticResource BoolToVis}}"/>
+							<Border BorderThickness="2" Margin="2" BorderBrush="{StaticResource PrimaryColorLightBrush}"/>
+							<Grid Margin="6">
+				                <Image Height="24" Width="24"
+				                    	HorizontalAlignment="Left"
+				                    	Source="{Binding [Icon]}" />
+				                <TextBlock
+										HorizontalAlignment="Right"
+				                        Style="{StaticResource nHUDTitleAltTextBlockStyle}"
+				                        Text="{Binding [TimeRemaining], Converter={StaticResource ShorthandTimeFormat}}" />
+							</Grid>
+			            </Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</DataTemplate>
 	</Grid.Resources>
 	
 	<Grid>
@@ -511,18 +545,42 @@ XamlTeamVTeam =
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 	        
-			<ContentControl	HorizontalAlignment="Left" VerticalAlignment="Top"
-					ContentTemplate="{StaticResource ObserverUiTeam}"
-					Content="{Binding [TeamLeft]}" />
+		    <Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				
+				<ContentControl	HorizontalAlignment="Left" VerticalAlignment="Top"
+						ContentTemplate="{StaticResource ObserverUiTeam}"
+						Content="{Binding [TeamLeft]}" />
+				<ContentControl	Grid.Row="1" HorizontalAlignment="Right"
+						ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
+						Content="{Binding [TeamSummaryLeft]}" />
+		    </Grid>
+				
 			<ContentControl	Grid.Column="1"
 					HorizontalAlignment="Center" VerticalAlignment="Top"
 					Margin="0,-2,0,0"
 					ContentTemplate="{StaticResource ObserverUiBalancePanel}"
 					Content="{Binding}" />
-			<ContentControl	Grid.Column="2"
-					HorizontalAlignment="Right" VerticalAlignment="Top"
-					ContentTemplate="{StaticResource ObserverUiTeam}"
-					Content="{Binding [TeamRight]}" />
+			
+		    <Grid Grid.Column="2">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				
+				<ContentControl	
+						HorizontalAlignment="Right" VerticalAlignment="Top"
+						ContentTemplate="{StaticResource ObserverUiTeam}"
+						Content="{Binding [TeamRight]}" />
+				<ContentControl	Grid.Row="1" HorizontalAlignment="Left"
+						ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
+						Content="{Binding [TeamSummaryRight]}" />
+		    </Grid>
 			
 	    </Grid>
 		

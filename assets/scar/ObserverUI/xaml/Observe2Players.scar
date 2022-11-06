@@ -643,7 +643,7 @@ _Observe2PlayersXaml =
 							Content="{Binding [player1]}" />
 					<ContentControl	HorizontalAlignment="Right"
 							ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
-							Content="{Binding [player1]}" />
+							Content="{Binding [TeamSummaryLeft]}" />
 				</Grid>
 				
 			</Grid>
@@ -733,7 +733,7 @@ _Observe2PlayersXaml =
 					
 					<ContentControl	HorizontalAlignment="Left"
 							ContentTemplate="{StaticResource ObserverUiVictoryCountdowns}"
-							Content="{Binding [player2]}" />
+							Content="{Binding [TeamSummaryRight]}" />
 				</Grid>
 			</Grid>
 		</Grid>

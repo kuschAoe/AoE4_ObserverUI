@@ -108,8 +108,11 @@ function PrepareObserverUIDataContextFor1v1()
 		  startingPositionPlayer2.z - startingPositionPlayer2.x
 		
 	if Players1v1SwapPlayersDueToStartingPosition ~= ObserverUI_Settings.swapPlayers1v1 then 
-		_ObserverUIDataContext.player1 = _ObserverUIDataContext.player2
-		_ObserverUIDataContext.player2 = _ObserverUIDataContext.player1
+		_ObserverUIDataContext.player1, _ObserverUIDataContext.player2
+			= _ObserverUIDataContext.player2, _ObserverUIDataContext.player1
+		
+		ObserverUiDataContext.TeamSummaryLeft, ObserverUiDataContext.TeamSummaryRight
+			= ObserverUiDataContext.TeamSummaryRight, ObserverUiDataContext.TeamSummaryLeft
 		return
 	end
 end
