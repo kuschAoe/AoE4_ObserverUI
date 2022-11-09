@@ -53,6 +53,7 @@ function ObserverUI_OnInit()
 		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
 		UI_AddChild("ScarDefault", "XamlPresenter", "SymmetryButton", { IsHitTestVisible = true, Xaml = _SymmetryButtonXaml, DataContext = UI_CreateDataContext(_SymmetryButtonDataContext)})
 	elseif #TEAMS == 2 then
+		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
 		observeXaml = XamlTeamVTeam
 	end
 	
@@ -97,6 +98,8 @@ function ShowImprovedUI()
 	ObserverUiRuleSystem:AddUpdateUiDataContextRule(UpdateObserverUIDataContext)
 	ObserverUiRuleSystem:AddApplyUiDataContextRule(function () UI_SetDataContext("ObserverUI", _ObserverUIDataContext) end)
 	ObserverUiInitialization:Initialize()
+	
+	PrepareObserverUIDataContextFor1v1()
 	
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Visible")
