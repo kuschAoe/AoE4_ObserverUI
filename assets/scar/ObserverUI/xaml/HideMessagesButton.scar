@@ -1,4 +1,4 @@
-_SymmetryButtonXaml = 
+XamlHideMessagesButton = 
 [[<ToggleButton 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,6 +16,6 @@ _SymmetryButtonXaml =
     <TextBlock 
 			TextAlignment="Center"
             Style="{StaticResource HUDTitleAltTextBlockStyle}"
-            Text="Sy" />
+            Text="Msg" />
 </ToggleButton>
 ]]

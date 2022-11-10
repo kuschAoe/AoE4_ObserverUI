@@ -3,10 +3,6 @@ QueuedStuff = {}
 ObserverUiInitialization:AddInitializable(QueuedStuff)
 
 function QueuedStuff:Initialize()
-	if World_GetPlayerCount() > 2 then 
-		return 
-	end
-	
 	for i=1, #PLAYERS do
 		local player = PLAYERS[i].id
 		self:_Initialize(player)
@@ -14,10 +10,6 @@ function QueuedStuff:Initialize()
 end
 
 function QueuedStuff:GetForPlayer(player)
-	if World_GetPlayerCount() > 2 then 
-		return {}
-	end
-	
 	return self[player.PlayerID]
 end
 

@@ -3,10 +3,6 @@ OwnedSquads = {}
 ObserverUiInitialization:AddInitializable(OwnedSquads)
 
 function OwnedSquads:Initialize()
-	if World_GetPlayerCount() > 2 then 
-		return 
-	end
-	
 	for i=1, #PLAYERS do
 		local player = PLAYERS[i].id
 		self:_Initialize(player)
@@ -14,10 +10,6 @@ function OwnedSquads:Initialize()
 end
 
 function OwnedSquads:GetForPlayer(player)
-	if World_GetPlayerCount() > 2 then 
-		return {}
-	end
-	
 	return self[player.PlayerID]
 end
 

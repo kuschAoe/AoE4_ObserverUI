@@ -424,6 +424,75 @@ XamlTeamVTeam =
 				</Grid>
             </Grid>
 		</DataTemplate>
+		
+		<DataTemplate x:Key="ObserverUiUnits">
+	        <ItemsControl Name="ObserverUiUnitsListOfPlayer" ItemsSource="{Binding [units]}" HorizontalAlignment="Left">
+	            <ItemsControl.ItemsPanel>
+	                <ItemsPanelTemplate>
+	                    <DockPanel/>
+	                </ItemsPanelTemplate>
+	            </ItemsControl.ItemsPanel>
+				
+			    <ItemsControl.ItemContainerStyle>
+			      	<Style TargetType="ContentPresenter">
+			        	<Setter Property="DockPanel.Dock" Value="Right"/>
+			      	</Style>
+			    </ItemsControl.ItemContainerStyle>
+	
+	            <ItemsControl.ItemTemplate>
+	                <DataTemplate>
+						<Border Margin="2,4,2,0" BorderThickness="2" BorderBrush="{Binding [Color]}">
+							<Grid>
+								<Rectangle Name="UnitBackground1"
+										Width="{StaticResource HUDBuildQueueIconSize}"
+	           							Height="{StaticResource HUDBuildQueueIconSize}"
+										Fill="{StaticResource MilitaryButtonBgBrush}" />
+								<Rectangle Name="UnitBackground2"
+										Width="{StaticResource HUDBuildQueueIconSize}"
+	           							Height="{StaticResource HUDBuildQueueIconSize}"
+										Fill="{StaticResource MilitaryLightButtonBgHighlightBrush}" />
+					
+								<Image 
+										Width="{StaticResource HUDBuildQueueIconSize}"
+	           							Height="{StaticResource HUDBuildQueueIconSize}"
+										Source="{Binding [icon]}"/>
+	                            <TextBlock 
+										VerticalAlignment="Top"
+										HorizontalAlignment="Left"
+										Style="{StaticResource HUDCommandCardButtonTextBlockStyle}"
+	                                	Text="{Binding [queued], Converter={StaticResource CastToIntOperator}}"
+										Visibility="{Binding [queuedNot0], Converter={StaticResource BoolToVis}}" />
+	                            <TextBlock 
+										VerticalAlignment="Bottom"
+										HorizontalAlignment="Right"
+										Style="{StaticResource HUDCommandCardButtonTextBlockStyle}"
+	                                	Text="{Binding [count], Converter={StaticResource CastToIntOperator}}"
+										Visibility="{Binding [countNot0], Converter={StaticResource BoolToVis}}" />
+								
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			
+			<DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding [IsRightSide]}" Value="true">
+		            <Setter TargetName="ObserverUiUnitsListOfPlayer" Property="HorizontalAlignment" Value="Right"/>
+		        </DataTrigger>
+            </DataTemplate.Triggers>
+		</DataTemplate>
+		
+		<DataTemplate x:Key="ObserverUiTeamUnits">
+			<ItemsControl ItemsSource="{Binding}">
+	            <ItemsControl.ItemTemplate>
+	                <DataTemplate>
+						<ContentControl
+							ContentTemplate="{StaticResource ObserverUiUnits}"
+							Content="{Binding}" />
+	                </DataTemplate>
+	            </ItemsControl.ItemTemplate>
+	        </ItemsControl>
+		</DataTemplate>
 	</Grid.Resources>
 	
 	<Grid>
@@ -442,27 +511,21 @@ XamlTeamVTeam =
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 	        
+			<ContentControl HorizontalAlignment="Left" Margin="0,200,0,0"
+				ContentTemplate="{StaticResource ObserverUiTeamUnits}"
+				Content="{Binding [TeamLeft]}" />
+			
 		    <Grid Margin="0,0,-2,0">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				
 				<ContentControl	HorizontalAlignment="Right" VerticalAlignment="Top"
 						ContentTemplate="{StaticResource ObserverUiTeam}"
 						Content="{Binding [TeamLeft]}" />
 		    </Grid>
 			
+			<ContentControl Grid.Column="2" HorizontalAlignment="Right" Margin="0,200,0,0"
+				ContentTemplate="{StaticResource ObserverUiTeamUnits}"
+				Content="{Binding [TeamRight]}" />
+			
 		    <Grid Grid.Column="2" Margin="-2,0,0,0">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				
 				<ContentControl	
 						HorizontalAlignment="Left" VerticalAlignment="Top"
 						ContentTemplate="{StaticResource ObserverUiTeam}"
@@ -514,7 +577,8 @@ XamlTeamVTeam =
 				HorizontalAlignment="Center"
 				VerticalAlignment="Top"
 				IsHitTestVisible="False"
-				ItemsSource="{Binding [messages]}">
+				ItemsSource="{Binding [messages]}"
+				Visibility="{Binding [ShowMessages], Converter={StaticResource BoolToVis}}">
 	        <ItemsControl.ItemsPanel>
 	            <ItemsPanelTemplate>
 	                <DockPanel/>

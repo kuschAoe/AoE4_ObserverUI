@@ -94,6 +94,7 @@ end
 
 function PrepareObserverUIDataContextFor1v1()
 	_ObserverUIDataContext.symmetricalUi = ObserverUI_Settings.symmetricalUi
+	ObserverUiDataContext.ShowMessages = ObserverUI_Settings.ShowMessages
 	
 	if ObserverUI_Settings.swapPlayers1v1 then
 		SwapSides()
@@ -141,6 +142,12 @@ end
 function EfficiencyStatisticsDisplayModeCommand()
 	ObserverUI_Settings.ShowEfficiencyStatisticsInPercent = not ObserverUI_Settings.ShowEfficiencyStatisticsInPercent
 	_ObserverUIDataContext.ShowEfficiencyStatisticsInPercent = ObserverUI_Settings.ShowEfficiencyStatisticsInPercent
+	UpdateObserverUIDataContext()
+end
+
+function ToggleMessages()
+	ObserverUI_Settings.ShowMessages = not ObserverUI_Settings.ShowMessages
+	ObserverUiDataContext.ShowMessages = ObserverUI_Settings.ShowMessages
 	UpdateObserverUIDataContext()
 end
 
@@ -332,7 +339,10 @@ function UpdateUnitsAndQueuedStuff(t, player, race)
 	local ui = BuildUnitsUiTable(units, queued)
 	local militaryUi, civilUi = SplitByIsMilitary(ui, isMilitary)
 	
-	for i = 1, #militaryUi do militaryUi[i].civil = false end
+	for i = 1, #militaryUi do 
+		militaryUi[i].civil = false
+		militaryUi[i].Color = t.color
+	end
 	for i = 1, #civilUi do civilUi[i].civil = true end
 	
 	t.upgradesQueued = upgradesQueued

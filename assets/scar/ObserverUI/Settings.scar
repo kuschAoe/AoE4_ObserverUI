@@ -1,5 +1,6 @@
 ObserverUI_Settings = {
 	swapPlayers1v1 = false,
 	symmetricalUi = false,
-	ShowEfficiencyStatisticsInPercent = false
+	ShowEfficiencyStatisticsInPercent = false,
+	ShowMessages = true
 }
