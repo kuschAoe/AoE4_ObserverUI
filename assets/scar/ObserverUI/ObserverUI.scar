@@ -110,12 +110,13 @@ function ShowImprovedUI()
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Collapsed")
 	UI_SetPropertyValue("HideMessagesButton", "Visibility", "Visible")
+	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Visible")
 	
 	if World_GetPlayerCount() ~= 2 and #TEAMS == 2 then
+		UI_SetPropertyValue("LandmarkInConstruction", "Visibility", "Collapsed")
 		return
 	end
 		
-	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Visible")
 	UI_SetPropertyValue("SymmetryButton", "Visibility", "Visible")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Collapsed")
@@ -129,12 +130,13 @@ function ShowClassicUI()
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Visible")
 	UI_SetPropertyValue("HideMessagesButton", "Visibility", "Collapsed")
+	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Collapsed")
 	
 	if World_GetPlayerCount() ~= 2 and #TEAMS == 2 then
+		UI_SetPropertyValue("LandmarkInConstruction", "Visibility", "Visible")
 		return
 	end
 	
-	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Collapsed")
 	UI_SetPropertyValue("SymmetryButton", "Visibility", "Collapsed")
 	UI_SetPropertyValue("DynastyUI", "Visibility", "Visible")
 	UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Visible")
