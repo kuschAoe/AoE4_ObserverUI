@@ -170,12 +170,6 @@ XamlTeamVTeam =
 	    
 	    <DataTemplate x:Key="ObserverUiBalancePanel">
 	        <DataTemplate.Resources>
-	
-	            <LinearGradientBrush x:Key="RightBarBrush">
-	                <GradientStop Offset="0" Color="{Binding [TeamSummaryRight][Color]}"/>
-	                <GradientStop Offset="1" Color="#FF888888"/>
-	            </LinearGradientBrush>
-	
 	            <SolidColorBrush x:Key="BalanceBorderBrush" Color="#5e6989"/>
 	            <SolidColorBrush x:Key="BalanceTickBrush" Color="#41485C"/>
 	        </DataTemplate.Resources>
@@ -217,7 +211,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamSummaryLeft][Color]}" />
+											<Rectangle Fill="{Binding [TeamLeft][1][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="-1" />
@@ -252,7 +246,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamSummaryRight][Color]}" />
+											<Rectangle Fill="{Binding [TeamRight][1][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="1" />
@@ -292,7 +286,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamSummaryLeft][Color]}" />
+											<Rectangle Fill="{Binding [TeamLeft][1][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="-1" />
@@ -308,7 +302,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamSummaryRight][Color]}" />
+											<Rectangle Fill="{Binding [TeamRight][1][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="1" />
