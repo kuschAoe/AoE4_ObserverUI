@@ -15,6 +15,39 @@ XamlTeamVTeam =
 	        <Setter Property="Effect" Value="{StaticResource ObserverUiHeaderDropShadow}"/>
 	        <Setter Property="Margin" Value="0,0,0,0"/>
 	    </Style>
+		   
+		<DropShadowEffect x:Key="DropShadow" BlurRadius="0.5" ShadowDepth="1.5"  />
+		<Style x:Key="PrimaryText" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="20"/>
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="FontWeight" Value="Bold" />
+			<Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
+			<Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+			<Setter Property="Margin" Value="0,0,0,0"/>
+		</Style>
+		<Style x:Key="SecondaryText" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="Foreground" Value="#C2C2C2"/>
+			<Setter Property="FontStyle" Value="Italic" />
+			<Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
+			<Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+			<Setter Property="Margin" Value="0,0,0,0"/>
+		</Style>
+		<Style x:Key="TimeText" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="18"/>
+			<Setter Property="Foreground" Value="#FFFFFF"/>
+			<Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
+			<Setter Property="Effect" Value="{StaticResource DropShadow}"/>
+			<Setter Property="Margin" Value="0,0,0,0"/>
+		</Style>
+
+		<Style x:Key="StyleDockPanelDockRight" TargetType="ContentPresenter">
+			<Setter Property="DockPanel.Dock" Value="Right"/>
+		</Style>
+		
+		<Style x:Key="StyleDockPanelDockLeft" TargetType="ContentPresenter">
+			<Setter Property="DockPanel.Dock" Value="Left"/>
+		</Style>
 		
         <DataTemplate x:Key="ObserverUIResource">
             <Grid Width="100">
@@ -142,31 +175,6 @@ XamlTeamVTeam =
 	                <GradientStop Offset="0" Color="{Binding [TeamSummaryRight][Color]}"/>
 	                <GradientStop Offset="1" Color="#FF888888"/>
 	            </LinearGradientBrush>
-	            
-	            <DropShadowEffect x:Key="DropShadow" BlurRadius="0.5" ShadowDepth="1.5"  />
-	            <Style x:Key="PrimaryText" TargetType="TextBlock">
-	                <Setter Property="FontSize" Value="20"/>
-	                <Setter Property="Foreground" Value="#FFFFFF"/>
-	                <Setter Property="FontWeight" Value="Bold" />
-	                <Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
-	                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
-	                <Setter Property="Margin" Value="0,0,0,0"/>
-	            </Style>
-	            <Style x:Key="SecondaryText" TargetType="TextBlock">
-	                <Setter Property="FontSize" Value="18"/>
-	                <Setter Property="Foreground" Value="#C2C2C2"/>
-	                <Setter Property="FontStyle" Value="Italic" />
-	                <Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
-	                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
-	                <Setter Property="Margin" Value="0,0,0,0"/>
-	            </Style>
-	            <Style x:Key="TimeText" TargetType="TextBlock">
-	                <Setter Property="FontSize" Value="18"/>
-	                <Setter Property="Foreground" Value="#FFFFFF"/>
-	                <Setter Property="FontFamily" Value="{StaticResource Syntax}"/>
-	                <Setter Property="Effect" Value="{StaticResource DropShadow}"/>
-	                <Setter Property="Margin" Value="0,0,0,0"/>
-	            </Style>
 	
 	            <SolidColorBrush x:Key="BalanceBorderBrush" Color="#5e6989"/>
 	            <SolidColorBrush x:Key="BalanceTickBrush" Color="#41485C"/>
@@ -426,18 +434,15 @@ XamlTeamVTeam =
 		</DataTemplate>
 		
 		<DataTemplate x:Key="ObserverUiUnits">
-	        <ItemsControl Name="ObserverUiUnitsListOfPlayer" ItemsSource="{Binding [units]}" HorizontalAlignment="Left">
+	        <ItemsControl Name="ObserverUiUnitsListOfPlayer" 
+					ItemsSource="{Binding [units]}"
+					ItemContainerStyle="{StaticResource StyleDockPanelDockRight}" 
+					HorizontalAlignment="Left">
 	            <ItemsControl.ItemsPanel>
 	                <ItemsPanelTemplate>
 	                    <DockPanel/>
 	                </ItemsPanelTemplate>
 	            </ItemsControl.ItemsPanel>
-				
-			    <ItemsControl.ItemContainerStyle>
-			      	<Style TargetType="ContentPresenter">
-			        	<Setter Property="DockPanel.Dock" Value="Right"/>
-			      	</Style>
-			    </ItemsControl.ItemContainerStyle>
 	
 	            <ItemsControl.ItemTemplate>
 	                <DataTemplate>
@@ -459,8 +464,9 @@ XamlTeamVTeam =
 	                            <TextBlock 
 										VerticalAlignment="Top"
 										HorizontalAlignment="Left"
-										Style="{StaticResource HUDCommandCardButtonTextBlockStyle}"
+										Style="{StaticResource SecondaryText}"
 	                                	Text="{Binding [queued], Converter={StaticResource CastToIntOperator}}"
+										FontSize="14"
 										Visibility="{Binding [queuedNot0], Converter={StaticResource BoolToVis}}" />
 	                            <TextBlock 
 										VerticalAlignment="Bottom"
@@ -478,6 +484,7 @@ XamlTeamVTeam =
 			<DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding [IsRightSide]}" Value="true">
 		            <Setter TargetName="ObserverUiUnitsListOfPlayer" Property="HorizontalAlignment" Value="Right"/>
+		            <Setter TargetName="ObserverUiUnitsListOfPlayer" Property="ItemContainerStyle" Value="{StaticResource StyleDockPanelDockLeft}" />
 		        </DataTrigger>
             </DataTemplate.Triggers>
 		</DataTemplate>
@@ -511,7 +518,7 @@ XamlTeamVTeam =
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 	        
-			<ContentControl HorizontalAlignment="Left" Margin="0,200,0,0"
+			<ContentControl HorizontalAlignment="Left" Margin="0,124,0,0"
 				ContentTemplate="{StaticResource ObserverUiTeamUnits}"
 				Content="{Binding [TeamLeft]}" />
 			
@@ -521,7 +528,7 @@ XamlTeamVTeam =
 						Content="{Binding [TeamLeft]}" />
 		    </Grid>
 			
-			<ContentControl Grid.Column="2" HorizontalAlignment="Right" Margin="0,200,0,0"
+			<ContentControl Grid.Column="2" HorizontalAlignment="Right" Margin="0,124,0,0"
 				ContentTemplate="{StaticResource ObserverUiTeamUnits}"
 				Content="{Binding [TeamRight]}" />
 			

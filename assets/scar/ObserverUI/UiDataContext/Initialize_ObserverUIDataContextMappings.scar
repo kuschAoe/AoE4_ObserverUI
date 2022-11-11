@@ -32,6 +32,9 @@ function ObserverUIDataContextMappings:Initialize()
 			table.insert(teamRight, self.PlayersById[TEAMS[2].players[i].id.PlayerID])
 		end
 		
+		table.sort(teamLeft, ComparePlayers)
+		table.sort(teamRight, ComparePlayers)
+		
 		ObserverUiDataContext.TeamLeft = teamLeft
 		ObserverUiDataContext.TeamRight = teamRight
 		
@@ -41,6 +44,10 @@ function ObserverUIDataContextMappings:Initialize()
 		ObserverUiDataContext.players = ObserverUIDataContextMappings.PlayersByIndex
 		self.TeamSummariesByIndex = {}
 	end
+end
+
+function ComparePlayers(player1, player2)
+	return player1.name.LocString < player2.name.LocString
 end
 
 function ObserverUIDataContextMappings:_GetTeamConfiguration()

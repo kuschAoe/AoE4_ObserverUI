@@ -1,5 +1,5 @@
 ObserverUiRuleSystem = {
-	RulesForPlayer = {},
+	RulesForPlayer = {}
 }
 
 ObserverUiInitialization:AddInitializable(ObserverUiRuleSystem)
@@ -9,11 +9,19 @@ function ObserverUiRuleSystem:Initialize()
 		self:_InitializeDataStructure(PLAYERS[i].id.PlayerID)
 	end
 	
-	Rule_Add(_OneRuleToRingThemAll)
+	if #PLAYERS == 2 then
+		Rule_Add(_OneRuleToRingThemAll_TrackAlways)
+	else
+		Rule_AddInterval(_OneRuleToRingThemAll_OnlyTrackWhenUpdatingUi, 0.5)
+	end
 end
 
 function ObserverUiRuleSystem:Reset()
-	Rule_Remove(_OneRuleToRingThemAll)
+	if #PLAYERS == 2 then
+		Rule_Remove(_OneRuleToRingThemAll_TrackAlways)
+	else
+		Rule_Remove(_OneRuleToRingThemAll_OnlyTrackWhenUpdatingUi, 0.5)
+	end
 	
 	self.RulesForPlayer = {}
 	self.UpdateUiDataContexts = _DefaultFuncTable
@@ -21,11 +29,19 @@ function ObserverUiRuleSystem:Reset()
 end
 
 function ObserverUiRuleSystem:Stop()
-	Rule_Pause(_OneRuleToRingThemAll)
+	if #PLAYERS == 2 then
+		Rule_Pause(_OneRuleToRingThemAll_TrackAlways)
+	else
+		Rule_Pause(_OneRuleToRingThemAll_OnlyTrackWhenUpdatingUi, 0.5)
+	end
 end
 
 function ObserverUiRuleSystem:Resume()
-	Rule_Unpause(_OneRuleToRingThemAll)
+	if #PLAYERS == 2 then
+		Rule_Unpause(_OneRuleToRingThemAll_TrackAlways)
+	else
+		Rule_Unpause(_OneRuleToRingThemAll_OnlyTrackWhenUpdatingUi, 0.5)
+	end
 end
 
 function ObserverUiRuleSystem:AddSquadDataGatheringRule(playerId, squadType, rule)
@@ -60,11 +76,17 @@ function _NoOp() end
 _DefaultFuncTable = { Func = _NoOp }
 _DefaultFuncMt = { __index = function () return _DefaultFuncTable end}
 
-function _OneRuleToRingThemAll()
-	local self = ObserverUiRuleSystem
+function _OneRuleToRingThemAll_TrackAlways()
 	local slot = World_GetGameTicks() & 7 --same as %8 but fast
-	
-	local isUiUpdateTick = slot == 0 or slot == 4
+	_OneRuleToRingThemAll(slot == 0 or slot == 4)
+end
+
+function _OneRuleToRingThemAll_OnlyTrackWhenUpdatingUi()
+	_OneRuleToRingThemAll(true)
+end
+
+function _OneRuleToRingThemAll(updateUi)
+	local self = ObserverUiRuleSystem
 	
 	for i=1, #PLAYERS do
 		local player = PLAYERS[i].id
@@ -75,12 +97,12 @@ function _OneRuleToRingThemAll()
 		EGroup_ForEach(Player_GetEntities(player), rulesForPlayer.RouterForEntities)
 		rulesForPlayer.ForProcessing.Func()
 		
-		if isUiUpdateTick then
+		if updateUi then
 			rulesForPlayer.UpdateUiDataContextsForPlayer.Func()
 		end
 	end
 	
-	if isUiUpdateTick then
+	if updateUi then
 		self.UpdateUiDataContexts.Func()
 		self.ApplyUiDataContexts.Func()
 	end
