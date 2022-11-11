@@ -1,11 +1,11 @@
-XamlHideMessagesButton = 
+XamlHideArmyButton = 
 [[<ToggleButton 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         
         HorizontalAlignment="Right" 
         VerticalAlignment="Bottom"
-        Margin="0,0,361,36"
+        Margin="0,0,361,0"
         
         Height="36"
         Width="36"
@@ -13,9 +13,6 @@ XamlHideMessagesButton =
         Style="{StaticResource SecondaryRaisedContentToggleButton}"
         
         Command="{Binding [command]}">
-    <TextBlock 
-			TextAlignment="Center"
-            Style="{StaticResource HUDTitleAltTextBlockStyle}"
-            Text="Msg" />
+    <Image Source="pack://application:,,,/WPFGUI;component/icons/races/common/victory_conditions/victory_condition_conquest.png" />
 </ToggleButton>
 ]]

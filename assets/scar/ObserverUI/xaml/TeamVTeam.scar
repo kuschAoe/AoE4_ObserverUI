@@ -211,7 +211,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamLeft][1][color]}" />
+											<Rectangle Fill="{Binding [TeamLeft][0][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="-1" />
@@ -246,7 +246,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamRight][1][color]}" />
+											<Rectangle Fill="{Binding [TeamRight][0][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="1" />
@@ -286,7 +286,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamLeft][1][color]}" />
+											<Rectangle Fill="{Binding [TeamLeft][0][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="-1" />
@@ -302,7 +302,7 @@ XamlTeamVTeam =
 											</MultiBinding>
 										</Border.Width>
 										<Grid>
-											<Rectangle Fill="{Binding [TeamRight][1][color]}" />
+											<Rectangle Fill="{Binding [TeamRight][0][color]}" />
 											<Rectangle Fill="{DynamicResource CasterTransparentToWhiteOverlayBrush}" RenderTransformOrigin=".5,.5">
 												<Rectangle.RenderTransform>
 													<ScaleTransform ScaleX="1" />

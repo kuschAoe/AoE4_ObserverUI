@@ -151,6 +151,11 @@ function ToggleMessages()
 	UpdateObserverUIDataContext()
 end
 
+function ToggleArmy()
+	ObserverUI_Settings.ShowArmy = not ObserverUI_Settings.ShowArmy
+	UpdateObserverUIDataContext()
+end
+
 function UpdateObserverUIDataContext()
 	for index=1, #PLAYERS do
 		local playerTable = ObserverUIDataContextMappings.PlayersByIndex[index]
@@ -332,6 +337,13 @@ function SplitByIsMilitary(units, isMilitary)
 end
 
 function UpdateUnitsAndQueuedStuff(t, player, race)
+	if not ObserverUI_Settings.ShowArmy then
+		t.upgradesQueued = {}
+		t.units = {}
+		t.unitsWorkers = {}
+		return
+	end
+	
 	local isMilitary = {}
 	local units = HashSetToArray(GetUnits(player, race, isMilitary))
 	local queued, upgradesQueued = GetQueuedStuff(player, race, isMilitary)

@@ -37,6 +37,7 @@ import("ObserverUI/xaml/ToggleUIButton.scar")
 import("ObserverUI/xaml/SwapPlayers1v1Button.scar")
 import("ObserverUI/xaml/SymmetryButton.scar")
 import("ObserverUI/xaml/HideMessagesButton.scar")
+import("ObserverUI/xaml/HideArmyButton.scar")
 
 import("ObserverUI/ObserverUIUpdateUi.scar")
 
@@ -56,6 +57,7 @@ function ObserverUI_OnInit()
 	elseif #TEAMS == 2 then
 		UI_AddChild("ScarDefault", "XamlPresenter", "SwapPlayers1v1Button", { IsHitTestVisible = true, Xaml = _SwapPlayers1v1ButtonXaml, DataContext = UI_CreateDataContext(_SwapPlayers1v1ButtonDataContext)})
 		UI_AddChild("ScarDefault", "XamlPresenter", "HideMessagesButton", { IsHitTestVisible = true, Xaml = XamlHideMessagesButton, DataContext = UI_CreateDataContext(_HideMessagesButtonDataContext)})
+		UI_AddChild("ScarDefault", "XamlPresenter", "HideArmyButton", { IsHitTestVisible = true, Xaml = XamlHideArmyButton, DataContext = UI_CreateDataContext(_HideArmyButtonDataContext)})
 		observeXaml = XamlTeamVTeam
 	end
 	
@@ -79,6 +81,10 @@ _ToggleUIButtonDataContext = {
 
 _HideMessagesButtonDataContext = { 
 	command = UI_CreateCommand("ToggleMessages")
+}
+
+_HideArmyButtonDataContext = { 
+	command = UI_CreateCommand("ToggleArmy")
 }
 
 _IsImprovedUIVisible = true
@@ -110,6 +116,7 @@ function ShowImprovedUI()
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Visible")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Collapsed")
 	UI_SetPropertyValue("HideMessagesButton", "Visibility", "Visible")
+	UI_SetPropertyValue("HideArmyButton", "Visibility", "Visible")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Visible")
 	
 	if World_GetPlayerCount() ~= 2 and #TEAMS == 2 then
@@ -130,6 +137,7 @@ function ShowClassicUI()
 	UI_SetPropertyValue("ObserverUI", "Visibility", "Collapsed")
 	UI_SetPropertyValue("uniqueSquadsPanel", "Visibility", "Visible")
 	UI_SetPropertyValue("HideMessagesButton", "Visibility", "Collapsed")
+	UI_SetPropertyValue("HideArmyButton", "Visibility", "Collapsed")
 	UI_SetPropertyValue("SwapPlayers1v1Button", "Visibility", "Collapsed")
 	
 	if World_GetPlayerCount() ~= 2 and #TEAMS == 2 then
