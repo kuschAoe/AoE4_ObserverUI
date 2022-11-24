@@ -67,6 +67,8 @@ function InitializeObserverUIDataContext()
 		data.isUpping = false
 		data.ageUpProgress = 0.0
 		data.upAt = 0
+		data.upName = ""
+		data.upIcon = ""
 		data.populationVsMaximumPopulation = ""
 		data.workerPopulation = 0
 		data.idleWorkerPopulation = 0
@@ -249,7 +251,7 @@ end
 
 function AddOrAggregateisMilitaryWithExisting(t, icon, isMilitary)
 	if t[icon] then
-		t[icon] = t[icon] and isMilitary
+		t[icon] = t[icon] or isMilitary
 		return
 	end
 	t[icon] = isMilitary
@@ -372,8 +374,8 @@ function CompareUnitCount(unit1, unit2)
 end
 
 function UpdateIsUpping(t, player)
-	t.isUpping, t.ageUpProgress, t.upAt = 
-		AgingUpProgress:GetForPlayer_IsAgingUp_Progress_EstimatedTimeOfCompletion(player)
+	t.isUpping, t.ageUpProgress, t.upAt, t.upIcon, t.upName = 
+		AgingUpProgress:GetForPlayer_IsAgingUp_Progress_EstimatedTimeOfCompletion_Icon_Name(player)
 end
 
 function UpdateCivSpecifics(t, player)

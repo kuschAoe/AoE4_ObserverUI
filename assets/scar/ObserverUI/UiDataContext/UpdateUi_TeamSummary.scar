@@ -13,6 +13,8 @@ function UiTeamSummary:Initialize()
 		teamSummary.Color = UI_GetColourAsString(Player_GetUIColour(TEAMS[t].players[1].id)) 
 		teamSummary.IdleWorkerCount = 0
 		teamSummary.WorkerPopulation = 0
+		teamSummary.WorkerNonTradePopulation = 0
+		teamSummary.TradePopulation = 0
 		teamSummary.MilitaryPopulation = 0
 		teamSummary.SiegePopulation = 0
 		teamSummary.MilitaryNoSiegePopulation = 0
@@ -32,27 +34,33 @@ function UiTeamSummary:Initialize()
 		
 		for t = 1, 2 do
 			local teamIdleWorkerCount = 0
-			local teamWorkerPopulation = 0
+			local teamWorkerNonTradePopulation = 0
+			local teamTradePopulation = 0
 			local teamMilitaryPopulation = 0
 			local teamSiegePopulation = 0
 			local teamMilitaryNoSiegePopulation = 0
 			
 			for i = 1, #teams[t].players do
-				local workerPopulation, idleWorkerCount, 
+				local workerNonTradePopulation, tradePopulation, idleWorkerCount, 
 				militaryNoSiegePopulation, siegePopulation = 
-				populationComposition:GetForPlayer_Worker_WorkerIdle_MilitaryNonSiege_Siege(
+				populationComposition:GetForPlayer_WorkerNonTrade_Trade_WorkerIdle_MilitaryNonSiege_Siege(
 					teams[t].players[i].id)
 				
 				teamIdleWorkerCount = teamIdleWorkerCount + idleWorkerCount 
-				teamWorkerPopulation = teamWorkerPopulation + workerPopulation 
+				teamWorkerNonTradePopulation = teamWorkerNonTradePopulation + workerNonTradePopulation 
+				teamTradePopulation = teamTradePopulation + tradePopulation 
 				teamMilitaryPopulation = teamMilitaryPopulation + militaryNoSiegePopulation + siegePopulation 
 				teamSiegePopulation = teamSiegePopulation + siegePopulation 
 				teamMilitaryNoSiegePopulation = teamMilitaryNoSiegePopulation + militaryNoSiegePopulation
 			end
 			
+			local teamWorkerPopulation = teamWorkerNonTradePopulation + teamTradePopulation 
+			
 			local teamSummary = teamSummariesByIndex[t]
 			teamSummary.IdleWorkerCount = teamIdleWorkerCount
 			teamSummary.WorkerPopulation = teamWorkerPopulation
+			teamSummary.WorkerNonTradePopulation = teamWorkerNonTradePopulation
+			teamSummary.TradePopulation = teamTradePopulation
 			teamSummary.MilitaryPopulation = teamMilitaryPopulation
 			teamSummary.SiegePopulation = teamSiegePopulation
 			teamSummary.MilitaryNoSiegePopulation = teamMilitaryNoSiegePopulation

@@ -9,24 +9,28 @@ function AgingUpProgress:Initialize()
 	end
 end
 
-function AgingUpProgress:GetForPlayer_IsAgingUp_Progress_EstimatedTimeOfCompletion(player)
+function AgingUpProgress:GetForPlayer_IsAgingUp_Progress_EstimatedTimeOfCompletion_Icon_Name(player)
 	if GameObjectRepository[player.PlayerID].Age > 3 then
-		return false, 0.0, nil
+		return false, 0.0, nil, "", ""
 	end
 	
 	local getIsAgingUp = self._GetForNonAbbasidPlayer_IsAgingUp
-	local getProgressAndEstimatedTimeOfCompletio = self._GetForNonAbbasidPlayer_Progress_EstimatedTimeOfCompletion
+	local getProgressAndEstimatedTimeOfCompletion = self._GetForNonAbbasidPlayer_Progress_EstimatedTimeOfCompletion_UiInfo
 	if Player_GetRace(player) == RACE.ABBASID then
 		getIsAgingUp = self._GetForAbbasidPlayer_IsAgingUp
-		getProgressAndEstimatedTimeOfCompletio = self._GetForAbbasidPlayer_Progress_EstimatedTimeOfCompletion
+		getProgressAndEstimatedTimeOfCompletion = self._GetForAbbasidPlayer_Progress_EstimatedTimeOfCompletion_UiInfo
 	end
 	
-	local progress, timeOfCompletion = getProgressAndEstimatedTimeOfCompletio(self, player)
+	if not getIsAgingUp(self, player) then
+		return false, 0.0, nil, "", ""
+	end
+	
+	local progress, timeOfCompletion, uiInfo = getProgressAndEstimatedTimeOfCompletion(self, player)
 	if timeOfCompletion == math.huge then
 		timeOfCompletion = nil
 	end
 	
-	return getIsAgingUp(self, player), 1.0 * progress, timeOfCompletion
+	return true, 1.0 * progress, timeOfCompletion, uiInfo.iconName, uiInfo.screenName
 end
 
 function AgingUpProgress:_GetTrackingIntervalInTicks()
@@ -53,6 +57,7 @@ function AgingUpProgress:_InitializeForAbbasid(player)
 		local isAtFirstPositionInProductionQueue = false
 		local isWingQueued = false
 		local houseOfWisdom = GameObjectRepository[player.PlayerID].HouseOfWisdom
+		local blueprint
         if houseOfWisdom then
             local queueSize = Entity_GetProductionQueueSize(houseOfWisdom)
             for i = (queueSize - 1), 0, -1 do
@@ -60,6 +65,7 @@ function AgingUpProgress:_InitializeForAbbasid(player)
 				
 				if BP_IsUpgradeOfType(queueItem, "abbasid_wing_upgrade") then
 					isWingQueued = true
+					blueprint = queueItem
 					if i == 0 then
 						isAtFirstPositionInProductionQueue = true
 					end
@@ -70,10 +76,12 @@ function AgingUpProgress:_InitializeForAbbasid(player)
 		if not isWingQueued then
 			progress.IsAgingUp = false
 			progress.StartedAt = nil
+			progress.Blueprint = nil
 			return
 		end
 		
 		progress.IsAgingUp = true
+		progress.Blueprint = blueprint
 		if isAtFirstPositionInProductionQueue and progress.StartedAt == nil then
 			progress.StartedAt = World_GetGameTime()
 		end
@@ -115,6 +123,7 @@ function AgingUpProgress:_UpdateLandmarkProgress(oldProgresses, newProgresses, e
 		entityProgress.OldProgress = oldProgresses[entity.EntityID].Progress
 	end
 	entityProgress.Progress = Entity_GetBuildingProgress(entity)
+	entityProgress.Blueprint = Entity_GetBlueprint(entity)
 	
 	local speed = (entityProgress.Progress - entityProgress.OldProgress) * 8 / self:_GetTrackingIntervalInTicks()
 	entityProgress.EstimatedTimeOfCompletion = World_GetGameTime() + (1 - entityProgress.Progress) / speed
@@ -126,12 +135,12 @@ function AgingUpProgress:_GetForNonAbbasidPlayer_IsAgingUp(player)
 	return next(self[player.PlayerID]) ~= nil
 end
 
-function AgingUpProgress:_GetForNonAbbasidPlayer_Progress_EstimatedTimeOfCompletion(player)
+function AgingUpProgress:_GetForNonAbbasidPlayer_Progress_EstimatedTimeOfCompletion_UiInfo(player)
 	local progresses = self[player.PlayerID]
 	
 	local progressIndex, progress = next(progresses)
 	if not progressIndex then
-		return 0, nil
+		return 0, nil, nil
 	end
 	
 	local progressIndex2, progress2 = next(progresses, progressIndex)
@@ -139,22 +148,24 @@ function AgingUpProgress:_GetForNonAbbasidPlayer_Progress_EstimatedTimeOfComplet
 		progress = progress2
 	end
 	
-	return progress.Progress, progress.EstimatedTimeOfCompletion
+	return progress.Progress, progress.EstimatedTimeOfCompletion, BP_GetEntityUIInfo(progress.Blueprint)
 end
 
 function AgingUpProgress:_GetForAbbasidPlayer_IsAgingUp(player)
 	return self[player.PlayerID].IsAgingUp == true
 end
 
-function AgingUpProgress:_GetForAbbasidPlayer_Progress_EstimatedTimeOfCompletion(player)
+function AgingUpProgress:_GetForAbbasidPlayer_Progress_EstimatedTimeOfCompletion_UiInfo(player)
 	local progressTable = self[player.PlayerID]
 	
 	local progress = 0
 	local timeOfCompletion
+	local blueprint 
 	if progressTable.StartedAt ~= nil then
 		progress = (World_GetGameTime() - progressTable.StartedAt) / 120
 		timeOfCompletion = progressTable.StartedAt + 120
+		uiInfo = BP_GetUpgradeUIInfo(progressTable.Blueprint)
 	end
 	
-	return progress, timeOfCompletion
+	return progress, timeOfCompletion, uiInfo
 end
