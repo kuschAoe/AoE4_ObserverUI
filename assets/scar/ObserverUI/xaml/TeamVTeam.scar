@@ -491,6 +491,8 @@ XamlTeamVTeam =
                 <DataTrigger Binding="{Binding [IsRightSide]}" Value="true">
 		            <Setter TargetName="ObserverUiAgingUpOfPlayerStack" Property="FlowDirection" Value="RightToLeft"/>
 		            <Setter TargetName="ObserverUiAgingUpOfPlayerBorder" Property="BorderThickness" Value="0,2,2,2"/>
+		            <Setter TargetName="ObserverUiAgingUpOfPlayerBorder" Property="HorizontalAlignment" Value="Right"/>
+		            <Setter TargetName="ObserverUiAgingUpOfPlayer" Property="HorizontalAlignment" Value="Right"/>
 		            <Setter TargetName="ObserverUiAgingUpOfPlayerBackground" Property="Fill" Value="{StaticResource ObserverUiBackgroundRight}"/>
 		        </DataTrigger>
                 <DataTrigger Binding="{Binding [isUpping]}" Value="true">
