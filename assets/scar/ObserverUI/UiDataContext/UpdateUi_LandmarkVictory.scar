@@ -12,6 +12,7 @@ function UiLandmarkVictory:Initialize()
 		teamSummariesByIndex[t].LandmarkVictory = {
 			Visible = false,
 			Built = 0,
+			Remaining = 0,
 			Destroyed = 0
 		}
 	end
@@ -20,12 +21,13 @@ function UiLandmarkVictory:Initialize()
 	local conquest_GetAllyLandmarkCount = Conquest_GetAllyLandmarkCount
 	local rule = function()
 		
-		for t=1, #teamSummariesByIndex do
+		for t=1, #teams do
 			local landmarkVictory = conquest_GetAllyLandmarkCount(teams[t].players[1])
 			local dataContext = teamSummariesByIndex[t].LandmarkVictory
 			
 			dataContext.Visible = landmarkVictory.built >= landmarkVictory.remaining * 2
 			dataContext.Built = landmarkVictory.built
+			dataContext.Remaining = landmarkVictory.remaining
 			dataContext.Destroyed = landmarkVictory.built - landmarkVictory.remaining
 		end
 	end

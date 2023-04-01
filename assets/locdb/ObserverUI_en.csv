@@ -1,7 +1,7 @@
 ﻿ID,Pipeline,PipelineStage,Notes,TranslationNotes,Tags,Text
 1,,,Mod name.,,,Improved Observer UI
 2,,,Mod description.,,,Improves the UI for observing games and watching replays.\r\n\r\nDue to technical restrictions the UI is implemented as a game mode. Playing the new game mode is aimed to be indistinguishable from playing the 'Standard' game mode.\r\n\r\nhttps://github.com/kuschAoe/AoE4_ObserverUI\r\nkusch_AOE#6566
-3,,,,,,Improved Observer UI
+3,,,,,,Improved Observer UI(Standard)
 4,,,,,,"The standard, competitive game mode with a variety of match options and win conditions and an improved observer UI."
 5,,,,,,Win Conditions
 6,,,,,,Sacred
@@ -48,3 +48,50 @@
 47,,,,,,Maximum Resources
 48,,,,,,High Resources
 49,,,,,,Standard Resources
+50,,,,,,Improved Observer UI(Nomad)
+51,,,,,,"Similar to Standard Mode, except that players start with no Town Center, and only 3 scattered Villagers. Contains improved observer UI."
+52,,,,,,Win Conditions
+53,,,,,,Landmarks
+54,,,,,,Landmarks
+55,,,,,,Destroy all enemy Landmarks
+56,,,,,,Sacred
+57,,,,,,Sacred
+58,,,,,,Control all the Sacred Sites
+59,,,,,,Wonder
+60,,,,,,Wonder
+61,,,,,,Build and defend a Wonder
+62,,,,,,Match Options
+63,,,,,,Display Player Scores
+64,,,,,,Player Scores are visible when Pinned Player Information is On
+65,,,,,,Player Scores are visible when Pinned Player Information is On
+66,,,,,,Starting Resources
+67,,,,,,Resources allotted to each player at match start.
+68,,,,,,Standard
+69,,,,,,Standard Resources
+70,,,,,,High
+71,,,,,,High Resources
+72,,,,,,Very High
+73,,,,,,Very High Resources
+74,,,,,,Maximum
+75,,,,,,Maximum Resources
+76,,,,,,Starting Age
+77,,,,,,Age at which players start the match
+78,,,,,,Age I
+79,,,,,,Age I Start
+80,,,,,,Age II
+81,,,,,,Age II Start
+82,,,,,,Age III
+83,,,,,,Age III Start
+84,,,,,,Age IV
+85,,,,,,Age IV Start
+86,,,,,,Map State
+87,,,,,,Initial state of the map
+88,,,,,,Concealed
+89,,,,,,Concealed Map
+90,,,,,,Explored
+91,,,,,,Explored Map
+92,,,,,,Revealed
+93,,,,,,Revealed Map
+94,,,,,,Reveal On Elimination
+95,,,,,,Reveal Fog of War to eliminated players
+96,,,,,,Reveal Fog of War to eliminated players

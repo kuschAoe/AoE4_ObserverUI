@@ -61,7 +61,8 @@ function InitializeObserverUIDataContext()
 			
 		data.civIcon = AdaptIconPathForXaml(World_GetRaceIcon(playerTable.race))
 		data.civImage = _RaceImage[raceName]
-			
+		
+		data.IsEliminated = false
 		data.ageIcon = ""
 		data.ageIconForAnimation = ""
 		data.isUpping = false
@@ -72,6 +73,7 @@ function InitializeObserverUIDataContext()
 		data.populationVsMaximumPopulation = ""
 		data.workerPopulation = 0
 		data.idleWorkerPopulation = 0
+		data.allMilitaryPopulation = 0
 		data.militaryPopulation = 0
 		data.siegePopulation = 0
 		data.relics = 0
@@ -87,7 +89,7 @@ function InitializeObserverUIDataContext()
 		
 		local resources = {}
 		for key,enum in pairs(ObserverUi_ResourceMapping) do
-			resources[key] = {amount=0, workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_"..key.."_icon")}
+			resources[key] = {amount=0, AmountFormatted="", workers=0, income="", icon=AdaptIconPathForXaml("icons/resources/resource_"..key.."_icon")}
 		end
 		
 		data.resources = resources
@@ -163,6 +165,8 @@ function UpdateObserverUIDataContext()
 		local playerTable = ObserverUIDataContextMappings.PlayersByIndex[index]
 		local player = PLAYERS[index].id
 		
+		playerTable.IsEliminated = PLAYERS[index].isEliminated
+		
 		local age = Player_GetCurrentAge(player)
 		UpdateIsUpping(playerTable, player, age)
 		playerTable.ageIcon = _AgeIcons[age][playerTable.isUpping]
@@ -185,9 +189,15 @@ function UpdateResources(t, player)
 	
 	local tResources = t.resources
 	for key,enum in pairs(ObserverUi_ResourceMapping) do
-		tResources[key].amount = resources[key]
+		local amount = resources[key]
+		tResources[key].amount = amount
 		tResources[key].workers = Player_GetStateModelInt(player, "num_"..key.."_gatherers")
 		tResources[key].income = tostring(math.floor(Player_GetResourceRate(player, enum)*60)).."/min"
+		if amount >= 10000 then
+			tResources[key].AmountFormatted = tostring(math.floor(amount/1000 + 0.5)).."k"
+		else
+			tResources[key].AmountFormatted = tostring(math.floor(amount))
+		end
 	end
 end
 
@@ -204,8 +214,8 @@ function GetPopulationVsMaximumPopulation(player)
 end
 
 function UpdatePopulationComposition(t, player)
-	t.workerPopulation, t.idleWorkerPopulation, t.militaryPopulation, t.siegePopulation
-		= PopulationComposition:GetForPlayer_Worker_WorkerIdle_MilitaryNonSiege_Siege(player)
+	t.workerPopulation, t.idleWorkerPopulation, t.allMilitaryPopulation, t.militaryPopulation, t.siegePopulation
+		= PopulationComposition:GetForPlayer_Worker_WorkerIdle_Military_MilitaryNonSiege_Siege(player)
 end
 
 function UpdateRelics(t, player)

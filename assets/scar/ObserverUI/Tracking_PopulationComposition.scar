@@ -9,9 +9,10 @@ function PopulationComposition:Initialize()
 	end
 end
 
-function PopulationComposition:GetForPlayer_Worker_WorkerIdle_MilitaryNonSiege_Siege(player)
+function PopulationComposition:GetForPlayer_Worker_WorkerIdle_Military_MilitaryNonSiege_Siege(player)
 	local PopulationComposition = self[player.PlayerID]
 	return PopulationComposition.WorkerNonTrade + PopulationComposition.Trade, PopulationComposition.WorkerIdle, 
+		PopulationComposition.MilitaryNonSiege + PopulationComposition.Siege,
 		PopulationComposition.MilitaryNonSiege, PopulationComposition.Siege
 end
 
