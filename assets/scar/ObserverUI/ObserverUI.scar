@@ -121,6 +121,12 @@ function ShowImprovedUI()
 	
 	if #TEAMS ~= 2 then
 		UI_SetPropertyValue("ReplayControl", "Margin", "0,125,0,0")
+		UI_SetPropertyValue("LandmarkInConstruction", "Visibility", "Hidden")
+    	UI_SetPropertyValue("LandmarkInConstruction", "Height", "60")
+		UI_SetPropertyValue("DynastyUI", "Visibility", "Collapsed")
+		UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Collapsed")
+		UI_SetPropertyValue("selectionCommandCardsGrid", "Margin", "-205,0,0,0")
+		return
 	end
 	
 	if World_GetPlayerCount() ~= 2 then
@@ -145,6 +151,11 @@ function ShowClassicUI()
 	
 	if #TEAMS ~= 2 then
 		UI_SetPropertyValue("ReplayControl", "Margin", "0,0,0,0")
+		UI_SetPropertyValue("LandmarkInConstruction", "Visibility", "Visible")
+		UI_SetPropertyValue("DynastyUI", "Visibility", "Visible")
+		UI_SetPropertyValue("ReplayStatViewer", "Visibility", "Visible")
+		UI_SetPropertyValue("ReplayControl", "Margin", "0,0,0,0")
+		return
 	end
 	
 	if World_GetPlayerCount() ~= 2 then

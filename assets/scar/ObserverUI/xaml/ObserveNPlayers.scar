@@ -337,17 +337,6 @@ xmlns:engineSharedEffects="clr-namespace:WPFGUI.Shared.Effects;assembly=EngineUI
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
 		</ItemsControl>
-
-		<Grid Margin="0,6,0,0"
-				HorizontalAlignment="Center" VerticalAlignment="Top"
-				Visibility="{Binding SettingValueLookup[ShowGameTimer], Source={x:Static sysConfigModels:SystemConfigModel.Instance}, Converter={StaticResource BoolToVisDesignModeOn}}">
-
-			<Rectangle Fill="Black" Opacity="0.6" />
-
-			<TextBlock Margin="{StaticResource ExtraSmallMarginAll}"
-						Style="{StaticResource nHUDBaseTextBlockStyle}"
-						Text="{Binding ElapsedTime, Source={x:Static hudModels:HUDModel.Instance}, Converter={StaticResource ShorthandTimeFormat}}" />
-		</Grid>
 	</StackPanel>
 	
 	<ItemsControl
