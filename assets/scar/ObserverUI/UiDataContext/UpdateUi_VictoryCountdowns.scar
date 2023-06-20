@@ -6,16 +6,19 @@ function UiVictoryCountdowns:Initialize()
 	local teamSummariesByIndex = ObserverUIDataContextMappings.TeamSummariesByIndex
 	for t=1, #teamSummariesByIndex do
 		teamSummariesByIndex[t].VictoryCountdownsContext = {}
+		teamSummariesByIndex[t].IsWinning = false
 	end
 	
 	local teams = TEAMS
 	local timer_Exists = Timer_Exists
 	local timer_GetRemaining = Timer_GetRemaining
 	local tableInsert = table.insert
+	local playersById = ObserverUIDataContextMappings.PlayersById
 	local rule = function()
 		
-		for t=1, #teamSummariesByIndex do
+		for t=1, #teams do
 			teamSummariesByIndex[t].VictoryCountdownsContext = {}
+			teamSummariesByIndex[t].IsWinning = false
 			
 			for p=1, #teams[t].players do
 				local wonder = teams[t].players[p]._wonder
@@ -37,30 +40,35 @@ function UiVictoryCountdowns:Initialize()
 				ClosestTo0 = false
 			}
 			
-			for t=1, #teamSummariesByIndex do
-				for p=1, #teams[t].players do
-					if _religious.last_capturer == teams[t].players[p].id then
-						tableInsert(teamSummariesByIndex[t].VictoryCountdownsContext, victoryCountdown)
-						break
-					end
+			local lastCapturer = _religious.last_capturer
+			if lastCapturer ~= nil then
+				local lastCapturerId = lastCapturer.PlayerID
+				if lastCapturerId ~= nil then
+					tableInsert(playersById[_religious.last_capturer.PlayerID].TeamSummary.VictoryCountdownsContext, 
+						victoryCountdown) 
 				end
 			end
 	    end
 		
 		local leastTimeRemaining = nil
 		local criticalVictoryCountdown = nil
-		for t=1, #teamSummariesByIndex do
+		local winningTeam = nil
+		for t=1, #teams do
 			local victoryCountdownsContext = teamSummariesByIndex[t].VictoryCountdownsContext
 			for i=1, #victoryCountdownsContext do
 				local victoryCountdown = victoryCountdownsContext[i]
 				if not leastTimeRemaining or victoryCountdown.TimeRemaining < leastTimeRemaining then
 					leastTimeRemaining = victoryCountdown.TimeRemaining
 					criticalVictoryCountdown = victoryCountdown
+					winningTeam = teamSummariesByIndex[t]
 				end
 			end
 		end
 		if criticalVictoryCountdown then
 			criticalVictoryCountdown.ClosestTo0 = true
+		end
+		if winningTeam then
+			winningTeam.IsWinning = true
 		end
 	end
 	

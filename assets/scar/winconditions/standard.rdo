@@ -2,8 +2,16 @@
 	<!--WinCondition/-->
 	<DataObject Name="" Type="WinCondition" Id="5106941631957616451">
 		<DataProperty Name="m_maxTeams" Type="Int32" Value="-1"/>
+		<DataProperty Name="m_startingCondition" Type="Object">
+			<DataValue Name="FamilyManagerEnum&lt;FamilyManager::FamilyType::TYP_StartingCondition,StdTraits&gt;">14091500742296193561</DataValue>
+			<!--WinCondition/FamilyManagerEnum<FamilyManager::FamilyType::TYP_StartingCondition,StdTraits>/-->
+			<DataObject Name="" Type="FamilyManagerEnum&lt;FamilyManager::FamilyType::TYP_StartingCondition,StdTraits&gt;" Id="14091500742296193561" OwnerId="5106941631957616451">
+				<DataProperty Name="m_enumName" Type="String" Value=""/>
+			</DataObject>
+		</DataProperty>
 		<DataProperty Name="m_gameModeType" Type="String" Value=""/>
 		<DataProperty Name="m_scarWinConditionFile" Type="String" Value="winconditions\standard"/>
+		<DataProperty Name="m_feAllowSelectingStartingLocations" Type="Bool" Value="true"/>
 		<DataProperty Name="m_playerUpgrades" Type="Object"/>
 		<DataProperty Name="m_feIcon" Type="String" Value=""/>
 		<DataProperty Name="m_scarMissionFile" Type="String" Value=""/>
