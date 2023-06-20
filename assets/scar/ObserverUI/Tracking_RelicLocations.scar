@@ -28,14 +28,11 @@ function RelicLocations:_Initialize(player)
     ObserverUiRuleSystem:AddDataGatheringPreparationRule(player.PlayerID, rule)
     
     local entity_GetStateModelFloat = Entity_GetStateModelFloat
-    local squad_EntityAt = Squad_EntityAt
-    local squad_Count = Squad_Count
+    local squad_GetFirstEntity = Squad_GetFirstEntity
     local rule = function (squad)
-        for i = 1, squad_Count(squad) do
-            local entity = squad_EntityAt(squad, i - 1)
-            local relics = entity_GetStateModelFloat(entity, "Relic_Count")
-            relicLocations.Carried = relicLocations.Carried + relics
-        end
+        local entity = squad_GetFirstEntity(squad)
+        local relics = entity_GetStateModelFloat(entity, "Relic_Count")
+        relicLocations.Carried = relicLocations.Carried + relics
     end
     ObserverUiRuleSystem:AddSquadDataGatheringRule(player.PlayerID, "NonWorker", rule)
     
